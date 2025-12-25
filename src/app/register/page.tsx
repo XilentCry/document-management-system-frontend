@@ -1,9 +1,9 @@
-import { LoginForm } from "@/components/auth/login-form";
+import { RegisterForm } from "@/components/auth/register-form";
 import Image from "next/image";
 
-export default function Page() {
+export default function RegisterPage() {
   return (
-    <div className="flex min-h-svh items-center justify-center">
+    <div className="flex min-h-svh justify-center py-24">
       <div className="w-full max-w-sm space-y-7">
         <div className="flex flex-col items-center gap-2 text-center">
           <Image src="/logo.png" alt="NORSU" width={80} height={80} />
@@ -11,7 +11,7 @@ export default function Page() {
             NORSU Document Management System
           </span>
         </div>
-        <LoginForm />
+        <RegisterForm />
       </div>
     </div>
   );
