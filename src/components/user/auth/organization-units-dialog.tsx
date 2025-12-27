@@ -14,7 +14,7 @@ import { TRegisterFormSchema } from "@/schemas/auth/register-form-schema";
 import { TOrganizationUnit } from "@/types/organization-unit";
 import { Plus, X } from "lucide-react";
 import { useController, useFormContext } from "react-hook-form";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "../../ui/spinner";
 import { OrganizationUnitTreeNode } from "./organization-unit-tree-node";
 
 function flattenOrganizationUnits(
@@ -33,11 +33,13 @@ function flattenOrganizationUnits(
 export function OrganizationUnitsDialog({
   organizationUnits,
   isLoading,
+  isError,
   error,
 }: {
   organizationUnits: TOrganizationUnit[];
   isLoading: boolean;
-  error: string;
+  isError: boolean;
+  error: Error | null;
 }) {
   const { control } = useFormContext<TRegisterFormSchema>();
 
@@ -108,9 +110,9 @@ export function OrganizationUnitsDialog({
               <div className="h-full flex items-center justify-center">
                 <Spinner className="text-primary" />
               </div>
-            ) : error ? (
+            ) : isError && error ? (
               <div className="h-full flex items-center justify-center">
-                <p className="text-destructive text-sm">{error}</p>
+                <p className="text-destructive text-sm">{error.message}</p>
               </div>
             ) : (
               organizationUnits.map((unit) => (

@@ -1,25 +1,24 @@
 "use client";
 
+import {
+  loginFormSchema,
+  TLoginFormSchema,
+} from "@/schemas/auth/login-form-schema";
+import { useLogin } from "@/services/auth/mutations";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { Button } from "../ui/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
-import { Input } from "../ui/input";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Button } from "../../ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../../ui/field";
+import { Input } from "../../ui/input";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
   InputGroupText,
-} from "../ui/input-group";
-import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm } from "react-hook-form";
-import {
-  loginFormSchema,
-  TLoginFormSchema,
-} from "@/schemas/auth/login-form-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { getCsrfCookie, login } from "@/services/api/auth";
-import { toast } from "sonner";
-import { Spinner } from "../ui/spinner";
+} from "../../ui/input-group";
+import { Spinner } from "../../ui/spinner";
+import { getCsrfCookie } from "@/services/auth/api";
 
 export function LoginForm() {
   const {
@@ -35,23 +34,11 @@ export function LoginForm() {
     },
   });
 
-  const router = useRouter();
+  const { mutateAsync: loginMutation } = useLogin(reset);
 
   const onSubmit: SubmitHandler<TLoginFormSchema> = async (data) => {
-    try {
-      await getCsrfCookie();
-      const { user, organizationUnitId } = await login(data);
-      reset();
-      if (user.role === "User") {
-        router.replace(`/drive/department-drive/${organizationUnitId}`);
-      } else {
-        router.replace("/admin/user-management");
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
+    await getCsrfCookie();
+    await loginMutation(data);
   };
 
   return (

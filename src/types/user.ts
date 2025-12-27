@@ -1,7 +1,7 @@
+import { TCurrentUser } from "./current-user";
+
 export type TUser = {
-  id: number;
-  first_name: string;
-  middle_name: string | null;
-  last_name: string;
-  email: string;
-};
+  status: "Pending" | "Approved" | "Rejected";
+  created_at: string;
+  updated_at: string;
+} & TCurrentUser;

@@ -19,27 +19,17 @@ import {
   registerFormSchema,
   type TRegisterFormSchema,
 } from "@/schemas/auth/register-form-schema";
-import {
-  getCsrfCookie,
-  register as registerService,
-} from "@/services/api/auth";
-import { getAllOrganizationUnits } from "@/services/api/organization-unit";
+import { getCsrfCookie } from "@/services/auth/api";
+import { useRegister } from "@/services/auth/mutations";
+import { useGetAllOrganizationUnits } from "@/services/organization-units/queries";
 import { TFormError } from "@/types/form-error";
-import { TOrganizationUnit } from "@/types/organization-unit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { OrganizationUnitsDialog } from "./organization-units-dialog";
 
 export function RegisterForm() {
-  const [organizationUnits, setOrganizationUnits] = useState<
-    TOrganizationUnit[]
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
   const [formErrors, setFormErrors] = useState<TFormError | null>(null);
 
   const methods = useForm<TRegisterFormSchema>({
@@ -61,44 +51,17 @@ export function RegisterForm() {
     formState: { errors, isSubmitting },
   } = methods;
 
-  const router = useRouter();
-
-  useEffect(() => {
-    async function fetchAllOrganizationUnits() {
-      setError("");
-
-      try {
-        const { organizationUnits } = await getAllOrganizationUnits();
-        setOrganizationUnits(organizationUnits);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          setError(error.message);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchAllOrganizationUnits();
-  }, []);
+  const {
+    isLoading,
+    isError,
+    error,
+    data: organizationUnits = [],
+  } = useGetAllOrganizationUnits();
+  const { mutateAsync: registerMutation } = useRegister(setFormErrors, reset);
 
   const onSubmit: SubmitHandler<TRegisterFormSchema> = async (data) => {
-    try {
-      setFormErrors(null);
-      await getCsrfCookie();
-      const result = await registerService(data);
-      if ("errors" in result) {
-        setFormErrors(result.errors);
-        return;
-      }
-      toast.success(result.message);
-      reset();
-      router.push("/");
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
+    await getCsrfCookie();
+    await registerMutation(data);
   };
 
   return (
@@ -140,6 +103,7 @@ export function RegisterForm() {
             <OrganizationUnitsDialog
               organizationUnits={organizationUnits}
               isLoading={isLoading}
+              isError={isError}
               error={error}
             />
             {errors.organization_unit_ids && (

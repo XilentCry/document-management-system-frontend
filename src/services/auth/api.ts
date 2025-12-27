@@ -1,12 +1,10 @@
 import { getCookie } from "@/lib/get-cookie";
 import { TLoginFormSchema } from "@/schemas/auth/login-form-schema";
 import { TRegisterFormSchema } from "@/schemas/auth/register-form-schema";
-import { TUser } from "@/types/user";
+import { TCurrentUser } from "@/types/current-user";
 
 export type TLoginResponse = {
-  user: TUser & {
-    role: "User" | "Admin";
-  };
+  user: TCurrentUser;
   organizationUnitId: number;
 };
 
@@ -77,4 +75,21 @@ export async function register(
   }
 
   return { message: data.message };
+}
+
+export async function logout() {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,
+    {
+      method: "POST",
+      headers: {
+        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+      },
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to logout.");
+  }
 }
