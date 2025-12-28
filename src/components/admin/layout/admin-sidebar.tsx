@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   Sidebar,
@@ -11,8 +13,11 @@ import {
 } from "@/components/ui/sidebar";
 import { UsersRound } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function AdminSidebar() {
+  const pathname = usePathname();
+
   return (
     <Sidebar variant="inset">
       <SidebarHeader className="h-14 flex flex-row items-center">
@@ -31,6 +36,7 @@ export default function AdminSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  isActive={pathname === "/admin/user-management"}
                   render={
                     <Link href="/admin/user-management">
                       <UsersRound />

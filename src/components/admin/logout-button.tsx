@@ -4,6 +4,7 @@ import { LogOut } from "lucide-react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { logout } from "@/services/auth/api";
+import { toast } from "sonner";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export function LogoutButton() {
       router.replace("/");
     } catch (error: unknown) {
       if (error instanceof Error) {
-        throw new Error(error.message);
+        toast.error(error.message);
       }
     }
   };

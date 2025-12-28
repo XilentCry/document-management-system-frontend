@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { UseFormReset } from "react-hook-form";
 import { TRegisterFormSchema } from "@/schemas/auth/register-form-schema";
 import { TLoginFormSchema } from "@/schemas/auth/login-form-schema";
+import Cookies from "js-cookie";
 
 export const useLogin = (reset: UseFormReset<TLoginFormSchema>) => {
   const router = useRouter();
@@ -17,6 +18,11 @@ export const useLogin = (reset: UseFormReset<TLoginFormSchema>) => {
       reset();
 
       if (data.user.role === "User") {
+        Cookies.set(
+          "current-organization-unit-id",
+          data.organizationUnitId.toString()
+        );
+
         router.replace(`/drive/department-drive/${data.organizationUnitId}`);
       } else if (data.user.role === "Admin") {
         router.replace("/admin/user-management");

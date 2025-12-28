@@ -5,13 +5,7 @@ import { Spinner } from "../../ui/spinner";
 import { UserTable } from "./user-table";
 
 export function UserList() {
-  const {
-    isLoading,
-    isError,
-    error,
-    isSuccess,
-    data: users = [],
-  } = useGetAllUsers();
+  const { isLoading, isError, error, data: users = [] } = useGetAllUsers();
 
   if (isError && error) {
     return (
@@ -29,5 +23,5 @@ export function UserList() {
     );
   }
 
-  return isSuccess && <UserTable users={users} />;
+  return <UserTable users={users} />;
 }

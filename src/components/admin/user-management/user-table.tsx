@@ -2,7 +2,9 @@ import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
@@ -17,7 +19,7 @@ import {
 import { useGetAllStatuses } from "@/services/statuses/queries";
 import { useUpdateStatus } from "@/services/users/mutations";
 import { TUser } from "@/types/user";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Eye, Pencil } from "lucide-react";
 import { useState } from "react";
 
 export function UserTable({ users }: { users: TUser[] }) {
@@ -81,21 +83,20 @@ export function UserTable({ users }: { users: TUser[] }) {
                       </p>
                     </div>
                   ) : (
-                    statuses.map((status) => (
-                      <DropdownMenuItem
-                        disabled={
-                          user.status === status.name ||
-                          (isPending && selectedStatus === status.name)
-                        }
-                        key={status.id}
-                        onClick={() => {
-                          handleUpdateStatus(user.id, status.id);
-                          setSelectedStatus(status.name);
-                        }}
-                      >
-                        {status.name}
-                      </DropdownMenuItem>
-                    ))
+                    statuses
+                      .filter((status) => user.status !== status.name)
+                      .map((status) => (
+                        <DropdownMenuItem
+                          disabled={isPending && selectedStatus === status.name}
+                          key={status.id}
+                          onClick={() => {
+                            handleUpdateStatus(user.id, status.id);
+                            setSelectedStatus(status.name);
+                          }}
+                        >
+                          {status.name}
+                        </DropdownMenuItem>
+                      ))
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -108,8 +109,17 @@ export function UserTable({ users }: { users: TUser[] }) {
                   <Ellipsis className="inline-block size-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem>View</DropdownMenuItem>
-                  <DropdownMenuItem>Edit</DropdownMenuItem>
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem>
+                      <Eye />
+                      View
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Pencil />
+                      Edit
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
