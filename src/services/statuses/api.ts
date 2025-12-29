@@ -4,6 +4,9 @@ export async function getAllStatuses(): Promise<TStatuses[]> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/statuses`,
     {
+      headers: {
+        Accept: "application/json",
+      },
       credentials: "include",
     }
   );

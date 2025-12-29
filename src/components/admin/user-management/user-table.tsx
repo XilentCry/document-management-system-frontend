@@ -20,6 +20,7 @@ import { useGetAllStatuses } from "@/services/statuses/queries";
 import { useUpdateStatus } from "@/services/users/mutations";
 import { TUser } from "@/types/user";
 import { Ellipsis, Eye, Pencil } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function UserTable({ users }: { users: TUser[] }) {
@@ -31,6 +32,8 @@ export function UserTable({ users }: { users: TUser[] }) {
     data: statuses = [],
   } = useGetAllStatuses();
   const { mutateAsync: updateStatus, isPending } = useUpdateStatus();
+
+  const router = useRouter();
 
   const handleUpdateStatus = async (userId: number, statusId: number) => {
     await updateStatus({ userId, statusId });
@@ -115,7 +118,11 @@ export function UserTable({ users }: { users: TUser[] }) {
                       <Eye />
                       View
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() =>
+                        router.push(`/admin/user-management/edit/${user.id}`)
+                      }
+                    >
                       <Pencil />
                       Edit
                     </DropdownMenuItem>

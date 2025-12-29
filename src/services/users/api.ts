@@ -1,8 +1,15 @@
 import { getCookie } from "@/lib/get-cookie";
+import { TOrganizationUnit } from "@/types/organization-unit";
 import { TUser } from "@/types/user";
 
+type TGetUserResponse = TUser & {
+  organizationUnits: Pick<TOrganizationUnit, "id" | "name">[];
+};
 export async function getAllUsers(): Promise<TUser[]> {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
+    headers: {
+      Accept: "application/json",
+    },
     credentials: "include",
   });
 
@@ -40,4 +47,24 @@ export async function updateStatus(
   }
 
   return { message: data.message };
+}
+
+export async function getUser(id: number): Promise<TGetUserResponse> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data.user;
 }

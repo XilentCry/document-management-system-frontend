@@ -71,20 +71,24 @@ export function OrganizationUnitsDialog({
     <>
       {selectedOrganizationUnits.length > 0 && (
         <Card>
-          <CardContent className="flex flex-wrap gap-2">
-            {selectedOrganizationUnits.map((unit) => (
-              <Badge key={unit.id} variant="outline">
-                {unit.name}
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  className="w-fit"
-                  onClick={() => removeOrganizationUnit(unit.id)}
-                >
-                  <X />
-                </Button>
-              </Badge>
-            ))}
+          <CardContent>
+            <ScrollArea className="max-h-60 flex flex-col">
+              <div className="flex-1 min-h-0 flex flex-wrap gap-2">
+                {selectedOrganizationUnits.map((unit) => (
+                  <Badge key={unit.id} variant="outline">
+                    {unit.name}
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      className="w-fit"
+                      onClick={() => removeOrganizationUnit(unit.id)}
+                    >
+                      <X />
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+            </ScrollArea>
           </CardContent>
         </Card>
       )}

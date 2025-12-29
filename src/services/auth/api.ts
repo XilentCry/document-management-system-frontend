@@ -85,6 +85,7 @@ export async function logout() {
       method: "POST",
       headers: {
         "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+        Accept: "application/json",
       },
       credentials: "include",
     }

@@ -1,7 +1,7 @@
 import { LoginForm } from "@/components/user/auth/login-form";
 import Image from "next/image";
 
-export default function Page() {
+export default function LoginPage() {
   return (
     <div className="flex min-h-svh items-center justify-center">
       <div className="w-full max-w-sm space-y-7">
