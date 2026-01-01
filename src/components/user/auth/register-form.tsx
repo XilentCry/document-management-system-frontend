@@ -159,8 +159,8 @@ export function RegisterForm() {
 
           <p className="text-center text-sm">
             Already have an account?{" "}
-            <Link href="/" className="underline">
-              Login
+            <Link href="/" className="hover:underline underline-offset-4">
+              Log in
             </Link>
           </p>
         </FieldGroup>

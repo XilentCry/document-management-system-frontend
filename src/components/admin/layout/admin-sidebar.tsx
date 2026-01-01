@@ -15,12 +15,12 @@ import { UsersRound } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
-export default function AdminSidebar() {
+export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar variant="inset">
-      <SidebarHeader className="h-14 flex flex-row items-center">
+    <Sidebar collapsible="none" className="sticky top-0">
+      <SidebarHeader className="h-14 flex flex-row items-center border-b">
         <SidebarMenu>
           <SidebarMenuItem>
             <div className="flex items-center gap-2">

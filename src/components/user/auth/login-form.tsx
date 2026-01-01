@@ -80,7 +80,7 @@ export function LoginForm() {
                 Logging in...
               </>
             ) : (
-              "Login"
+              "Log in"
             )}
           </Button>
         </Field>

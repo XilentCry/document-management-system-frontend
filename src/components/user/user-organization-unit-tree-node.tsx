@@ -1,33 +1,35 @@
+import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { TOrganizationUnit } from "@/types/organization-unit";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { DialogClose } from "../ui/dialog";
 
-export function OrganizationUnitTreeNode({
+export function UserOrganizationUnitTreeNode({
   node,
-  selectedIds,
-  onToggle,
 }: {
   node: Pick<
     TOrganizationUnit,
     "id" | "name" | "parent_organization_unit_id" | "children"
   >;
-  selectedIds: number[];
-  onToggle: (id: number) => void;
 }) {
   const [open, setOpen] = useState(true);
   const hasChildren = !!node.children?.length;
 
+  const router = useRouter();
+
+  const handleSelectOrganizationUnit = (id: number) => {
+    router.push(`/drive/department-drive/${id}`);
+  };
+
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
-      <div className="flex items-center gap-2 py-1">
+      <div className="flex items-center gap-2">
         {hasChildren ? (
           <CollapsibleTrigger render={<Button variant="ghost" size="icon" />}>
             {open ? <ChevronUp /> : <ChevronDown />}
@@ -35,23 +37,23 @@ export function OrganizationUnitTreeNode({
         ) : (
           <div className="w-6" />
         )}
-        <Checkbox
-          checked={selectedIds.includes(node.id)}
-          onCheckedChange={() => onToggle(node.id)}
-          id={`unit-${node.id}`}
-        />
-        <Label htmlFor={`unit-${node.id}`}>{node.name}</Label>
+        <DialogClose
+          render={
+            <Button
+              variant="ghost"
+              className="flex-1 justify-start"
+              onClick={() => handleSelectOrganizationUnit(node.id)}
+            />
+          }
+        >
+          {node.name}
+        </DialogClose>
       </div>
       {hasChildren && (
         <div className="ml-4 border-l pl-2">
           <CollapsibleContent>
             {node.children!.map((child) => (
-              <OrganizationUnitTreeNode
-                key={child.id}
-                node={child}
-                selectedIds={selectedIds}
-                onToggle={onToggle}
-              />
+              <UserOrganizationUnitTreeNode key={child.id} node={child} />
             ))}
           </CollapsibleContent>
         </div>

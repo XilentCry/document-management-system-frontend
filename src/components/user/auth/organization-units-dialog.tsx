@@ -12,14 +12,26 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TRegisterFormSchema } from "@/schemas/auth/register-form-schema";
 import { TOrganizationUnit } from "@/types/organization-unit";
-import { Plus, X } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 import { useController, useFormContext } from "react-hook-form";
 import { Spinner } from "../../ui/spinner";
 import { OrganizationUnitTreeNode } from "./organization-unit-tree-node";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { useState } from "react";
 
 function flattenOrganizationUnits(
-  organizationUnits: TOrganizationUnit[],
-  acc: TOrganizationUnit[] = []
+  organizationUnits: Pick<
+    TOrganizationUnit,
+    "id" | "name" | "parent_organization_unit_id" | "children"
+  >[],
+  acc: Pick<
+    TOrganizationUnit,
+    "id" | "name" | "parent_organization_unit_id" | "children"
+  >[] = []
 ) {
   for (const organizationUnit of organizationUnits) {
     acc.push(organizationUnit);
@@ -36,7 +48,10 @@ export function OrganizationUnitsDialog({
   isError,
   error,
 }: {
-  organizationUnits: TOrganizationUnit[];
+  organizationUnits: Pick<
+    TOrganizationUnit,
+    "id" | "name" | "parent_organization_unit_id" | "children"
+  >[];
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
@@ -49,6 +64,8 @@ export function OrganizationUnitsDialog({
     name: "organization_unit_ids",
     control,
   });
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const toggleOrganizationUnit = (id: number) => {
     onChange(
@@ -67,6 +84,49 @@ export function OrganizationUnitsDialog({
     selectedIds.includes(selectedId.id)
   );
 
+  const filterOrganizationUnits = (
+    organizationUnits: Pick<
+      TOrganizationUnit,
+      "id" | "name" | "parent_organization_unit_id" | "children"
+    >[],
+    searchTerm: string
+  ): Pick<
+    TOrganizationUnit,
+    "id" | "name" | "parent_organization_unit_id" | "children"
+  >[] => {
+    if (!searchTerm) return organizationUnits;
+    const lower = searchTerm.toLowerCase();
+    return organizationUnits
+      .map(
+        (
+          organizationUnit: Pick<
+            TOrganizationUnit,
+            "id" | "name" | "parent_organization_unit_id" | "children"
+          >
+        ) => {
+          const children = organizationUnit.children
+            ? filterOrganizationUnits(organizationUnit.children, searchTerm)
+            : [];
+          if (
+            organizationUnit.name.toLowerCase().includes(lower) ||
+            children.length > 0
+          ) {
+            return { ...organizationUnit, children };
+          }
+          return null;
+        }
+      )
+      .filter(Boolean) as Pick<
+      TOrganizationUnit,
+      "id" | "name" | "parent_organization_unit_id" | "children"
+    >[];
+  };
+
+  const filteredOrganizationUnits = filterOrganizationUnits(
+    organizationUnits,
+    searchTerm
+  );
+
   return (
     <>
       {selectedOrganizationUnits.length > 0 && (
@@ -74,14 +134,16 @@ export function OrganizationUnitsDialog({
           <CardContent>
             <ScrollArea className="max-h-60 flex flex-col">
               <div className="flex-1 min-h-0 flex flex-wrap gap-2">
-                {selectedOrganizationUnits.map((unit) => (
-                  <Badge key={unit.id} variant="outline">
-                    {unit.name}
+                {selectedOrganizationUnits.map((organizationUnit) => (
+                  <Badge key={organizationUnit.id} variant="outline">
+                    {organizationUnit.name}
                     <Button
                       variant="ghost"
                       size="icon-xs"
                       className="w-fit"
-                      onClick={() => removeOrganizationUnit(unit.id)}
+                      onClick={() =>
+                        removeOrganizationUnit(organizationUnit.id)
+                      }
                     >
                       <X />
                     </Button>
@@ -94,21 +156,26 @@ export function OrganizationUnitsDialog({
       )}
 
       <Dialog>
-        <DialogTrigger
-          render={
-            <Button variant="secondary">
-              <Plus />
-              Add office/unit
-            </Button>
-          }
-        />
+        <DialogTrigger render={<Button variant="secondary" />}>
+          <Plus />
+          Add office/unit
+        </DialogTrigger>
 
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Organizational Structure</DialogTitle>
             <DialogDescription>Select your office or unit</DialogDescription>
           </DialogHeader>
-
+          <InputGroup>
+            <InputGroupInput
+              placeholder="Search an office or unit"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+          </InputGroup>
           <ScrollArea className="h-60">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
@@ -118,11 +185,15 @@ export function OrganizationUnitsDialog({
               <div className="h-full flex items-center justify-center">
                 <p className="text-destructive text-sm">{error.message}</p>
               </div>
+            ) : filteredOrganizationUnits.length === 0 ? (
+              <div className="h-full flex items-center justify-center">
+                <p className="text-sm">No results found.</p>
+              </div>
             ) : (
-              organizationUnits.map((unit) => (
+              filteredOrganizationUnits.map((organizationUnit) => (
                 <OrganizationUnitTreeNode
-                  key={unit.id}
-                  node={unit}
+                  key={organizationUnit.id}
+                  node={organizationUnit}
                   selectedIds={selectedIds}
                   onToggle={toggleOrganizationUnit}
                 />

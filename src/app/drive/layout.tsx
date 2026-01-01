@@ -1,5 +1,5 @@
-import { AdminSidebar } from "@/components/admin/layout/admin-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { UserSidebar } from "@/components/user/layout/user-sidebar";
 
 export default function AdminLayout({
   children,
@@ -8,7 +8,7 @@ export default function AdminLayout({
 }>) {
   return (
     <SidebarProvider>
-      <AdminSidebar />
+      <UserSidebar />
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   );

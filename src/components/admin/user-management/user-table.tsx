@@ -2,9 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Spinner } from "@/components/ui/spinner";
@@ -19,7 +17,6 @@ import {
 import { useGetAllStatuses } from "@/services/statuses/queries";
 import { useUpdateStatus } from "@/services/users/mutations";
 import { TUser } from "@/types/user";
-import { Ellipsis, Eye, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -44,6 +41,7 @@ export function UserTable({ users }: { users: TUser[] }) {
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
+          <TableHead>Email</TableHead>
           <TableHead>Role</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Created</TableHead>
@@ -56,6 +54,7 @@ export function UserTable({ users }: { users: TUser[] }) {
             <TableCell>
               {user.first_name} {user.middle_name} {user.last_name}
             </TableCell>
+            <TableCell>{user.email}</TableCell>
             <TableCell>
               <Badge variant="secondary">{user.role}</Badge>
             </TableCell>
@@ -86,50 +85,24 @@ export function UserTable({ users }: { users: TUser[] }) {
                       </p>
                     </div>
                   ) : (
-                    statuses
-                      .filter((status) => user.status !== status.name)
-                      .map((status) => (
-                        <DropdownMenuItem
-                          disabled={isPending && selectedStatus === status.name}
-                          key={status.id}
-                          onClick={() => {
-                            handleUpdateStatus(user.id, status.id);
-                            setSelectedStatus(status.name);
-                          }}
-                        >
-                          {status.name}
-                        </DropdownMenuItem>
-                      ))
+                    statuses.map((status) => (
+                      <DropdownMenuItem
+                        disabled={isPending && selectedStatus === status.name}
+                        key={status.id}
+                        onClick={() => {
+                          handleUpdateStatus(user.id, status.id);
+                          setSelectedStatus(status.name);
+                        }}
+                      >
+                        {status.name}
+                      </DropdownMenuItem>
+                    ))
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
             <TableCell>{new Date(user.created_at).toLocaleString()}</TableCell>
             <TableCell>{new Date(user.updated_at).toLocaleString()}</TableCell>
-            <TableCell className="text-right">
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <Ellipsis className="inline-block size-4" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>
-                      <Eye />
-                      View
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        router.push(`/admin/user-management/edit/${user.id}`)
-                      }
-                    >
-                      <Pencil />
-                      Edit
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TableCell>
           </TableRow>
         ))}
       </TableBody>

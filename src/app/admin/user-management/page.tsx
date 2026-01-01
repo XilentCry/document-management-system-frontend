@@ -1,5 +1,5 @@
-import { LogoutButton } from "@/components/admin/logout-button";
 import { UserList } from "@/components/admin/user-management/user-list";
+import { LogoutButton } from "@/components/logout-button";
 
 export default function UserManagementPage() {
   return (
@@ -8,7 +8,7 @@ export default function UserManagementPage() {
         <LogoutButton />
       </header>
       <div className="p-4 flex-1 flex flex-col gap-4">
-        <h1>User Management</h1>
+        <h1 className="text-2xl">User Management</h1>
         <UserList />
       </div>
     </div>
