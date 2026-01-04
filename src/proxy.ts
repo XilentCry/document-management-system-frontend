@@ -33,6 +33,10 @@ export async function proxy(request: NextRequest) {
     if (response.ok) {
       const data = await response.json();
 
+      if ("alreadyVerified" in data && data.alreadyVerified === false) {
+        return NextResponse.redirect(new URL("/email/verify", request.url));
+      }
+
       if (isAuthPage) {
         if (data.user.role === "User") {
           return NextResponse.redirect(
