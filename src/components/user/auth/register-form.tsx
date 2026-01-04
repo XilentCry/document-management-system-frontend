@@ -77,6 +77,9 @@ export function RegisterForm() {
             {errors.first_name && (
               <FieldError>{errors.first_name.message}</FieldError>
             )}
+            {formErrors?.first_name && (
+              <FieldError>{formErrors.first_name}</FieldError>
+            )}
           </Field>
           <Field>
             <FieldLabel>Middle Name</FieldLabel>
@@ -87,6 +90,9 @@ export function RegisterForm() {
             {errors.middle_name && (
               <FieldError>{errors.middle_name.message}</FieldError>
             )}
+            {formErrors?.middle_name && (
+              <FieldError>{formErrors.middle_name}</FieldError>
+            )}
           </Field>
           <Field>
             <FieldLabel>Last Name</FieldLabel>
@@ -96,6 +102,9 @@ export function RegisterForm() {
             />
             {errors.last_name && (
               <FieldError>{errors.last_name.message}</FieldError>
+            )}
+            {formErrors?.last_name && (
+              <FieldError>{formErrors.last_name}</FieldError>
             )}
           </Field>
           <Field>

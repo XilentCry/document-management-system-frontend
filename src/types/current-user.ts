@@ -5,4 +5,5 @@ export type TCurrentUser = {
   last_name: string;
   email: string;
   role: "User" | "Admin";
+  status: "Pending" | "Approved";
 };

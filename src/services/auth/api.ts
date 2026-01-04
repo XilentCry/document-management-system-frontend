@@ -4,13 +4,19 @@ import { TRegisterFormSchema } from "@/schemas/auth/register-form-schema";
 import { TCurrentUser } from "@/types/current-user";
 import Cookies from "js-cookie";
 
-export type TLoginResponse = {
-  user: TCurrentUser;
-  organizationUnitId: number;
-};
+export type TLoginResponse =
+  | {
+      user: TCurrentUser;
+      organizationUnitId: number;
+    }
+  | { alreadyVerified: boolean };
 
 type TRegisterResponse =
   | { errors: Record<string, string[]> }
+  | { message: string };
+
+type TResendVerificationEmailResponse =
+  | { alreadyVerified: boolean }
   | { message: string };
 
 export async function getCsrfCookie() {
@@ -39,6 +45,10 @@ export async function login(
   const data = await response.json();
 
   if (!response.ok) {
+    if ("alreadyVerified" in data && data.alreadyVerified === false) {
+      return { alreadyVerified: data.alreadyVerified };
+    }
+
     throw new Error(data.message);
   }
 
@@ -96,4 +106,31 @@ export async function logout() {
   }
 
   Cookies.remove("current-organization-unit-id");
+}
+
+export async function resendVerificationEmail(): Promise<TResendVerificationEmailResponse> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/auth/email/verification-notification`,
+    {
+      method: "POST",
+      headers: {
+        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      credentials: "include",
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    if ("alreadyVerified" in data && data.alreadyVerified === true) {
+      return { alreadyVerified: data.alreadyVerified };
+    }
+
+    throw new Error(data.message);
+  }
+
+  return { message: data.message };
 }

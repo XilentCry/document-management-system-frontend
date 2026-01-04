@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { login, register } from "./api";
+import { login, register, resendVerificationEmail } from "./api";
 import { toast } from "sonner";
 import type { Dispatch, SetStateAction } from "react";
 import type { TFormError } from "@/types/form-error";
@@ -17,15 +17,19 @@ export const useLogin = (reset: UseFormReset<TLoginFormSchema>) => {
     onSuccess: (data) => {
       reset();
 
-      if (data.user.role === "User") {
-        Cookies.set(
-          "current-organization-unit-id",
-          data.organizationUnitId.toString()
-        );
+      if ("alreadyVerified" in data && data.alreadyVerified === false) {
+        return router.replace("/email/verify");
+      } else if ("user" in data && "organizationUnitId" in data) {
+        if (data.user.role === "User") {
+          Cookies.set(
+            "current-organization-unit-id",
+            data.organizationUnitId.toString()
+          );
 
-        router.replace(`/drive/department-drive/${data.organizationUnitId}`);
-      } else if (data.user.role === "Admin") {
-        router.replace("/admin/user-management");
+          router.replace(`/drive/department-drive/${data.organizationUnitId}`);
+        } else if (data.user.role === "Admin") {
+          router.replace("/admin/user-management");
+        }
       }
     },
     onError: (error) => {
@@ -52,7 +56,25 @@ export const useRegister = (
 
       toast.success(data.message);
       reset();
-      router.push("/");
+      router.push("/email/verify");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useResendVerificationEmail = () => {
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: resendVerificationEmail,
+    onSuccess: (data) => {
+      if ("alreadyVerified" in data && data.alreadyVerified === true) {
+        return router.replace("/email/verify?status=already_verified");
+      } else if ("message" in data) {
+        toast.success(data.message);
+      }
     },
     onError: (error) => {
       toast.error(error.message);

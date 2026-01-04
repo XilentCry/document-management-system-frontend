@@ -25,7 +25,7 @@ export function UserSidebar() {
   return (
     <>
       <Sidebar collapsible="none" className="sticky top-0">
-        <SidebarHeader className="h-14 flex flex-row items-center">
+        <SidebarHeader className="h-14 flex flex-row items-center border-b">
           <SidebarMenu>
             <SidebarMenuItem>
               <div className="flex items-center gap-2">
