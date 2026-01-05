@@ -9,22 +9,13 @@ export async function proxy(request: NextRequest) {
 
   const isAuthPage = pathname === "/" || pathname.startsWith("/register");
 
-  const laravelSession = request.cookies.get("laravel-session")?.value;
-  const xsrfToken = request.cookies.get("XSRF-TOKEN")?.value;
-
-  const cookieHeader = [
-    laravelSession && `laravel-session=${laravelSession}`,
-    xsrfToken && `XSRF-TOKEN=${xsrfToken}`,
-  ]
-    .filter(Boolean)
-    .join("; ");
-
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/api/user`,
       {
         headers: {
-          Cookie: cookieHeader,
+          Accept: "application/json",
+          Cookie: request.headers.get("cookie") ?? "",
           Origin: process.env.FRONTEND_URL!,
         },
       }

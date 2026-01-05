@@ -13,7 +13,7 @@ import { Filter } from "lucide-react";
 
 export function Header() {
   return (
-    <header className="h-14 border-b flex items-center justify-between px-4">
+    <header className="bg-background sticky top-0 h-14 border-b flex items-center justify-between px-4">
       <ButtonGroup>
         <Input placeholder="Search..." className="w-2xl" />
         <DropdownMenu>

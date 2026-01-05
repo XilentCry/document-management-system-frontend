@@ -1,6 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateStatus } from "./api";
+import { updateStatus, updateUser } from "./api";
 import { toast } from "sonner";
+import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
+import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction } from "react";
+import { TFormError } from "@/types/form-error";
+import { UseFormReset } from "react-hook-form";
 
 export const useUpdateStatus = () => {
   const queryClient = useQueryClient();
@@ -11,6 +16,40 @@ export const useUpdateStatus = () => {
     onSuccess: (data) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useUpdateUser = (
+  setFormErrors: Dispatch<SetStateAction<TFormError | null>>,
+  reset: UseFormReset<TUpdateUserFormSchema>
+) => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: ({
+      userData,
+      userId,
+    }: {
+      userData: TUpdateUserFormSchema;
+      userId: number;
+    }) => updateUser(userData, userId),
+    onSuccess: (data) => {
+      setFormErrors(null);
+
+      if ("errors" in data) {
+        setFormErrors(data.errors);
+        return;
+      }
+
+      toast.success(data.message);
+      reset();
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      router.push("/admin/user-management");
     },
     onError: (error) => {
       toast.error(error.message);

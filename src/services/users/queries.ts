@@ -10,11 +10,10 @@ export const useGetAllUsers = () => {
   return { isLoading, isError, error, data };
 };
 
-export const useGetUser = (id: number) => {
+export const useGetUser = (id: string) => {
   const { isLoading, isError, error, data } = useQuery({
-    queryKey: ["user"],
+    queryKey: ["users", id],
     queryFn: () => getUser(id),
-    enabled: !!id,
   });
 
   return { isLoading, isError, error, data };

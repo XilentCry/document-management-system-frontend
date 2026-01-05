@@ -50,7 +50,12 @@ export function UserTable({ users }: { users: TUser[] }) {
       </TableHeader>
       <TableBody>
         {users.map((user) => (
-          <TableRow key={user.id}>
+          <TableRow
+            key={user.id}
+            onClick={() =>
+              router.push(`/admin/user-management/review/${user.id}`)
+            }
+          >
             <TableCell>
               {user.first_name} {user.middle_name} {user.last_name}
             </TableCell>
