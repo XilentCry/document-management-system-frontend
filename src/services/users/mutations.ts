@@ -6,15 +6,21 @@ import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 import { TFormError } from "@/types/form-error";
 import { UseFormReset } from "react-hook-form";
+import { STATUSES } from "@/constant";
 
-export const useUpdateStatus = () => {
+export const useUpdateStatus = (
+  setStatus: Dispatch<SetStateAction<"Pending" | "Approved">>
+) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ userId, statusId }: { userId: number; statusId: number }) =>
       updateStatus(userId, statusId),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       toast.success(data.message);
+      setStatus(
+        variables.statusId === STATUSES.APPROVED ? "Approved" : "Pending"
+      );
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error) => {
@@ -38,7 +44,7 @@ export const useUpdateUser = (
       userData: TUpdateUserFormSchema;
       userId: number;
     }) => updateUser(userData, userId),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       setFormErrors(null);
 
       if ("errors" in data) {
@@ -49,7 +55,7 @@ export const useUpdateUser = (
       toast.success(data.message);
       reset();
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      router.push("/admin/user-management");
+      router.push(`/admin/user-management/view/${variables.userId}`);
     },
     onError: (error) => {
       toast.error(error.message);

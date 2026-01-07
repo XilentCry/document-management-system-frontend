@@ -1,6 +1,6 @@
 "use client";
 
-import { ReviewUser } from "@/components/admin/user-management/review-user";
+import { ViewUser } from "@/components/admin/user-management/view-user";
 import { LogoutButton } from "@/components/logout-button";
 import {
   Breadcrumb,
@@ -15,7 +15,7 @@ import { useGetUser } from "@/services/users/queries";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-export default function ReviewUserPage() {
+export default function ViewUserPage() {
   const { id } = useParams<{ id: string }>();
 
   const { isLoading, isError, error, data: user } = useGetUser(id);
@@ -32,14 +32,14 @@ export default function ReviewUserPage() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Review User</BreadcrumbPage>
+              <BreadcrumbPage>View User</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         <LogoutButton />
       </header>
       <div className="p-4 flex-1 flex flex-col gap-4">
-        <h1 className="text-2xl">Review User</h1>
+        <h1 className="text-2xl">View User</h1>
         {isLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <Spinner className="text-primary size-9" />
@@ -49,7 +49,7 @@ export default function ReviewUserPage() {
             <p className="text-destructive text-sm">{error.message}</p>
           </div>
         ) : (
-          user && <ReviewUser user={user} />
+          user && <ViewUser user={user} />
         )}
       </div>
     </div>

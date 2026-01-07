@@ -26,8 +26,9 @@ import { useGetAllOrganizationUnits } from "@/services/organization-units/querie
 import { Button } from "@/components/ui/button";
 import { OrganizationUnitsDialog } from "./organization-units-dialog";
 import { useUpdateUser } from "@/services/users/mutations";
+import { useRouter } from "next/navigation";
 
-export function ReviewUser({
+export function EditUser({
   user,
 }: {
   user: TUser & {
@@ -35,6 +36,8 @@ export function ReviewUser({
   };
 }) {
   const [formErrors, setFormErrors] = useState<TFormError | null>(null);
+
+  const router = useRouter();
 
   const methods = useForm<TUpdateUserFormSchema>({
     resolver: zodResolver(updateUserFormSchema),
@@ -139,16 +142,27 @@ export function ReviewUser({
             {errors.email && <FieldError>{errors.email.message}</FieldError>}
             {formErrors?.email && <FieldError>{formErrors.email}</FieldError>}
           </Field>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <Spinner />
-                Saving...
-              </>
-            ) : (
-              "Save"
-            )}
-          </Button>
+          <Field orientation="horizontal">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() =>
+                router.push(`/admin/user-management/view/${user.id}`)
+              }
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Spinner />
+                  Saving...
+                </>
+              ) : (
+                "Save"
+              )}
+            </Button>
+          </Field>
         </FieldGroup>
       </form>
     </FormProvider>

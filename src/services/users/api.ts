@@ -2,6 +2,7 @@ import { getCookie } from "@/lib/get-cookie";
 import { TOrganizationUnit } from "@/types/organization-unit";
 import { TUser } from "@/types/user";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
+import { Paginate } from "@/types/paginate";
 
 type TGetUserResponse = TUser & {
   organizationUnits: Pick<TOrganizationUnit, "id" | "name">[];
@@ -11,13 +12,16 @@ type TUpdateUserResponse =
   | { errors: Record<string, string[]> }
   | { message: string };
 
-export async function getAllUsers(): Promise<TUser[]> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
-    headers: {
-      Accept: "application/json",
-    },
-    credentials: "include",
-  });
+export async function getAllUsers(page: number): Promise<Paginate<TUser>> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/users?page=${page}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    }
+  );
 
   const data = await response.json();
 
@@ -25,7 +29,7 @@ export async function getAllUsers(): Promise<TUser[]> {
     throw new Error(data.message);
   }
 
-  return data.users;
+  return data;
 }
 
 export async function updateStatus(
