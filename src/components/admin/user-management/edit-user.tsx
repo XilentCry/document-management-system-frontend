@@ -145,7 +145,7 @@ export function EditUser({
           <Field orientation="horizontal">
             <Button
               type="button"
-              variant="secondary"
+              variant="outline"
               onClick={() =>
                 router.push(`/admin/user-management/view/${user.id}`)
               }

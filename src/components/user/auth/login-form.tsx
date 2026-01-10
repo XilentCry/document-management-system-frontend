@@ -4,9 +4,11 @@ import {
   loginFormSchema,
   TLoginFormSchema,
 } from "@/schemas/auth/login-form-schema";
+import { getCsrfCookie } from "@/services/auth/api";
 import { useLogin } from "@/services/auth/mutations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../../ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../../ui/field";
@@ -18,14 +20,15 @@ import {
   InputGroupText,
 } from "../../ui/input-group";
 import { Spinner } from "../../ui/spinner";
-import { getCsrfCookie } from "@/services/auth/api";
 
 export function LoginForm() {
+  "use no memo";
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm<TLoginFormSchema>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -34,7 +37,13 @@ export function LoginForm() {
     },
   });
 
-  const { mutateAsync: loginMutation } = useLogin(reset);
+  const { mutateAsync: loginMutation, isError, error } = useLogin();
+
+  useEffect(() => {
+    if (isSubmitSuccessful || (isError && error.code === "ACCOUNT_PENDING")) {
+      reset();
+    }
+  }, [isSubmitSuccessful, reset, isError, error?.code]);
 
   const onSubmit: SubmitHandler<TLoginFormSchema> = async (data) => {
     await getCsrfCookie();

@@ -25,7 +25,7 @@ import { useGetAllOrganizationUnits } from "@/services/organization-units/querie
 import { TFormError } from "@/types/form-error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { OrganizationUnitsDialog } from "./organization-units-dialog";
 
@@ -48,7 +48,7 @@ export function RegisterForm() {
   const {
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isSubmitSuccessful },
   } = methods;
 
   const {
@@ -57,7 +57,13 @@ export function RegisterForm() {
     error,
     data: organizationUnits = [],
   } = useGetAllOrganizationUnits();
-  const { mutateAsync: registerMutation } = useRegister(setFormErrors, reset);
+  const { mutateAsync: registerMutation } = useRegister(setFormErrors);
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful, reset]);
 
   const onSubmit: SubmitHandler<TRegisterFormSchema> = async (data) => {
     await getCsrfCookie();

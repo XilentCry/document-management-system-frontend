@@ -61,7 +61,7 @@ export function UserTable({ users }: { users: TUser[] }) {
             <TableCell>
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Ellipsis className="size-4" />
+                  <Ellipsis className="size-4 inline-block" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuGroup>

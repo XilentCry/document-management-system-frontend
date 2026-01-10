@@ -1,5 +1,16 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
+import { Spinner } from "@/components/ui/spinner";
 import { STATUSES } from "@/constant";
 import { useUpdateStatus } from "@/services/users/mutations";
 import { TOrganizationUnit } from "@/types/organization-unit";
@@ -15,12 +26,16 @@ export function ViewUser({
   };
 }) {
   const [status, setStatus] = useState(user.status);
+  const [isOpen, setIsOpen] = useState(false);
+
   const router = useRouter();
 
   const { mutateAsync: updateStatusMutation, isPending } =
     useUpdateStatus(setStatus);
 
   const handleApprove = async () => {
+    setIsOpen(false);
+
     const statusId =
       user.status === "Approved" ? STATUSES.PENDING : STATUSES.APPROVED;
 
@@ -30,8 +45,8 @@ export function ViewUser({
   return (
     <div className="flex-1 flex flex-col gap-4">
       <div className="grid grid-cols-2 text-sm">
-        <div className="flex gap-4">
-          <div className="flex flex-col gap-2">
+        <div className="flex gap-6">
+          <div className="flex flex-col gap-3">
             <p className="font-medium">Name</p>
             <p className="font-medium">Email</p>
             <p className="font-medium">Role</p>
@@ -39,7 +54,7 @@ export function ViewUser({
             <p className="font-medium">Created</p>
             <p className="font-medium">Updated</p>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <p>
               {user.first_name} {user.middle_name} {user.last_name}
             </p>
@@ -50,30 +65,59 @@ export function ViewUser({
             <p>{new Date(user.updated_at).toLocaleString()}</p>
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <p className="font-medium">Offices/Units</p>
-          <div>
+          <div className="flex flex-col gap-1">
             {user.organizationUnits.map((organizationUnit) => (
               <p key={organizationUnit.id}>{organizationUnit.name}</p>
             ))}
           </div>
         </div>
       </div>
-      <ButtonGroup>
+      <div className="flex gap-3">
         <Button
           variant="outline"
           onClick={() => router.push(`/admin/user-management/edit/${user.id}`)}
         >
           Edit
         </Button>
-        <Button variant="outline" onClick={handleApprove}>
-          {isPending
-            ? "Processing..."
-            : status === "Approved"
-            ? "Unapprove"
-            : "Approve"}
-        </Button>
-      </ButtonGroup>
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+          <AlertDialogTrigger render={<Button variant="outline" />}>
+            {isPending ? (
+              <>
+                <Spinner />
+                Processing...
+              </>
+            ) : status === "Approved" ? (
+              "Unapprove"
+            ) : (
+              "Approve"
+            )}
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <div className="flex flex-col gap-1">
+                <AlertDialogTitle>
+                  {status === "Approved"
+                    ? "Confirm Unapporval"
+                    : "Confirm Approval"}
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {status === "Approved"
+                    ? "Are you sure you want to unapprove this user?"
+                    : "Are you sure you want to approve this user?"}
+                </AlertDialogDescription>
+              </div>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="mt-2">
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handleApprove}>
+                Confirm
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 }

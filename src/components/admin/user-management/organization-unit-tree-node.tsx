@@ -35,11 +35,13 @@ export function OrganizationUnitTreeNode({
         ) : (
           <div className="w-6" />
         )}
-        <Checkbox
-          checked={selectedIds.includes(node.id)}
-          onCheckedChange={() => onToggle(node.id)}
-          id={`unit-${node.id}`}
-        />
+        {node.id !== 1 && (
+          <Checkbox
+            checked={selectedIds.includes(node.id)}
+            onCheckedChange={() => onToggle(node.id)}
+            id={`unit-${node.id}`}
+          />
+        )}
         <Label htmlFor={`unit-${node.id}`}>{node.name}</Label>
       </div>
       {hasChildren && (

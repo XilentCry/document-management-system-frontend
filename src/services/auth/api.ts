@@ -4,20 +4,10 @@ import { TRegisterFormSchema } from "@/schemas/auth/register-form-schema";
 import { TCurrentUser } from "@/types/current-user";
 import Cookies from "js-cookie";
 
-export type TLoginResponse =
-  | {
-      user: TCurrentUser;
-      organizationUnitId: number;
-    }
-  | { alreadyVerified: boolean };
-
-type TRegisterResponse =
-  | { errors: Record<string, string[]> }
-  | { message: string };
-
-type TResendVerificationEmailResponse =
-  | { alreadyVerified: boolean }
-  | { message: string };
+export type TLoginResponse = {
+  user: TCurrentUser;
+  organizationUnitId?: number;
+};
 
 export async function getCsrfCookie() {
   await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
@@ -45,22 +35,19 @@ export async function login(
   const data = await response.json();
 
   if (!response.ok) {
-    if ("alreadyVerified" in data && data.alreadyVerified === false) {
-      return { alreadyVerified: data.alreadyVerified };
-    }
-
-    throw new Error(data.message);
+    const error = new Error(data.message) as Error & {
+      code?: string;
+    };
+    error.code = data.code;
+    throw error;
   }
 
-  return {
-    user: data.user,
-    organizationUnitId: data.organizationUnitId,
-  };
+  return data;
 }
 
 export async function register(
   registerData: TRegisterFormSchema
-): Promise<TRegisterResponse> {
+): Promise<{ message: string }> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
     {
@@ -79,7 +66,7 @@ export async function register(
 
   if (!response.ok) {
     if (data.errors && Object.keys(data.errors).length > 0) {
-      return { errors: data.errors };
+      throw { errors: data.errors };
     }
 
     throw new Error(data.message);
@@ -108,7 +95,7 @@ export async function logout() {
   Cookies.remove("current-organization-unit-id");
 }
 
-export async function resendVerificationEmail(): Promise<TResendVerificationEmailResponse> {
+export async function resendVerificationEmail(): Promise<{ message: string }> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/email/verification-notification`,
     {
@@ -125,12 +112,12 @@ export async function resendVerificationEmail(): Promise<TResendVerificationEmai
   const data = await response.json();
 
   if (!response.ok) {
-    if ("alreadyVerified" in data && data.alreadyVerified === true) {
-      return { alreadyVerified: data.alreadyVerified };
-    }
-
-    throw new Error(data.message);
+    const error = new Error(data.message) as Error & {
+      code?: string;
+    };
+    error.code = data.code;
+    throw error;
   }
 
-  return { message: data.message };
+  return data;
 }

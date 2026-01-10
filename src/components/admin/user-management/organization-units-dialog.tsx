@@ -156,12 +156,12 @@ export function OrganizationUnitsDialog({
       )}
 
       <Dialog>
-        <DialogTrigger render={<Button variant="secondary" />}>
+        <DialogTrigger render={<Button variant="outline" />}>
           <Plus />
           Add office/unit
         </DialogTrigger>
 
-        <DialogContent>
+        <DialogContent className="w-250 max-w-250!">
           <DialogHeader>
             <DialogTitle>Organizational Structure</DialogTitle>
             <DialogDescription>Select your office or unit</DialogDescription>
@@ -176,7 +176,7 @@ export function OrganizationUnitsDialog({
               <Search />
             </InputGroupAddon>
           </InputGroup>
-          <ScrollArea className="h-60">
+          <ScrollArea className="h-96">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
                 <Spinner className="text-primary" />
