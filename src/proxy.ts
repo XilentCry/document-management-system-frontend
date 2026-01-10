@@ -21,13 +21,9 @@ export async function proxy(request: NextRequest) {
       }
     );
 
-    const data = await response.json();
-
-    if (response.status === 403 && data.code === "EMAIL_NOT_VERIFIED") {
-      return NextResponse.redirect(new URL("/email/verify", request.url));
-    }
-
     if (response.ok) {
+      const data = await response.json();
+
       if (isAuthPage) {
         if (data.user.role === "User" && data.organizationUnitId) {
           return NextResponse.redirect(
