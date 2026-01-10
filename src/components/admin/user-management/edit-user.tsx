@@ -40,14 +40,16 @@ export function EditUser({
   const router = useRouter();
 
   const methods = useForm<TUpdateUserFormSchema>({
-    resolver: zodResolver(updateUserFormSchema),
+    resolver: zodResolver(updateUserFormSchema(user.role)),
     defaultValues: {
       first_name: user.first_name,
       middle_name: user.middle_name ?? "",
       last_name: user.last_name,
-      organization_unit_ids: user.organizationUnits.map(
-        (organizationUnit) => organizationUnit.id
-      ),
+      ...(user.role === "User" && {
+        organization_unit_ids: user.organizationUnits.map(
+          (organizationUnit) => organizationUnit.id
+        ),
+      }),
       email: user.email,
     },
   });
@@ -79,10 +81,7 @@ export function EditUser({
         <FieldGroup>
           <Field>
             <FieldLabel>First Name</FieldLabel>
-            <Input
-              placeholder="Enter your first name"
-              {...methods.register("first_name")}
-            />
+            <Input {...methods.register("first_name")} />
             {errors.first_name && (
               <FieldError>{errors.first_name.message}</FieldError>
             )}
@@ -92,10 +91,7 @@ export function EditUser({
           </Field>
           <Field>
             <FieldLabel>Middle Name</FieldLabel>
-            <Input
-              placeholder="Enter the middle name"
-              {...methods.register("middle_name")}
-            />
+            <Input {...methods.register("middle_name")} />
             {errors.middle_name && (
               <FieldError>{errors.middle_name.message}</FieldError>
             )}
@@ -105,10 +101,7 @@ export function EditUser({
           </Field>
           <Field>
             <FieldLabel>Last Name</FieldLabel>
-            <Input
-              placeholder="Enter your last name"
-              {...methods.register("last_name")}
-            />
+            <Input {...methods.register("last_name")} />
             {errors.last_name && (
               <FieldError>{errors.last_name.message}</FieldError>
             )}
@@ -116,25 +109,24 @@ export function EditUser({
               <FieldError>{formErrors.last_name}</FieldError>
             )}
           </Field>
-          <Field>
-            <FieldLabel>Office / Unit</FieldLabel>
-            <OrganizationUnitsDialog
-              organizationUnits={organizationUnits}
-              isLoading={isLoading}
-              isError={isError}
-              error={error}
-            />
-            {errors.organization_unit_ids && (
-              <FieldError>{errors.organization_unit_ids.message}</FieldError>
-            )}
-          </Field>
+          {user.role === "User" && (
+            <Field>
+              <FieldLabel>Office / Unit</FieldLabel>
+              <OrganizationUnitsDialog
+                organizationUnits={organizationUnits}
+                isLoading={isLoading}
+                isError={isError}
+                error={error}
+              />
+              {errors.organization_unit_ids && (
+                <FieldError>{errors.organization_unit_ids.message}</FieldError>
+              )}
+            </Field>
+          )}
           <Field>
             <FieldLabel>Email</FieldLabel>
             <InputGroup>
-              <InputGroupInput
-                placeholder="Enter your email"
-                {...methods.register("email")}
-              />
+              <InputGroupInput {...methods.register("email")} />
               <InputGroupAddon align="inline-end">
                 <InputGroupText>@norsu.edu.ph</InputGroupText>
               </InputGroupAddon>

@@ -10,7 +10,7 @@ import { MailCheck } from "lucide-react";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "../../ui/spinner";
 
 interface EmailVerificationStatusProps {
   title: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { EmailVerificationStatus } from "@/components/user/email-status";
+import { EmailVerificationStatus } from "@/components/user/auth/email-status";
 import { useResendVerificationEmail } from "@/services/auth/mutations";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";

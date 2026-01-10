@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 import { TFormError } from "@/types/form-error";
 import { UseFormReset } from "react-hook-form";
-import { STATUSES } from "@/constant";
+import { STATUSES } from "@/lib/constants";
 
 export const useUpdateStatus = (
   setStatus: Dispatch<SetStateAction<"Pending" | "Approved">>

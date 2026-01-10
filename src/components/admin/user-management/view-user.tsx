@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { STATUSES } from "@/constant";
+import { STATUSES } from "@/lib/constants";
 import { useUpdateStatus } from "@/services/users/mutations";
 import { TOrganizationUnit } from "@/types/organization-unit";
 import { TUser } from "@/types/user";
@@ -65,14 +65,16 @@ export function ViewUser({
             <p>{new Date(user.updated_at).toLocaleString()}</p>
           </div>
         </div>
-        <div className="flex flex-col gap-3">
-          <p className="font-medium">Offices/Units</p>
-          <div className="flex flex-col gap-1">
-            {user.organizationUnits.map((organizationUnit) => (
-              <p key={organizationUnit.id}>{organizationUnit.name}</p>
-            ))}
+        {user.role === "User" && (
+          <div className="flex flex-col gap-3">
+            <p className="font-medium">Offices/Units</p>
+            <div className="flex flex-col gap-1">
+              {user.organizationUnits.map((organizationUnit) => (
+                <p key={organizationUnit.id}>{organizationUnit.name}</p>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="flex gap-3">
         <Button
