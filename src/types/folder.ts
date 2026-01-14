@@ -6,6 +6,7 @@ export type TFolder = {
   parent_folder_id: number;
   owner: TCurrentUser;
   organization_unit_id: number;
+  children?: TFolder[];
   created_at: string;
   updated_at: string;
 };

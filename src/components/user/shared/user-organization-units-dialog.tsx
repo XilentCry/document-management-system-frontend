@@ -5,10 +5,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../ui/dialog";
-import { ScrollArea } from "../ui/scroll-area";
+} from "../../ui/dialog";
+import { ScrollArea } from "../../ui/scroll-area";
 import { useGetUserOrganizationUnits } from "@/services/user/queries";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "../../ui/spinner";
 import { UserOrganizationUnitTreeNode } from "./user-organization-unit-tree-node";
 
 export function UserOrganizationUnitsDialog({

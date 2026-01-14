@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
@@ -13,6 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import { UsersRound } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export function AdminSidebar() {
@@ -37,10 +37,11 @@ export function AdminSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   isActive={pathname.startsWith("/admin/user-management")}
-                  render={<Link href="/admin/user-management" />}
                 >
-                  <UsersRound />
-                  User Management
+                  <Link href="/admin/user-management">
+                    <UsersRound />
+                    User Management
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

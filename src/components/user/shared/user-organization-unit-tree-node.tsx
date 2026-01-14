@@ -8,7 +8,7 @@ import { TOrganizationUnit } from "@/types/organization-unit";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { DialogClose } from "../ui/dialog";
+import { DialogClose } from "../../ui/dialog";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 
 export function UserOrganizationUnitTreeNode({

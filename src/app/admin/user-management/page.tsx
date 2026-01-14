@@ -1,5 +1,5 @@
 import { UserList } from "@/components/admin/user-management/user-list";
-import { LogoutButton } from "@/components/logout-button";
+import { LogoutButton } from "@/components/shared/logout-button";
 
 export default function UserManagementPage() {
   return (

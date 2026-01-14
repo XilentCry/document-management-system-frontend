@@ -6,7 +6,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../ui/dialog";
+} from "../../ui/dialog";
 import {
   folderFormSchema,
   TFolderFormSchema,
@@ -15,10 +15,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateFolder } from "@/services/folders/mutations";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useFolderStore } from "@/stores/folder-store";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Spinner } from "../ui/spinner";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../../ui/field";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
+import { Spinner } from "../../ui/spinner";
 import { useEffect } from "react";
 
 export default function NewFolderDialog({

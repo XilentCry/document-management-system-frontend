@@ -8,7 +8,7 @@ import {
 import { TFolder } from "@/types/folder";
 import { EllipsisVertical, FolderIcon } from "lucide-react";
 
-export default function Folder({
+export function Folder({
   folder,
   onDoubleClick,
 }: {
@@ -18,13 +18,13 @@ export default function Folder({
   return (
     <Item variant="muted" onDoubleClick={() => onDoubleClick(folder.id)}>
       <ItemMedia>
-        <FolderIcon className="size-5" />
+        <FolderIcon className="size-4" />
       </ItemMedia>
       <ItemContent className="min-w-0">
         <ItemTitle className="block w-auto truncate">{folder.name}</ItemTitle>
       </ItemContent>
       <ItemActions>
-        <EllipsisVertical className="size-5" />
+        <EllipsisVertical className="size-4" />
       </ItemActions>
     </Item>
   );

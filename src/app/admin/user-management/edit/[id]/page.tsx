@@ -1,7 +1,7 @@
 "use client";
 
 import { EditUser } from "@/components/admin/user-management/edit-user";
-import { LogoutButton } from "@/components/logout-button";
+import { LogoutButton } from "@/components/shared/logout-button";
 import {
   Breadcrumb,
   BreadcrumbItem,

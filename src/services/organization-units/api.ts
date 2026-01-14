@@ -1,7 +1,9 @@
+import { TBreadcrumb } from "@/types/breadcrumb";
 import { TFolder } from "@/types/folder";
 import { TOrganizationUnit } from "@/types/organization-unit";
 
 type TGetOrganizationUnitContentsResponse = {
+  breadcrumb: TBreadcrumb;
   folders: TFolder[];
 } & Omit<TOrganizationUnit, "children">;
 
@@ -33,7 +35,7 @@ export const getOrganizationUnitContents = async (
   id: string | undefined
 ): Promise<TGetOrganizationUnitContentsResponse> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/organization-units/${id}/contents`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/organization-units/${id}/contents?include=breadcrumb`,
     {
       headers: {
         "Content-Type": "application/json",

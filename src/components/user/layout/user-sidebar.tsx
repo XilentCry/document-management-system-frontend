@@ -23,8 +23,8 @@ import { FileUp, Folder, FolderPlus, Plus } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { UserOrganizationUnitsDialog } from "../user-organization-units-dialog";
-import NewFolderDialog from "../new-folder-dialog";
+import { UserOrganizationUnitsDialog } from "../shared/user-organization-units-dialog";
+import NewFolderDialog from "../shared/new-folder-dialog";
 
 export function UserSidebar() {
   const [openUserOrganizationUnitsDialog, setOpenUserOrganizationUnitsDialog] =

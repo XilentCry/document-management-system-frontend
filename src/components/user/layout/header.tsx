@@ -1,4 +1,4 @@
-import { LogoutButton } from "@/components/logout-button";
+import { LogoutButton } from "@/components/shared/logout-button";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import {
