@@ -9,6 +9,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DialogClose } from "../ui/dialog";
+import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 
 export function UserOrganizationUnitTreeNode({
   node,
@@ -19,7 +20,11 @@ export function UserOrganizationUnitTreeNode({
   >;
 }) {
   const [open, setOpen] = useState(true);
+
   const hasChildren = !!node.children?.length;
+  const currentOrganizationUnitId = useOrganizationUnitStore(
+    (state) => state.currentOrganizationUnitId
+  );
 
   const router = useRouter();
 
@@ -41,7 +46,10 @@ export function UserOrganizationUnitTreeNode({
           render={
             <Button
               variant="ghost"
-              className="flex-1 justify-start"
+              className={`flex-1 justify-start ${
+                currentOrganizationUnitId === node.id &&
+                "bg-muted text-foreground"
+              }`}
               onClick={() => handleSelectOrganizationUnit(node.id)}
             />
           }

@@ -1,5 +1,14 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -10,15 +19,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Folder } from "lucide-react";
+import { FileUp, Folder, FolderPlus, Plus } from "lucide-react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { UserOrganizationUnitsDialog } from "../user-organization-units-dialog";
+import NewFolderDialog from "../new-folder-dialog";
 
 export function UserSidebar() {
   const [openUserOrganizationUnitsDialog, setOpenUserOrganizationUnitsDialog] =
     useState(false);
+  const [openNewFolderDialog, setOpenNewFolderDialog] = useState(false);
 
   const pathname = usePathname();
 
@@ -36,6 +47,31 @@ export function UserSidebar() {
           </SidebarMenu>
         </SidebarHeader>
         <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger render={<Button className="w-full" />}>
+                  <Plus />
+                  New
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      onClick={() => setOpenNewFolderDialog(true)}
+                    >
+                      <FolderPlus />
+                      New Folder
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <FileUp />
+                      File upload
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -60,6 +96,11 @@ export function UserSidebar() {
       <UserOrganizationUnitsDialog
         openUserOrganizationUnitsDialog={openUserOrganizationUnitsDialog}
         setOpenUserOrganizationUnitsDialog={setOpenUserOrganizationUnitsDialog}
+      />
+
+      <NewFolderDialog
+        openNewFolderDialog={openNewFolderDialog}
+        setOpenNewFolderDialog={setOpenNewFolderDialog}
       />
     </>
   );

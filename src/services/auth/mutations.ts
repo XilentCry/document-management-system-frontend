@@ -1,23 +1,23 @@
 import type { TFormError } from "@/types/form-error";
 import { useMutation } from "@tanstack/react-query";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { login, register, resendVerificationEmail } from "./api";
+import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 
 export const useLogin = () => {
+  const setCurrentOrganizationUnitId = useOrganizationUnitStore(
+    (state) => state.setCurrentOrganizationUnitId
+  );
+
   const router = useRouter();
 
   return useMutation({
     mutationFn: login,
     onSuccess: (data) => {
       if (data.user.role === "User" && data.organizationUnitId) {
-        Cookies.set(
-          "current-organization-unit-id",
-          data.organizationUnitId.toString()
-        );
-
+        setCurrentOrganizationUnitId(data.organizationUnitId);
         router.replace(`/drive/department-drive/${data.organizationUnitId}`);
       } else if (data.user.role === "Admin") {
         router.replace("/admin/user-management");

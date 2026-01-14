@@ -30,12 +30,12 @@ export function UserOrganizationUnitsDialog({
       open={openUserOrganizationUnitsDialog}
       onOpenChange={setOpenUserOrganizationUnitsDialog}
     >
-      <DialogContent>
+      <DialogContent className="w-250 max-w-250!">
         <DialogHeader>
           <DialogTitle>Organizational Structure</DialogTitle>
           <DialogDescription>Select your office or unit</DialogDescription>
         </DialogHeader>
-        <ScrollArea className="h-60">
+        <ScrollArea className="h-96 min-w-0">
           {isLoading ? (
             <div className="h-full flex items-center justify-center">
               <Spinner className="text-primary" />

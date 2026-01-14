@@ -3,10 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const currentOrganizationUnitId = request.cookies.get(
-    "current-organization-unit-id"
-  )?.value;
-
   const isAuthPage = pathname === "/" || pathname.startsWith("/register");
 
   try {
@@ -25,12 +21,10 @@ export async function proxy(request: NextRequest) {
       const data = await response.json();
 
       if (isAuthPage) {
-        if (data.user.role === "User" && data.organizationUnitId) {
+        if (data.user.role === "User") {
           return NextResponse.redirect(
             new URL(
-              `/drive/department-drive/${
-                currentOrganizationUnitId || data.organizationUnitId
-              }`,
+              `/drive/department-drive/${data.organizationUnitId}`,
               request.url
             )
           );
@@ -44,9 +38,7 @@ export async function proxy(request: NextRequest) {
       if (data.user.role === "User" && pathname.startsWith("/admin")) {
         return NextResponse.redirect(
           new URL(
-            `/drive/department-drive/${
-              currentOrganizationUnitId || data.organizationUnitId
-            }`,
+            `/drive/department-drive/${data.organizationUnitId}`,
             request.url
           )
         );

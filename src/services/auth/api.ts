@@ -2,7 +2,6 @@ import { getCookie } from "@/lib/get-cookie";
 import { TLoginFormSchema } from "@/schemas/auth/login-form-schema";
 import { TRegisterFormSchema } from "@/schemas/auth/register-form-schema";
 import { TCurrentUser } from "@/types/current-user";
-import Cookies from "js-cookie";
 
 export type TLoginResponse = {
   user: TCurrentUser;
@@ -91,8 +90,6 @@ export async function logout() {
   if (!response.ok) {
     throw new Error("Failed to logout.");
   }
-
-  Cookies.remove("current-organization-unit-id");
 }
 
 export async function resendVerificationEmail(): Promise<{ message: string }> {
