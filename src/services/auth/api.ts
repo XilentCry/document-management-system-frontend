@@ -5,7 +5,7 @@ import { TCurrentUser } from "@/types/current-user";
 
 export type TLoginResponse = {
   user: TCurrentUser;
-  organizationUnitId?: number;
+  currentOrganizationUnitId?: number;
 };
 
 export async function getCsrfCookie() {

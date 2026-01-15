@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getFolderContents } from "./api";
+import { getFolderItems } from "./api";
 
-export const useGetFolderContents = (id: string) => {
+export const useGetFolderItems = (id: string) => {
   const { isLoading, isError, error, data } = useQuery({
-    queryKey: [`folder-${id}-contents`],
-    queryFn: () => getFolderContents(id),
+    queryKey: [`folder-${id}-items`],
+    queryFn: () => getFolderItems(id),
   });
 
   return { isLoading, isError, error, data };

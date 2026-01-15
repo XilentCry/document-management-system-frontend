@@ -1,12 +1,12 @@
 import { TCurrentUser } from "./current-user";
 
-export type TFolder = {
+export type TItem = {
   id: number;
   name: string;
-  parent_folder_id: number;
+  is_folder: boolean;
+  parent_item_id: number | null;
   owner: TCurrentUser;
   organization_unit_id: number;
-  children?: TFolder[];
-  created_at: string;
+  classification: string;
   updated_at: string;
 };

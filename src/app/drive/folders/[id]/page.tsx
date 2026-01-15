@@ -2,10 +2,10 @@
 
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { FolderGrid } from "@/components/user/shared/folder-grid";
-import { FolderList } from "@/components/user/shared/folder-list";
+import { ItemGrid } from "@/components/user/shared/item-grid";
+import { ItemList } from "@/components/user/shared/item-list";
 import { UserBreadCrumb } from "@/components/user/shared/user-breadcrumb";
-import { useGetFolderContents } from "@/services/folders/queries";
+import { useGetFolderItems } from "@/services/folders/queries";
 import { useFolderStore } from "@/stores/folder-store";
 import { useViewModeStore } from "@/stores/view-mode-store";
 import { LayoutGrid, TextAlignJustify } from "lucide-react";
@@ -19,8 +19,8 @@ export default function FoldersPage() {
     isLoading,
     isError,
     error,
-    data: folderContents,
-  } = useGetFolderContents(id);
+    data: folderItems,
+  } = useGetFolderItems(id);
 
   const setCurrentParentFolderId = useFolderStore(
     (state) => state.setCurrentParentFolderId
@@ -29,10 +29,10 @@ export default function FoldersPage() {
   const setViewMode = useViewModeStore((state) => state.setViewMode);
 
   useEffect(() => {
-    if (folderContents?.id) {
-      setCurrentParentFolderId(folderContents.id);
+    if (folderItems?.currentParentFolderId) {
+      setCurrentParentFolderId(folderItems.currentParentFolderId);
     }
-  }, [folderContents?.id, setCurrentParentFolderId]);
+  }, [folderItems?.currentParentFolderId, setCurrentParentFolderId]);
 
   return isLoading ? (
     <div className="flex-1 flex items-center justify-center">
@@ -43,10 +43,10 @@ export default function FoldersPage() {
       <p className="text-destructive text-sm">{error.message}</p>
     </div>
   ) : (
-    folderContents && (
+    folderItems && (
       <div className="flex-1 flex flex-col gap-4 p-4">
-        <div className="flex items-center justify-between">
-          <UserBreadCrumb breadcrumb={folderContents.breadcrumb} />
+        <div className="flex items-center justify-between sticky top-18 bg-background z-10 pb-4">
+          <UserBreadCrumb breadcrumb={folderItems.breadcrumb} />
           <ToggleGroup
             variant="outline"
             value={[viewMode]}
@@ -60,11 +60,19 @@ export default function FoldersPage() {
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
-        {viewMode === "list" && folderContents.children?.length ? (
-          <FolderList folders={folderContents.children} />
+        {viewMode === "list" && folderItems.data.length ? (
+          <ItemList
+            data={folderItems.data}
+            links={folderItems.links}
+            meta={folderItems.meta}
+          />
         ) : null}
-        {viewMode === "grid" && folderContents.children?.length ? (
-          <FolderGrid folders={folderContents.children} />
+        {viewMode === "grid" && folderItems.data.length ? (
+          <ItemGrid
+            data={folderItems.data}
+            links={folderItems.links}
+            meta={folderItems.meta}
+          />
         ) : null}
       </div>
     )

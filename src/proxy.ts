@@ -24,7 +24,7 @@ export async function proxy(request: NextRequest) {
         if (data.user.role === "User") {
           return NextResponse.redirect(
             new URL(
-              `/drive/department-drive/${data.organizationUnitId}`,
+              `/drive/department-drive/${data.currentOrganizationUnitId}`,
               request.url
             )
           );
@@ -38,7 +38,7 @@ export async function proxy(request: NextRequest) {
       if (data.user.role === "User" && pathname.startsWith("/admin")) {
         return NextResponse.redirect(
           new URL(
-            `/drive/department-drive/${data.organizationUnitId}`,
+            `/drive/department-drive/${data.currentOrganizationUnitId}`,
             request.url
           )
         );

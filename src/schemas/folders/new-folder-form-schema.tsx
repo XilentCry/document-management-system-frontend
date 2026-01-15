@@ -1,11 +1,11 @@
 import z from "zod";
 
-export const folderFormSchema = z.object({
+export const newFolderFormSchema = z.object({
   name: z.string().trim().nonempty("Name is required."),
-  parent_folder_id: z
+  parent_item_id: z
     .number()
     .int()
-    .positive("Invalid parent folder id.")
+    .positive("Invalid parent item id.")
     .nullable(),
   organization_unit_id: z
     .number()
@@ -14,4 +14,4 @@ export const folderFormSchema = z.object({
     .min(1, "Organization unit id is required."),
 });
 
-export type TFolderFormSchema = z.infer<typeof folderFormSchema>;
+export type TNewFolderFormSchema = z.infer<typeof newFolderFormSchema>;

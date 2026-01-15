@@ -8,9 +8,9 @@ import {
   DialogTitle,
 } from "../../ui/dialog";
 import {
-  folderFormSchema,
-  TFolderFormSchema,
-} from "@/schemas/folders/create-folder-form-schema";
+  newFolderFormSchema,
+  TNewFolderFormSchema,
+} from "@/schemas/folders/new-folder-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateFolder } from "@/services/folders/mutations";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
@@ -40,11 +40,11 @@ export default function NewFolderDialog({
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<TFolderFormSchema>({
-    resolver: zodResolver(folderFormSchema),
+  } = useForm<TNewFolderFormSchema>({
+    resolver: zodResolver(newFolderFormSchema),
     defaultValues: {
       name: "Untitled folder",
-      parent_folder_id: currentParentFolderId,
+      parent_item_id: currentParentFolderId,
       organization_unit_id: currentOrganizationUnitId!,
     },
   });
@@ -53,7 +53,7 @@ export default function NewFolderDialog({
     return () =>
       reset({
         name: "Untitled folder",
-        parent_folder_id: currentParentFolderId,
+        parent_item_id: currentParentFolderId,
         organization_unit_id: currentOrganizationUnitId!,
       });
   }, [
@@ -65,7 +65,7 @@ export default function NewFolderDialog({
 
   const { mutateAsync: createFolderMutation } = useCreateFolder();
 
-  const onSubmit = async (data: TFolderFormSchema) => {
+  const onSubmit = async (data: TNewFolderFormSchema) => {
     await createFolderMutation(data);
     setOpenNewFolderDialog(false);
     reset();

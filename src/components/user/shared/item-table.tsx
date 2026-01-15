@@ -6,14 +6,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TFolder } from "@/types/folder";
-import { EllipsisVertical, Folder } from "lucide-react";
+import { TItem } from "@/types/item";
+import { Paginate } from "@/types/paginate";
+import { EllipsisVertical, FileText, Folder } from "lucide-react";
 
-export function FolderTable({
-  folders,
+export function ItemTable({
+  data,
   onDoubleClick,
 }: {
-  folders: TFolder[];
+  data: Paginate<TItem>["data"];
   onDoubleClick: (id: number) => void;
 }) {
   return (
@@ -27,22 +28,28 @@ export function FolderTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {folders.map((folder) => (
+        {data.map((item) => (
           <TableRow
-            key={folder.id}
-            onDoubleClick={() => onDoubleClick(folder.id)}
+            key={item.id}
+            onDoubleClick={() => {
+              if (item.is_folder) {
+                onDoubleClick(item.id);
+              }
+            }}
           >
             <TableCell className="flex items-center gap-2">
-              <Folder className="size-4" />
-              {folder.name}
+              {item.is_folder ? (
+                <Folder className="size-4" />
+              ) : (
+                <FileText className="size-4" />
+              )}
+              {item.name}
             </TableCell>
             <TableCell>
-              {folder.owner.first_name} {folder.owner.middle_name}{" "}
-              {folder.owner.last_name}
+              {item.owner.first_name} {item.owner.middle_name}{" "}
+              {item.owner.last_name}
             </TableCell>
-            <TableCell>
-              {new Date(folder.updated_at).toLocaleString()}
-            </TableCell>
+            <TableCell>{new Date(item.updated_at).toLocaleString()}</TableCell>
             <TableCell>&mdash;</TableCell>
             <TableCell className="text-right">
               <EllipsisVertical className="size-4 inline-block" />

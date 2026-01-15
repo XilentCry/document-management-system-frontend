@@ -1,14 +1,16 @@
 import { getCookie } from "@/lib/get-cookie";
-import { TFolderFormSchema } from "@/schemas/folders/create-folder-form-schema";
+import { TNewFolderFormSchema } from "@/schemas/folders/new-folder-form-schema";
 import { TBreadcrumb } from "@/types/breadcrumb";
-import { TFolder } from "@/types/folder";
+import { TItem } from "@/types/item";
+import { Paginate } from "@/types/paginate";
 
-type TGetFolderContentsResponse = TFolder & {
+type TGetFolderItemsResponse = {
+  currentParentFolderId: number;
   breadcrumb: TBreadcrumb[];
-};
+} & Paginate<TItem>;
 
 export async function createFolder(
-  folderData: TFolderFormSchema
+  folderData: TNewFolderFormSchema
 ): Promise<{ message: string }> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/folders`,
@@ -33,11 +35,11 @@ export async function createFolder(
   return data;
 }
 
-export const getFolderContents = async (
+export const getFolderItems = async (
   id: string
-): Promise<TGetFolderContentsResponse> => {
+): Promise<TGetFolderItemsResponse> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/folders/${id}/contents?include=breadcrumb`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/folders/${id}/items`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -52,5 +54,5 @@ export const getFolderContents = async (
     throw new Error(data.message);
   }
 
-  return data.folderContents;
+  return data;
 };

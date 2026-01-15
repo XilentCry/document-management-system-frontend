@@ -2,10 +2,10 @@
 
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { FolderGrid } from "@/components/user/shared/folder-grid";
-import { FolderList } from "@/components/user/shared/folder-list";
+import { ItemGrid } from "@/components/user/shared/item-grid";
+import { ItemList } from "@/components/user/shared/item-list";
 import { UserBreadCrumb } from "@/components/user/shared/user-breadcrumb";
-import { useGetOrganizationUnitContents } from "@/services/organization-units/queries";
+import { useGetOrganizationUnitItems } from "@/services/organization-units/queries";
 import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useViewModeStore } from "@/stores/view-mode-store";
@@ -20,8 +20,8 @@ export default function DepartmentDrivePage() {
     isLoading,
     isError,
     error,
-    data: organizationUnitContents,
-  } = useGetOrganizationUnitContents(id);
+    data: organizationUnitItems,
+  } = useGetOrganizationUnitItems(id);
 
   const setCurrentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.setCurrentOrganizationUnitId
@@ -33,12 +33,14 @@ export default function DepartmentDrivePage() {
   const setViewMode = useViewModeStore((state) => state.setViewMode);
 
   useEffect(() => {
-    if (organizationUnitContents?.id) {
-      setCurrentOrganizationUnitId(organizationUnitContents.id);
+    if (organizationUnitItems?.currentOrganizationUnitId) {
+      setCurrentOrganizationUnitId(
+        organizationUnitItems.currentOrganizationUnitId
+      );
       setCurrentParentFolderId(null);
     }
   }, [
-    organizationUnitContents?.id,
+    organizationUnitItems?.currentOrganizationUnitId,
     setCurrentOrganizationUnitId,
     setCurrentParentFolderId,
   ]);
@@ -52,10 +54,10 @@ export default function DepartmentDrivePage() {
       <p className="text-destructive text-sm">{error.message}</p>
     </div>
   ) : (
-    organizationUnitContents && (
+    organizationUnitItems && (
       <div className="flex-1 flex flex-col gap-4 p-4">
-        <div className="flex items-center justify-between">
-          <UserBreadCrumb breadcrumb={organizationUnitContents.breadcrumb} />
+        <div className="flex items-center justify-between sticky top-18 bg-background z-10 pb-4">
+          <UserBreadCrumb breadcrumb={organizationUnitItems.breadcrumb} />
           <ToggleGroup
             variant="outline"
             value={[viewMode]}
@@ -71,11 +73,19 @@ export default function DepartmentDrivePage() {
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
-        {viewMode === "list" && organizationUnitContents.folders.length ? (
-          <FolderList folders={organizationUnitContents.folders} />
+        {viewMode === "list" && organizationUnitItems.data.length ? (
+          <ItemList
+            data={organizationUnitItems.data}
+            links={organizationUnitItems.links}
+            meta={organizationUnitItems.meta}
+          />
         ) : null}
-        {viewMode === "grid" && organizationUnitContents.folders.length ? (
-          <FolderGrid folders={organizationUnitContents.folders} />
+        {viewMode === "grid" && organizationUnitItems.data.length ? (
+          <ItemGrid
+            data={organizationUnitItems.data}
+            links={organizationUnitItems.links}
+            meta={organizationUnitItems.meta}
+          />
         ) : null}
       </div>
     )

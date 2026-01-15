@@ -33,7 +33,7 @@ export function UserBreadCrumb({
                   render={
                     <Link
                       href={
-                        item.type === "organization unit"
+                        item.type === "organization_unit"
                           ? `/drive/department-drive/${item.id}`
                           : `/drive/folders/${item.id}`
                       }

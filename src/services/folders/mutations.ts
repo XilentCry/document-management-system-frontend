@@ -21,11 +21,11 @@ export const useCreateFolder = () => {
 
       if (currentParentFolderId) {
         queryClient.invalidateQueries({
-          queryKey: [`folder-${currentParentFolderId}-contents`],
+          queryKey: [`folder-${currentParentFolderId}-items`],
         });
       } else {
         queryClient.invalidateQueries({
-          queryKey: [`organization-unit-${currentOrganizationUnitId}-contents`],
+          queryKey: [`organization-unit-${currentOrganizationUnitId}-items`],
         });
       }
     },

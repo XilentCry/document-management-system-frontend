@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllOrganizationUnits, getOrganizationUnitContents } from "./api";
+import { getAllOrganizationUnits, getOrganizationUnitItems } from "./api";
 
 export const useGetAllOrganizationUnits = () => {
   const { isLoading, isError, error, data } = useQuery({
@@ -10,10 +10,10 @@ export const useGetAllOrganizationUnits = () => {
   return { isLoading, isError, error, data };
 };
 
-export const useGetOrganizationUnitContents = (id: string) => {
+export const useGetOrganizationUnitItems = (id: string) => {
   const { isLoading, isError, error, data } = useQuery({
-    queryKey: [`organization-unit-${id}-contents`],
-    queryFn: () => getOrganizationUnitContents(id),
+    queryKey: [`organization-unit-${id}-items`],
+    queryFn: () => getOrganizationUnitItems(id),
   });
 
   return { isLoading, isError, error, data };

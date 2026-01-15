@@ -16,9 +16,11 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      if (data.user.role === "User" && data.organizationUnitId) {
-        setCurrentOrganizationUnitId(data.organizationUnitId);
-        router.replace(`/drive/department-drive/${data.organizationUnitId}`);
+      if (data.user.role === "User" && data.currentOrganizationUnitId) {
+        setCurrentOrganizationUnitId(data.currentOrganizationUnitId);
+        router.replace(
+          `/drive/department-drive/${data.currentOrganizationUnitId}`
+        );
       } else if (data.user.role === "Admin") {
         router.replace("/admin/user-management");
       }

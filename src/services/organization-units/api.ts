@@ -1,11 +1,12 @@
 import { TBreadcrumb } from "@/types/breadcrumb";
-import { TFolder } from "@/types/folder";
+import { TItem } from "@/types/item";
 import { TOrganizationUnit } from "@/types/organization-unit";
+import { Paginate } from "@/types/paginate";
 
-type TGetOrganizationUnitContentsResponse = {
+type TGetOrganizationUnitItemsResponse = {
+  currentOrganizationUnitId: number;
   breadcrumb: TBreadcrumb;
-  folders: TFolder[];
-} & Omit<TOrganizationUnit, "children">;
+} & Paginate<TItem>;
 
 export async function getAllOrganizationUnits(): Promise<
   Pick<
@@ -31,11 +32,11 @@ export async function getAllOrganizationUnits(): Promise<
   return data.organizationUnits;
 }
 
-export const getOrganizationUnitContents = async (
-  id: string | undefined
-): Promise<TGetOrganizationUnitContentsResponse> => {
+export const getOrganizationUnitItems = async (
+  id: string
+): Promise<TGetOrganizationUnitItemsResponse> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/organization-units/${id}/contents?include=breadcrumb`,
+    `${process.env.NEXT_PUBLIC_API_URL}/api/organization-units/${id}/items`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -51,5 +52,5 @@ export const getOrganizationUnitContents = async (
     throw new Error(data.message);
   }
 
-  return data.organizationUnitContents;
+  return data;
 };
