@@ -5,17 +5,21 @@ import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { login, register, resendVerificationEmail } from "./api";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
+import { useUserStore } from "@/stores/user-store";
 
 export const useLogin = () => {
   const setCurrentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.setCurrentOrganizationUnitId
   );
+  const setUserId = useUserStore((state) => state.setUserId);
 
   const router = useRouter();
 
   return useMutation({
     mutationFn: login,
     onSuccess: (data) => {
+      setUserId(data.user.id);
+
       if (data.user.role === "User" && data.currentOrganizationUnitId) {
         setCurrentOrganizationUnitId(data.currentOrganizationUnitId);
         router.replace(

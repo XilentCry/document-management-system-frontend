@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useUserStore } from "@/stores/user-store";
 import { TItem } from "@/types/item";
 import { Paginate } from "@/types/paginate";
 import { EllipsisVertical, FileText, Folder } from "lucide-react";
@@ -17,6 +18,8 @@ export function ItemTable({
   data: Paginate<TItem>["data"];
   onDoubleClick: (id: number) => void;
 }) {
+  const userId = useUserStore((state) => state.userId);
+
   return (
     <Table>
       <TableHeader>
@@ -46,8 +49,9 @@ export function ItemTable({
               {item.name}
             </TableCell>
             <TableCell>
-              {item.owner.first_name} {item.owner.middle_name}{" "}
-              {item.owner.last_name}
+              {userId === item.owner.id
+                ? "me"
+                : `${item.owner.first_name} ${item.owner.middle_name} ${item.owner.last_name}`}
             </TableCell>
             <TableCell>{new Date(item.updated_at).toLocaleString()}</TableCell>
             <TableCell>&mdash;</TableCell>
