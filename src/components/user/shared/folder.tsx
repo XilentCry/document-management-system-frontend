@@ -73,11 +73,13 @@ export function Folder({
         </ItemActions>
       </Item>
 
-      <RenameFolderDialog
-        folder={item}
-        openRenameFolderDialog={openRenameFolderDialog}
-        setOpenRenameFolderDialog={setOpenRenameFolderDialog}
-      />
+      {openRenameFolderDialog && (
+        <RenameFolderDialog
+          folder={item}
+          openRenameFolderDialog={openRenameFolderDialog}
+          setOpenRenameFolderDialog={setOpenRenameFolderDialog}
+        />
+      )}
     </>
   );
 }

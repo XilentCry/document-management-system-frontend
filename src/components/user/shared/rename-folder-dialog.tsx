@@ -23,7 +23,7 @@ import { useRenameFolder } from "@/services/folders/mutations";
 import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export function RenameFolderDialog({
   folder,
@@ -47,12 +47,11 @@ export function RenameFolderDialog({
   });
 
   useEffect(() => {
-    if (!openRenameFolderDialog) {
+    return () =>
       reset({
         name: folder.name,
       });
-    }
-  }, [openRenameFolderDialog, reset, folder.name]);
+  }, [reset, folder.name]);
 
   useEffect(() => {
     if (isSubmitSuccessful) {
@@ -63,7 +62,7 @@ export function RenameFolderDialog({
 
   const { mutateAsync: renameFolderMutation } = useRenameFolder();
 
-  const onSubmit = async (data: TRenameFolderFormSchema) => {
+  const onSubmit: SubmitHandler<TRenameFolderFormSchema> = async (data) => {
     await renameFolderMutation({
       id: folder.id,
       renameData: data,
@@ -76,41 +75,41 @@ export function RenameFolderDialog({
       onOpenChange={setOpenRenameFolderDialog}
     >
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Rename folder</DialogTitle>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="name">Folder name</FieldLabel>
-                <Input id="name" {...register("name")} />
-                {errors.name && <FieldError>{errors.name.message}</FieldError>}
-              </Field>
-            </FieldGroup>
-            <DialogFooter>
-              <DialogClose
-                render={
-                  <Button
-                    variant="secondary"
-                    type="button"
-                    onClick={() => reset()}
-                  />
-                }
-              >
-                Cancel
-              </DialogClose>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Spinner />
-                    Renaming...
-                  </>
-                ) : (
-                  "Rename"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogHeader>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+          <DialogHeader>
+            <DialogTitle>Rename folder</DialogTitle>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="name">Folder name</FieldLabel>
+              <Input id="name" {...register("name")} />
+              {errors.name && <FieldError>{errors.name.message}</FieldError>}
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
+            <DialogClose
+              render={
+                <Button
+                  variant="secondary"
+                  type="button"
+                  onClick={() => reset()}
+                />
+              }
+            >
+              Cancel
+            </DialogClose>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Spinner />
+                  Renaming...
+                </>
+              ) : (
+                "Rename"
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

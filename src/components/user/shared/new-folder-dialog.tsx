@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import {
   Dialog,
   DialogClose,
@@ -35,10 +35,13 @@ export default function NewFolderDialog({
     (state) => state.currentParentFolderId
   );
 
+  console.log("currentParentFolderId", currentParentFolderId);
+  console.log("currentOrganizationUnitId", currentOrganizationUnitId);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isSubmitSuccessful },
     reset,
   } = useForm<TNewFolderFormSchema>({
     resolver: zodResolver(newFolderFormSchema),
@@ -56,28 +59,28 @@ export default function NewFolderDialog({
         parent_item_id: currentParentFolderId,
         organization_unit_id: currentOrganizationUnitId!,
       });
-  }, [
-    openNewFolderDialog,
-    currentParentFolderId,
-    currentOrganizationUnitId,
-    reset,
-  ]);
+  }, [currentParentFolderId, currentOrganizationUnitId, reset]);
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+      setOpenNewFolderDialog(false);
+    }
+  }, [isSubmitSuccessful, reset, setOpenNewFolderDialog]);
 
   const { mutateAsync: createFolderMutation } = useCreateFolder();
 
-  const onSubmit = async (data: TNewFolderFormSchema) => {
+  const onSubmit: SubmitHandler<TNewFolderFormSchema> = async (data) => {
     await createFolderMutation(data);
-    setOpenNewFolderDialog(false);
-    reset();
   };
 
   return (
     <Dialog open={openNewFolderDialog} onOpenChange={setOpenNewFolderDialog}>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>New folder</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+          <DialogHeader>
+            <DialogTitle>New folder</DialogTitle>
+          </DialogHeader>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Name</FieldLabel>
@@ -85,7 +88,7 @@ export default function NewFolderDialog({
               {errors.name && <FieldError>{errors.name.message}</FieldError>}
             </Field>
           </FieldGroup>
-          <DialogFooter className="mt-4">
+          <DialogFooter>
             <DialogClose
               render={
                 <Button

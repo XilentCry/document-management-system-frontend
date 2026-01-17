@@ -93,15 +93,21 @@ export function UserSidebar() {
         </SidebarContent>
       </Sidebar>
 
-      <UserOrganizationUnitsDialog
-        openUserOrganizationUnitsDialog={openUserOrganizationUnitsDialog}
-        setOpenUserOrganizationUnitsDialog={setOpenUserOrganizationUnitsDialog}
-      />
+      {openUserOrganizationUnitsDialog && (
+        <UserOrganizationUnitsDialog
+          openUserOrganizationUnitsDialog={openUserOrganizationUnitsDialog}
+          setOpenUserOrganizationUnitsDialog={
+            setOpenUserOrganizationUnitsDialog
+          }
+        />
+      )}
 
-      <NewFolderDialog
-        openNewFolderDialog={openNewFolderDialog}
-        setOpenNewFolderDialog={setOpenNewFolderDialog}
-      />
+      {openNewFolderDialog && (
+        <NewFolderDialog
+          openNewFolderDialog={openNewFolderDialog}
+          setOpenNewFolderDialog={setOpenNewFolderDialog}
+        />
+      )}
     </>
   );
 }
