@@ -2,6 +2,7 @@
 
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { EmptyFiles } from "@/components/user/shared/empty-files";
 import { ItemGrid } from "@/components/user/shared/item-grid";
 import { ItemList } from "@/components/user/shared/item-list";
 import { UserBreadCrumb } from "@/components/user/shared/user-breadcrumb";
@@ -9,7 +10,7 @@ import { useGetOrganizationUnitItems } from "@/services/organization-units/queri
 import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useViewModeStore } from "@/stores/view-mode-store";
-import { LayoutGrid, TextAlignJustify } from "lucide-react";
+import { LayoutGrid, List } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -55,8 +56,8 @@ export default function DepartmentDrivePage() {
     </div>
   ) : (
     organizationUnitItems && (
-      <div className="flex-1 flex flex-col gap-4 p-4">
-        <div className="flex items-center justify-between sticky top-18 bg-background z-10 pb-4">
+      <div className="flex-1 flex flex-col p-4 pt-0">
+        <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
           <UserBreadCrumb breadcrumb={organizationUnitItems.breadcrumb} />
           <ToggleGroup
             variant="outline"
@@ -66,27 +67,28 @@ export default function DepartmentDrivePage() {
             }}
           >
             <ToggleGroupItem value="list">
-              <TextAlignJustify />
+              <List />
             </ToggleGroupItem>
             <ToggleGroupItem value="grid">
               <LayoutGrid />
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
-        {viewMode === "list" && organizationUnitItems.data.length ? (
+        {organizationUnitItems.data.length === 0 ? (
+          <EmptyFiles />
+        ) : viewMode === "list" ? (
           <ItemList
             data={organizationUnitItems.data}
             links={organizationUnitItems.links}
             meta={organizationUnitItems.meta}
           />
-        ) : null}
-        {viewMode === "grid" && organizationUnitItems.data.length ? (
+        ) : (
           <ItemGrid
             data={organizationUnitItems.data}
             links={organizationUnitItems.links}
             meta={organizationUnitItems.meta}
           />
-        ) : null}
+        )}
       </div>
     )
   );

@@ -2,13 +2,14 @@
 
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { EmptyFiles } from "@/components/user/shared/empty-files";
 import { ItemGrid } from "@/components/user/shared/item-grid";
 import { ItemList } from "@/components/user/shared/item-list";
 import { UserBreadCrumb } from "@/components/user/shared/user-breadcrumb";
 import { useGetFolderItems } from "@/services/folders/queries";
 import { useFolderStore } from "@/stores/folder-store";
 import { useViewModeStore } from "@/stores/view-mode-store";
-import { LayoutGrid, TextAlignJustify } from "lucide-react";
+import { LayoutGrid, List } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -44,8 +45,8 @@ export default function FoldersPage() {
     </div>
   ) : (
     folderItems && (
-      <div className="flex-1 flex flex-col gap-4 p-4">
-        <div className="flex items-center justify-between sticky top-18 bg-background z-10 pb-4">
+      <div className="flex-1 flex flex-col p-4 pt-0">
+        <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
           <UserBreadCrumb breadcrumb={folderItems.breadcrumb} />
           <ToggleGroup
             variant="outline"
@@ -53,27 +54,28 @@ export default function FoldersPage() {
             onValueChange={(value) => setViewMode(value[0] as "grid" | "list")}
           >
             <ToggleGroupItem value="list">
-              <TextAlignJustify />
+              <List />
             </ToggleGroupItem>
             <ToggleGroupItem value="grid">
               <LayoutGrid />
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
-        {viewMode === "list" && folderItems.data.length ? (
+        {folderItems.data.length === 0 ? (
+          <EmptyFiles />
+        ) : viewMode === "list" ? (
           <ItemList
             data={folderItems.data}
             links={folderItems.links}
             meta={folderItems.meta}
           />
-        ) : null}
-        {viewMode === "grid" && folderItems.data.length ? (
+        ) : (
           <ItemGrid
             data={folderItems.data}
             links={folderItems.links}
             meta={folderItems.meta}
           />
-        ) : null}
+        )}
       </div>
     )
   );

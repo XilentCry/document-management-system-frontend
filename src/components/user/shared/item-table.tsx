@@ -28,6 +28,7 @@ export function ItemTable({
           <TableHead>Owner</TableHead>
           <TableHead>Date modified</TableHead>
           <TableHead>File size</TableHead>
+          <TableHead></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -40,7 +41,7 @@ export function ItemTable({
               }
             }}
           >
-            <TableCell className="flex items-center gap-2">
+            <TableCell className="flex items-center gap-2 truncate">
               {item.is_folder ? (
                 <Folder className="size-4" />
               ) : (
