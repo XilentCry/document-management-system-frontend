@@ -5,7 +5,7 @@ export const registerFormSchema = loginFormSchema
   .extend({
     password: loginFormSchema.shape.password.min(
       8,
-      "Password must be at least 8 characters."
+      "Password must be at least 8 characters.",
     ),
     first_name: z
       .string()

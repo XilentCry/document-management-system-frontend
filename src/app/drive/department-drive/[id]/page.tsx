@@ -25,10 +25,10 @@ export default function DepartmentDrivePage() {
   } = useGetOrganizationUnitItems(id);
 
   const setCurrentOrganizationUnitId = useOrganizationUnitStore(
-    (state) => state.setCurrentOrganizationUnitId
+    (state) => state.setCurrentOrganizationUnitId,
   );
   const setCurrentParentFolderId = useFolderStore(
-    (state) => state.setCurrentParentFolderId
+    (state) => state.setCurrentParentFolderId,
   );
   const viewMode = useViewModeStore((state) => state.viewMode);
   const setViewMode = useViewModeStore((state) => state.setViewMode);
@@ -36,7 +36,7 @@ export default function DepartmentDrivePage() {
   useEffect(() => {
     if (organizationUnitItems?.currentOrganizationUnitId) {
       setCurrentOrganizationUnitId(
-        organizationUnitItems.currentOrganizationUnitId
+        organizationUnitItems.currentOrganizationUnitId,
       );
       setCurrentParentFolderId(null);
     }

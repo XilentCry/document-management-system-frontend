@@ -38,7 +38,7 @@ export function UserOrganizationUnitsDialog({
         <ScrollArea className="h-96 min-w-0">
           {isLoading ? (
             <div className="h-full flex items-center justify-center">
-              <Spinner className="text-primary" />
+              <Spinner className="text-primary size-9" />
             </div>
           ) : isError && error ? (
             <div className="h-full flex items-center justify-center">

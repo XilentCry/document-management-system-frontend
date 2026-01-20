@@ -41,13 +41,15 @@ export function ItemTable({
               }
             }}
           >
-            <TableCell className="flex items-center gap-2 truncate">
-              {item.is_folder ? (
-                <Folder className="size-4" />
-              ) : (
-                <FileText className="size-4" />
-              )}
-              {item.name}
+            <TableCell>
+              <div className="flex items-center gap-2">
+                {item.is_folder ? (
+                  <Folder className="size-4" />
+                ) : (
+                  <FileText className="size-4" />
+                )}
+                {item.name}
+              </div>
             </TableCell>
             <TableCell>
               {userId === item.owner.id

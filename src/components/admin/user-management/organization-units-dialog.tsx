@@ -31,7 +31,7 @@ function flattenOrganizationUnits(
   acc: Pick<
     TOrganizationUnit,
     "id" | "name" | "parent_organization_unit_id" | "children"
-  >[] = []
+  >[] = [],
 ) {
   for (const organizationUnit of organizationUnits) {
     acc.push(organizationUnit);
@@ -67,11 +67,13 @@ export function OrganizationUnitsDialog({
 
   const [searchTerm, setSearchTerm] = useState("");
 
+  if (!selectedIds) return null;
+
   const toggleOrganizationUnit = (id: number) => {
     onChange(
       selectedIds.includes(id)
         ? selectedIds.filter((selectedId) => selectedId !== id)
-        : [...selectedIds, id]
+        : [...selectedIds, id],
     );
   };
 
@@ -81,7 +83,7 @@ export function OrganizationUnitsDialog({
 
   const flatOrganizationUnits = flattenOrganizationUnits(organizationUnits);
   const selectedOrganizationUnits = flatOrganizationUnits.filter((selectedId) =>
-    selectedIds.includes(selectedId.id)
+    selectedIds.includes(selectedId.id),
   );
 
   const filterOrganizationUnits = (
@@ -89,7 +91,7 @@ export function OrganizationUnitsDialog({
       TOrganizationUnit,
       "id" | "name" | "parent_organization_unit_id" | "children"
     >[],
-    searchTerm: string
+    searchTerm: string,
   ): Pick<
     TOrganizationUnit,
     "id" | "name" | "parent_organization_unit_id" | "children"
@@ -102,7 +104,7 @@ export function OrganizationUnitsDialog({
           organizationUnit: Pick<
             TOrganizationUnit,
             "id" | "name" | "parent_organization_unit_id" | "children"
-          >
+          >,
         ) => {
           const children = organizationUnit.children
             ? filterOrganizationUnits(organizationUnit.children, searchTerm)
@@ -114,7 +116,7 @@ export function OrganizationUnitsDialog({
             return { ...organizationUnit, children };
           }
           return null;
-        }
+        },
       )
       .filter(Boolean) as Pick<
       TOrganizationUnit,
@@ -124,7 +126,7 @@ export function OrganizationUnitsDialog({
 
   const filteredOrganizationUnits = filterOrganizationUnits(
     organizationUnits,
-    searchTerm
+    searchTerm,
   );
 
   return (
@@ -179,7 +181,7 @@ export function OrganizationUnitsDialog({
           <ScrollArea className="h-96">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
-                <Spinner className="text-primary" />
+                <Spinner className="text-primary size-9" />
               </div>
             ) : isError && error ? (
               <div className="h-full flex items-center justify-center">

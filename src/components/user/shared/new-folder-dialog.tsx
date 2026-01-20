@@ -29,14 +29,11 @@ export default function NewFolderDialog({
   setOpenNewFolderDialog: (openNewFolderDialog: boolean) => void;
 }) {
   const currentOrganizationUnitId = useOrganizationUnitStore(
-    (state) => state.currentOrganizationUnitId
+    (state) => state.currentOrganizationUnitId,
   );
   const currentParentFolderId = useFolderStore(
-    (state) => state.currentParentFolderId
+    (state) => state.currentParentFolderId,
   );
-
-  console.log("currentParentFolderId", currentParentFolderId);
-  console.log("currentOrganizationUnitId", currentOrganizationUnitId);
 
   const {
     register,
@@ -47,7 +44,7 @@ export default function NewFolderDialog({
     resolver: zodResolver(newFolderFormSchema),
     defaultValues: {
       name: "Untitled folder",
-      parent_item_id: currentParentFolderId,
+      folder_id: currentParentFolderId,
       organization_unit_id: currentOrganizationUnitId!,
     },
   });
@@ -56,7 +53,7 @@ export default function NewFolderDialog({
     return () =>
       reset({
         name: "Untitled folder",
-        parent_item_id: currentParentFolderId,
+        folder_id: currentParentFolderId,
         organization_unit_id: currentOrganizationUnitId!,
       });
   }, [currentParentFolderId, currentOrganizationUnitId, reset]);

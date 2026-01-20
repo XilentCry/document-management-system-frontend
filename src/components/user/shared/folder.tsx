@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import { RenameFolderDialog } from "./rename-folder-dialog";
 import { useState } from "react";
+import { MoveItemDialog } from "./move-item-dialog";
+import { Button } from "@/components/ui/button";
 
 export function Folder({
   item,
@@ -34,6 +36,7 @@ export function Folder({
   onDoubleClick: (id: number) => void;
 }) {
   const [openRenameFolderDialog, setOpenRenameFolderDialog] = useState(false);
+  const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
 
   return (
     <>
@@ -46,7 +49,15 @@ export function Folder({
         </ItemContent>
         <ItemActions>
           <DropdownMenu modal={false}>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="outline"
+                  size="icon-xs"
+                  className="border-none bg-transparent hover:bg-input/50"
+                />
+              }
+            >
               <EllipsisVertical className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -61,7 +72,9 @@ export function Folder({
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setOpenMoveItemDialog(true)}
+                    >
                       <FolderInput />
                       Move
                     </DropdownMenuItem>
@@ -78,6 +91,14 @@ export function Folder({
           folder={item}
           openRenameFolderDialog={openRenameFolderDialog}
           setOpenRenameFolderDialog={setOpenRenameFolderDialog}
+        />
+      )}
+
+      {openMoveItemDialog && (
+        <MoveItemDialog
+          item={item}
+          openMoveItemDialog={openMoveItemDialog}
+          setOpenMoveItemDialog={setOpenMoveItemDialog}
         />
       )}
     </>
