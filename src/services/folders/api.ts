@@ -111,7 +111,7 @@ export const getFolderSubfolders = async (
 
 export async function moveFolder(
   id: number,
-  moveData: { folder_id: number | null },
+  moveData: { parent_folder_id: number | null },
 ) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/folders/${id}/move`,

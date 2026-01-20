@@ -4,7 +4,7 @@ import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createFolder, moveFolder, renameFolder } from "./api";
-import { TMoveFolderFormSchema } from "@/schemas/items/move-item-form-schema";
+import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 
 export const useCreateFolder = () => {
   const currentOrganizationUnitId = useOrganizationUnitStore(
@@ -90,7 +90,7 @@ export const useMoveFolder = () => {
       moveData,
     }: {
       id: number;
-      moveData: TMoveFolderFormSchema;
+      moveData: TMoveItemFormSchema;
     }) => moveFolder(id, moveData),
     onSuccess: (data) => {
       toast.success(data.message);
