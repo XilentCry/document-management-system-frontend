@@ -1,6 +1,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Header } from "@/components/user/layout/header";
 import { UserSidebar } from "@/components/user/layout/user-sidebar";
+import { UploadProgress } from "@/components/user/shared/upload-progress";
 
 export default function AdminLayout({
   children,
@@ -13,6 +14,7 @@ export default function AdminLayout({
       <div className="flex-1 flex flex-col">
         <Header />
         {children}
+        <UploadProgress />
       </div>
     </SidebarProvider>
   );

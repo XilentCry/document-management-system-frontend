@@ -25,11 +25,13 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { UserOrganizationUnitsDialog } from "../shared/user-organization-units-dialog";
 import NewFolderDialog from "../shared/new-folder-dialog";
+import { FileUploadDialog } from "../shared/file-upload-dialog";
 
 export function UserSidebar() {
   const [openUserOrganizationUnitsDialog, setOpenUserOrganizationUnitsDialog] =
     useState(false);
   const [openNewFolderDialog, setOpenNewFolderDialog] = useState(false);
+  const [openFileUploadDialog, setOpenFileUploadDialog] = useState(false);
 
   const pathname = usePathname();
 
@@ -63,7 +65,9 @@ export function UserSidebar() {
                       New Folder
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setOpenFileUploadDialog(true)}
+                    >
                       <FileUp />
                       File upload
                     </DropdownMenuItem>
@@ -106,6 +110,13 @@ export function UserSidebar() {
         <NewFolderDialog
           openNewFolderDialog={openNewFolderDialog}
           setOpenNewFolderDialog={setOpenNewFolderDialog}
+        />
+      )}
+
+      {openFileUploadDialog && (
+        <FileUploadDialog
+          openFileUploadDialog={openFileUploadDialog}
+          setOpenFileUploadDialog={setOpenFileUploadDialog}
         />
       )}
     </>
