@@ -8,5 +8,11 @@ export type TItem = {
   owner: TCurrentUser;
   organization_unit_id: number;
   classification: string;
+  current_version: {
+    id: number;
+    item_id: number;
+    file_size: number;
+    version_number: number;
+  } | null;
   updated_at: string;
 };

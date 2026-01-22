@@ -2,17 +2,17 @@ import { getCookie } from "@/lib/get-cookie";
 import { TNewFolderFormSchema } from "@/schemas/folders/new-folder-form-schema";
 import { TBreadcrumb } from "@/types/breadcrumb";
 import { TItem } from "@/types/item";
-import { Paginate } from "@/types/paginate";
+import { TPaginate } from "@/types/paginate";
 
 type TGetFolderItemsResponse = {
   currentParentFolderId: number;
   breadcrumb: TBreadcrumb[];
-} & Paginate<TItem>;
+} & TPaginate<TItem>;
 
 type TGetFolderSuboldersResponse = {
   currentOrganizationUnitId: number;
   breadcrumb: TBreadcrumb;
-} & Paginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
+} & TPaginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
 
 export async function createFolder(
   folderData: TNewFolderFormSchema,

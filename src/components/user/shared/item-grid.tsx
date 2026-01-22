@@ -1,5 +1,5 @@
 import type { TItem } from "@/types/item";
-import { Paginate } from "@/types/paginate";
+import { TPaginate } from "@/types/paginate";
 import { useRouter } from "next/navigation";
 import { Folder } from "./folder";
 import { Document } from "./document";
@@ -9,9 +9,9 @@ export function ItemGrid({
   links,
   meta,
 }: {
-  data: Paginate<TItem>["data"];
-  links: Paginate<TItem>["links"];
-  meta: Paginate<TItem>["meta"];
+  data: TPaginate<TItem>["data"];
+  links: TPaginate<TItem>["links"];
+  meta: TPaginate<TItem>["meta"];
 }) {
   const router = useRouter();
 

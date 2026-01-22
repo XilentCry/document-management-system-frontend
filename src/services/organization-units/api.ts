@@ -1,17 +1,17 @@
 import { TBreadcrumb } from "@/types/breadcrumb";
 import { TItem } from "@/types/item";
 import { TOrganizationUnit } from "@/types/organization-unit";
-import { Paginate } from "@/types/paginate";
+import { TPaginate } from "@/types/paginate";
 
 type TGetOrganizationUnitItemsResponse = {
   currentOrganizationUnitId: number;
   breadcrumb: TBreadcrumb;
-} & Paginate<TItem>;
+} & TPaginate<TItem>;
 
 type TGetOrganizationUnitFoldersResponse = {
   currentOrganizationUnitId: number;
   breadcrumb: TBreadcrumb;
-} & Paginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
+} & TPaginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
 
 export async function getAllOrganizationUnits(): Promise<
   Pick<

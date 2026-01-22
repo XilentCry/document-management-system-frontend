@@ -2,7 +2,7 @@ import { getCookie } from "@/lib/get-cookie";
 import { TOrganizationUnit } from "@/types/organization-unit";
 import { TUser } from "@/types/user";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
-import { Paginate } from "@/types/paginate";
+import { TPaginate } from "@/types/paginate";
 
 type TGetUserResponse = TUser & {
   organizationUnits: Pick<TOrganizationUnit, "id" | "name">[];
@@ -12,7 +12,7 @@ type TUpdateUserResponse =
   | { errors: Record<string, string[]> }
   | { message: string };
 
-export async function getAllUsers(page: number): Promise<Paginate<TUser>> {
+export async function getAllUsers(page: number): Promise<TPaginate<TUser>> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/users?page=${page}`,
     {
@@ -20,7 +20,7 @@ export async function getAllUsers(page: number): Promise<Paginate<TUser>> {
         Accept: "application/json",
       },
       credentials: "include",
-    }
+    },
   );
 
   const data = await response.json();
@@ -34,7 +34,7 @@ export async function getAllUsers(page: number): Promise<Paginate<TUser>> {
 
 export async function updateStatus(
   userId: number,
-  statusId: number
+  statusId: number,
 ): Promise<{ message: string }> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/status`,
@@ -47,7 +47,7 @@ export async function updateStatus(
       },
       credentials: "include",
       body: JSON.stringify({ status_id: statusId }),
-    }
+    },
   );
 
   const data = await response.json();
@@ -67,7 +67,7 @@ export async function getUser(id: string): Promise<TGetUserResponse> {
         Accept: "application/json",
       },
       credentials: "include",
-    }
+    },
   );
 
   const data = await response.json();
@@ -81,7 +81,7 @@ export async function getUser(id: string): Promise<TGetUserResponse> {
 
 export async function updateUser(
   userData: TUpdateUserFormSchema,
-  userId: number
+  userId: number,
 ): Promise<TUpdateUserResponse> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`,
@@ -94,7 +94,7 @@ export async function updateUser(
       },
       credentials: "include",
       body: JSON.stringify(userData),
-    }
+    },
   );
 
   const data = await response.json();

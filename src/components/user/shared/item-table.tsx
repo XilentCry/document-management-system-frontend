@@ -6,16 +6,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatFileSize } from "@/lib/format-file-size";
 import { useUserStore } from "@/stores/user-store";
 import { TItem } from "@/types/item";
-import { Paginate } from "@/types/paginate";
+import { TPaginate } from "@/types/paginate";
 import { EllipsisVertical, FileText, Folder } from "lucide-react";
 
 export function ItemTable({
   data,
   onDoubleClick,
 }: {
-  data: Paginate<TItem>["data"];
+  data: TPaginate<TItem>["data"];
   onDoubleClick: (id: number) => void;
 }) {
   const userId = useUserStore((state) => state.userId);
@@ -56,8 +57,14 @@ export function ItemTable({
                 ? "me"
                 : `${item.owner.first_name} ${item.owner.middle_name} ${item.owner.last_name}`}
             </TableCell>
-            <TableCell>{new Date(item.updated_at).toLocaleString()}</TableCell>
-            <TableCell>&mdash;</TableCell>
+            <TableCell>{item.updated_at}</TableCell>
+            <TableCell>
+              {item?.current_version?.file_size ? (
+                formatFileSize(item.current_version.file_size)
+              ) : (
+                <>&mdash;</>
+              )}
+            </TableCell>
             <TableCell className="text-right">
               <EllipsisVertical className="size-4 inline-block" />
             </TableCell>

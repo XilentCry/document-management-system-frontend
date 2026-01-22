@@ -1,4 +1,4 @@
-export type Paginate<T> = {
+export type TPaginate<T> = {
   data: T[];
   links: {
     first: string;
