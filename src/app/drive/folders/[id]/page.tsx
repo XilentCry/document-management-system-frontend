@@ -24,7 +24,7 @@ export default function FoldersPage() {
   } = useGetFolderItems(id);
 
   const setCurrentParentFolderId = useFolderStore(
-    (state) => state.setCurrentParentFolderId
+    (state) => state.setCurrentParentFolderId,
   );
   const viewMode = useViewModeStore((state) => state.viewMode);
   const setViewMode = useViewModeStore((state) => state.setViewMode);
@@ -51,7 +51,11 @@ export default function FoldersPage() {
           <ToggleGroup
             variant="outline"
             value={[viewMode]}
-            onValueChange={(value) => setViewMode(value[0] as "grid" | "list")}
+            onValueChange={(value) => {
+              if (!value[0]) return;
+
+              setViewMode(value[0] as "grid" | "list");
+            }}
           >
             <ToggleGroupItem value="list">
               <List />

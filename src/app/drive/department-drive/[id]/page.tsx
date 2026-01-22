@@ -63,6 +63,8 @@ export default function DepartmentDrivePage() {
             variant="outline"
             value={[viewMode]}
             onValueChange={(value) => {
+              if (!value[0]) return;
+
               setViewMode(value[0] as "grid" | "list");
             }}
           >

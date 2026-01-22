@@ -37,11 +37,10 @@ export function AdminSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   isActive={pathname.startsWith("/admin/user-management")}
+                  render={<Link href="/admin/user-management" />}
                 >
-                  <Link href="/admin/user-management">
-                    <UsersRound />
-                    User Management
-                  </Link>
+                  <UsersRound />
+                  User Management
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

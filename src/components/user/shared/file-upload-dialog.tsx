@@ -15,8 +15,6 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FileText, UploadIcon, X } from "lucide-react";
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import {
   Select,
   SelectContent,
@@ -29,12 +27,14 @@ import {
   TUploadFileFormSchema,
   uploadFileFormSchema,
 } from "@/schemas/documents/upload-file-form-schema";
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
-import { useFolderStore } from "@/stores/folder-store";
 import { useUploadDocument } from "@/services/documents/mutations";
+import { useFolderStore } from "@/stores/folder-store";
+import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useUploadStore } from "@/stores/upload-store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FileText, UploadIcon, X } from "lucide-react";
+import { Dispatch, SetStateAction, useRef } from "react";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 
 const classificationMap: Record<number, string> = {
   1: "Private",
@@ -62,34 +62,20 @@ export function FileUploadDialog({
 
   const { mutateAsync: uploadDocumentMutation } = useUploadDocument();
 
-  const { control, handleSubmit, setValue, reset } =
-    useForm<TUploadFileFormSchema>({
-      resolver: zodResolver(uploadFileFormSchema),
-      defaultValues: { documents: [] },
-    });
+  const { control, handleSubmit } = useForm<TUploadFileFormSchema>({
+    resolver: zodResolver(uploadFileFormSchema),
+    defaultValues: { documents: [] },
+  });
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "documents",
   });
 
-  const watchedFiles = useWatch({
-    control,
-    name: "documents",
-  });
-
-  useEffect(() => {
-    return () => reset({ documents: [] });
-  }, [reset]);
-
   const addFilesToQueue = (files: File[]) => {
-    if (!currentOrganizationUnitId) {
-      return;
-    }
-
     files.forEach((file) => {
       append({
-        organization_unit_id: currentOrganizationUnitId,
+        organization_unit_id: currentOrganizationUnitId!,
         classification_id: 1,
         folder_id: currentParentFolderId,
         file,
@@ -145,7 +131,10 @@ export function FileUploadDialog({
   return (
     <Dialog open={openFileUploadDialog} onOpenChange={setOpenFileUploadDialog}>
       <DialogContent className="w-150 max-w-150!">
-        <form className="flex flex-col gap-6 min-w-0">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-6 min-w-0"
+        >
           <DialogHeader>
             <DialogTitle>Upload file</DialogTitle>
           </DialogHeader>
@@ -167,40 +156,39 @@ export function FileUploadDialog({
             {fields.length > 0 && (
               <ScrollArea className="flex-1 min-h-0">
                 {fields.map((field, index) => (
-                  <Item key={index} size="xs">
+                  <Item key={field.id} size="xs">
                     <ItemMedia variant="icon">
                       <FileText className="size-4" />
                     </ItemMedia>
                     <ItemContent className="min-w-0">
                       <ItemTitle className="block w-auto truncate">
-                        {watchedFiles?.[index]?.file?.name}
+                        {field.file.name}
                       </ItemTitle>
                     </ItemContent>
                     <ItemActions>
-                      <Select
-                        defaultValue={field.classification_id.toString()}
-                        onValueChange={(value) =>
-                          setValue(
-                            `documents.${index}.classification_id`,
-                            Number(value),
-                          )
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue>
-                            {
-                              classificationMap[
-                                watchedFiles?.[index]?.classification_id
-                              ]
+                      <Controller
+                        control={control}
+                        name={`documents.${index}.classification_id`}
+                        render={({ field }) => (
+                          <Select
+                            value={field.value.toString()}
+                            onValueChange={(value) =>
+                              field.onChange(Number(value))
                             }
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">Private</SelectItem>
-                          <SelectItem value="2">Protected</SelectItem>
-                          <SelectItem value="3">Public</SelectItem>
-                        </SelectContent>
-                      </Select>
+                          >
+                            <SelectTrigger>
+                              <SelectValue>
+                                {classificationMap[field.value]}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1">Private</SelectItem>
+                              <SelectItem value="2">Protected</SelectItem>
+                              <SelectItem value="3">Public</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
                       <Button
                         variant="ghost"
                         size="icon"
@@ -226,10 +214,7 @@ export function FileUploadDialog({
             <DialogClose render={<Button variant="outline" />}>
               Cancel
             </DialogClose>
-            <Button
-              onClick={handleSubmit(onSubmit)}
-              disabled={fields.length === 0}
-            >
+            <Button type="submit" disabled={fields.length === 0}>
               Upload
             </Button>
           </DialogFooter>

@@ -16,8 +16,8 @@ const viewModeStore = create<ViewModeStore>()(
     })),
     {
       name: "view-mode-storage",
-    }
-  )
+    },
+  ),
 );
 
 export const useViewModeStore = createSelectors(viewModeStore);

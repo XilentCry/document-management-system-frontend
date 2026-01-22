@@ -2,7 +2,6 @@ import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { uploadDocument } from "./api";
-import { toast } from "sonner";
 
 export const useUploadDocument = () => {
   const currentOrganizationUnitId = useOrganizationUnitStore(
@@ -26,9 +25,6 @@ export const useUploadDocument = () => {
           queryKey: [`organization-unit-${currentOrganizationUnitId}-items`],
         });
       }
-    },
-    onError: (error) => {
-      toast.error(error.message);
     },
   });
 };

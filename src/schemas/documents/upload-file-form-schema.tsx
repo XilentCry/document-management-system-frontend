@@ -23,7 +23,9 @@ export const uploadFileFormSchema = z.object({
             "File size must be less than 10MB.",
           )
           .refine(
-            (file) => file.type === "application/pdf",
+            (file) =>
+              file.type === "application/pdf" ||
+              file.name.toLowerCase().endsWith(".pdf"),
             "Only PDF files are allowed.",
           ),
       }),

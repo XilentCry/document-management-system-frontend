@@ -37,18 +37,29 @@ export function UploadProgress() {
 
   if (uploadingFiles.length === 0) return null;
 
-  const uploadingCount = uploadingFiles.filter(
-    (file) => file.status === "uploading",
-  ).length;
-  const completedCount = uploadingFiles.filter(
-    (file) => file.status === "complete",
-  ).length;
-  const cancelledCount = uploadingFiles.filter(
-    (file) => file.status === "cancelled",
-  ).length;
-  const failedCount = uploadingFiles.filter(
-    (file) => file.status === "failed",
-  ).length;
+  const counts = uploadingFiles.reduce(
+    (acc, file) => {
+      switch (file.status) {
+        case "uploading":
+          acc.uploadingCount += 1;
+          break;
+        case "complete":
+          acc.completedCount += 1;
+          break;
+        case "failed":
+          acc.failedCount += 1;
+          break;
+        case "cancelled":
+          acc.cancelledCount += 1;
+          break;
+      }
+      return acc;
+    },
+    { uploadingCount: 0, completedCount: 0, failedCount: 0, cancelledCount: 0 },
+  );
+
+  const { uploadingCount, completedCount, failedCount, cancelledCount } =
+    counts;
 
   const title = () => {
     if (uploadingCount > 0) {
@@ -71,7 +82,7 @@ export function UploadProgress() {
   };
 
   return (
-    <Card className="fixed bottom-4 left-4 w-96" size="sm">
+    <Card className="fixed bottom-4 right-4 w-96" size="sm">
       <CardHeader>
         <CardTitle>{title()}</CardTitle>
         <CardAction>
@@ -97,7 +108,7 @@ export function UploadProgress() {
       {!isMinimized && (
         <CardContent>
           <ScrollArea className="h-40">
-            {uploadingFiles.map((file) => (
+            {[...uploadingFiles].reverse().map((file) => (
               <Item key={file.id}>
                 <ItemMedia variant="icon">
                   <FileText />
