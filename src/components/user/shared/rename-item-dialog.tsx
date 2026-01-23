@@ -16,72 +16,62 @@ import {
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import {
-  renameFolderFormSchema,
-  TRenameFolderFormSchema,
-} from "@/schemas/folders/rename-folder-form-schema";
-import { useRenameFolder } from "@/services/folders/mutations";
+  renameItemFormSchema,
+  TRenameItemFormSchema,
+} from "@/schemas/items/rename-item-form-schema";
+import { useRenameItem } from "@/services/items/mutations";
 import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-export function RenameFolderDialog({
-  folder,
-  openRenameFolderDialog,
-  setOpenRenameFolderDialog,
+export function RenameItemDialog({
+  item,
+  openRenameItemDialog,
+  setOpenRenameItemDialog,
 }: {
-  folder: TItem;
-  openRenameFolderDialog: boolean;
-  setOpenRenameFolderDialog: Dispatch<SetStateAction<boolean>>;
+  item: TItem;
+  openRenameItemDialog: boolean;
+  setOpenRenameItemDialog: Dispatch<SetStateAction<boolean>>;
 }) {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isSubmitSuccessful },
     reset,
-  } = useForm<TRenameFolderFormSchema>({
-    resolver: zodResolver(renameFolderFormSchema),
+  } = useForm<TRenameItemFormSchema>({
+    resolver: zodResolver(renameItemFormSchema),
     defaultValues: {
-      name: folder.name,
+      name: item.name,
     },
   });
 
   useEffect(() => {
-    return () =>
-      reset({
-        name: folder.name,
-      });
-  }, [reset, folder.name]);
-
-  useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      setOpenRenameFolderDialog(false);
+      setOpenRenameItemDialog(false);
     }
-  }, [isSubmitSuccessful, reset, setOpenRenameFolderDialog]);
+  }, [isSubmitSuccessful, reset, setOpenRenameItemDialog]);
 
-  const { mutateAsync: renameFolderMutation } = useRenameFolder();
+  const { mutateAsync: renameItemMutation } = useRenameItem();
 
-  const onSubmit: SubmitHandler<TRenameFolderFormSchema> = async (data) => {
-    await renameFolderMutation({
-      id: folder.id,
+  const onSubmit: SubmitHandler<TRenameItemFormSchema> = async (data) => {
+    await renameItemMutation({
+      id: item.id,
       renameData: data,
     });
   };
 
   return (
-    <Dialog
-      open={openRenameFolderDialog}
-      onOpenChange={setOpenRenameFolderDialog}
-    >
+    <Dialog open={openRenameItemDialog} onOpenChange={setOpenRenameItemDialog}>
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <DialogHeader>
-            <DialogTitle>Rename folder</DialogTitle>
+            <DialogTitle>Rename</DialogTitle>
           </DialogHeader>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="name">Folder name</FieldLabel>
+              <FieldLabel htmlFor="name">Name</FieldLabel>
               <Input id="name" {...register("name")} />
               {errors.name && <FieldError>{errors.name.message}</FieldError>}
             </Field>

@@ -50,15 +50,6 @@ export default function NewFolderDialog({
   });
 
   useEffect(() => {
-    return () =>
-      reset({
-        name: "Untitled folder",
-        folder_id: currentParentFolderId,
-        organization_unit_id: currentOrganizationUnitId!,
-      });
-  }, [currentParentFolderId, currentOrganizationUnitId, reset]);
-
-  useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
       setOpenNewFolderDialog(false);

@@ -80,7 +80,7 @@ export function MoveItemBreadCrumb({
                         }
                         className="truncate"
                       >
-                        {item.name}
+                        {hiddenItem.name}
                       </BreadcrumbLink>
                     </DropdownMenuItem>
                   ))}

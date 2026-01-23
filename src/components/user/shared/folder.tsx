@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,10 +24,9 @@ import {
   FolderOpen,
   PencilLine,
 } from "lucide-react";
-import { RenameFolderDialog } from "./rename-folder-dialog";
 import { useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
-import { Button } from "@/components/ui/button";
+import { RenameItemDialog } from "./rename-item-dialog";
 
 export function Folder({
   item,
@@ -35,7 +35,7 @@ export function Folder({
   item: TItem;
   onDoubleClick: (id: number) => void;
 }) {
-  const [openRenameFolderDialog, setOpenRenameFolderDialog] = useState(false);
+  const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
 
   return (
@@ -61,7 +61,7 @@ export function Folder({
               <EllipsisVertical className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setOpenRenameFolderDialog(true)}>
+              <DropdownMenuItem onClick={() => setOpenRenameItemDialog(true)}>
                 <PencilLine />
                 Rename
               </DropdownMenuItem>
@@ -86,11 +86,11 @@ export function Folder({
         </ItemActions>
       </Item>
 
-      {openRenameFolderDialog && (
-        <RenameFolderDialog
-          folder={item}
-          openRenameFolderDialog={openRenameFolderDialog}
-          setOpenRenameFolderDialog={setOpenRenameFolderDialog}
+      {openRenameItemDialog && (
+        <RenameItemDialog
+          item={item}
+          openRenameItemDialog={openRenameItemDialog}
+          setOpenRenameItemDialog={setOpenRenameItemDialog}
         />
       )}
 

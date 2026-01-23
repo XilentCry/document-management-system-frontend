@@ -35,12 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FileText, UploadIcon, X } from "lucide-react";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-
-const classificationMap: Record<number, string> = {
-  1: "Private",
-  2: "Protected",
-  3: "Public",
-};
+import { CLASSIFICATIONS } from "@/lib/constants";
 
 export function FileUploadDialog({
   openFileUploadDialog,
@@ -106,7 +101,7 @@ export function FileUploadDialog({
     addUpload({
       id: uploadId,
       file: data.file,
-      classification: classificationMap[data.classification_id],
+      classification: CLASSIFICATIONS[data.classification_id],
       status: "uploading",
     });
 
@@ -178,7 +173,7 @@ export function FileUploadDialog({
                           >
                             <SelectTrigger>
                               <SelectValue>
-                                {classificationMap[field.value]}
+                                {CLASSIFICATIONS[field.value]}
                               </SelectValue>
                             </SelectTrigger>
                             <SelectContent>

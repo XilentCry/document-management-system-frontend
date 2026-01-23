@@ -12,7 +12,7 @@ export const useGetFolderItems = (id: string) => {
 
 export const useGetFolderSubfolders = (id: number | null) => {
   const { isLoading, isError, error, data } = useQuery({
-    queryKey: [`organization-unit-${id}-folders`],
+    queryKey: [`folder-${id}-subfolders`],
     queryFn: () => getFolderSubfolders(id),
     enabled: !!id,
   });

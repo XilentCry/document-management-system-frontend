@@ -30,7 +30,7 @@ import {
 } from "@/schemas/items/move-item-form-schema";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMoveFolder } from "@/services/folders/mutations";
+import { useMoveItem } from "@/services/items/mutations";
 
 export function MoveItemDialog({
   item,
@@ -108,10 +108,10 @@ export function MoveItemDialog({
     }
   }, [isSubmitSuccessful, reset, setOpenMoveItemDialog]);
 
-  const { mutateAsync: moveFolderMutation } = useMoveFolder();
+  const { mutateAsync: moveItemMutation } = useMoveItem();
 
   const onSubmit: SubmitHandler<TMoveItemFormSchema> = async (data) => {
-    await moveFolderMutation({ id: item.id, moveData: data });
+    await moveItemMutation({ id: item.id, moveData: data });
   };
 
   return (

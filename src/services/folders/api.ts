@@ -62,30 +62,6 @@ export const getFolderItems = async (
   return data;
 };
 
-export async function renameFolder(id: number, renameData: { name: string }) {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/folders/${id}/rename`,
-    {
-      method: "PATCH",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(renameData),
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
-  return { message: data.message };
-}
-
 export const getFolderSubfolders = async (
   id: number | null,
 ): Promise<TGetFolderSuboldersResponse> => {
@@ -108,30 +84,3 @@ export const getFolderSubfolders = async (
 
   return data;
 };
-
-export async function moveFolder(
-  id: number,
-  moveData: { parent_folder_id: number | null },
-) {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/folders/${id}/move`,
-    {
-      method: "PATCH",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(moveData),
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
-  return { message: data.message };
-}
