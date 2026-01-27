@@ -25,66 +25,61 @@ export function UserList() {
     isPlaceholderData,
   } = useGetAllUsers(page);
 
-  if (isError && error) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-destructive text-sm">{error.message}</p>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <Spinner className="text-primary size-9" />
-      </div>
-    );
-  }
-
-  return (
-    <ScrollArea>
-      <UserTable users={users?.data ?? []} />
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => setPage((old) => Math.max(old - 1, 1))}
-              disabled={page === 1}
-            />
-          </PaginationItem>
-          {users?.meta.links
-            .filter(
-              (link) =>
-                !link.label.includes("Previous") && !link.label.includes("Next")
-            )
-            .map((link) => (
-              <PaginationLink
-                key={link.label}
+  return isLoading ? (
+    <div className="flex-1 flex items-center justify-center">
+      <Spinner className="text-primary size-9" />
+    </div>
+  ) : isError && error ? (
+    <div className="flex-1 flex items-center justify-center">
+      <p className="text-destructive text-sm">{error.message}</p>
+    </div>
+  ) : (
+    users && (
+      <ScrollArea>
+        <UserTable users={users.data} />
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setPage((old) => Math.max(old - 1, 1))}
+                disabled={page === 1}
+              />
+            </PaginationItem>
+            {users?.meta.links
+              .filter(
+                (link) =>
+                  !link.label.includes("Previous") &&
+                  !link.label.includes("Next"),
+              )
+              .map((link) => (
+                <PaginationLink
+                  key={link.label}
+                  onClick={() => {
+                    if (link.url) {
+                      const pageParam = new URL(link.url).searchParams.get(
+                        "page",
+                      );
+                      setPage(Number(pageParam));
+                    }
+                  }}
+                  isActive={link.active}
+                >
+                  {link.label}
+                </PaginationLink>
+              ))}
+            <PaginationItem>
+              <PaginationNext
                 onClick={() => {
-                  if (link.url) {
-                    const pageParam = new URL(link.url).searchParams.get(
-                      "page"
-                    );
-                    setPage(Number(pageParam));
+                  if (!isPlaceholderData && users?.links.next) {
+                    setPage((old) => old + 1);
                   }
                 }}
-                isActive={link.active}
-              >
-                {link.label}
-              </PaginationLink>
-            ))}
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => {
-                if (!isPlaceholderData && users?.links.next) {
-                  setPage((old) => old + 1);
-                }
-              }}
-              disabled={isPlaceholderData || !users?.links.next}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-    </ScrollArea>
+                disabled={isPlaceholderData || !users?.links.next}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </ScrollArea>
+    )
   );
 }

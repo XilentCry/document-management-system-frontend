@@ -205,7 +205,7 @@ export function MoveItemDialog({
 
                                     setValue("parent_folder_id", folder.id);
                                   }}
-                                  disabled={isSelf}
+                                  disabled={isSelf || isSubmitting}
                                 >
                                   Move
                                 </Button>

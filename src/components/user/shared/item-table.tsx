@@ -80,7 +80,7 @@ export function ItemTable({
               <TableCell>
                 {userId === item.owner.id
                   ? "me"
-                  : `${item.owner.first_name} ${item.owner.middle_name} ${item.owner.last_name}`}
+                  : `${item.owner.first_name} ${item.owner.middle_name ?? ""} ${item.owner.last_name}`}
               </TableCell>
               <TableCell>{item.updated_at}</TableCell>
               <TableCell>
