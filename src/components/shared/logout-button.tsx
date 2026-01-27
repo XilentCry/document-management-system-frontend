@@ -12,6 +12,10 @@ export function LogoutButton() {
   const handleLogout = async () => {
     try {
       await logout();
+
+      localStorage.removeItem("folder-storage");
+      localStorage.removeItem("organization-unit-storage");
+      localStorage.removeItem("user-storage");
       router.replace("/");
     } catch (error: unknown) {
       if (error instanceof Error) {
