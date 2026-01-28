@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/item";
 import { TItem } from "@/types/item";
 import {
+  CircleAlert,
   EllipsisVertical,
   FileText,
   FolderInput,
@@ -28,14 +29,32 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { MoveItemDialog } from "./move-item-dialog";
+import { useRailStore } from "@/stores/rail-store";
 
 export function Document({ item }: { item: TItem }) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
 
+  const {
+    setSelectedDocumentId,
+    setSelectedDocumentFileName,
+    setSelectedFolderId,
+    setSelectedFolderName,
+    setRailTab,
+    setOpenRail,
+  } = useRailStore();
+
   return (
     <>
-      <Item variant="muted">
+      <Item
+        variant="muted"
+        onClick={() => {
+          setSelectedDocumentId(item.id);
+          setSelectedDocumentFileName(item.name);
+          setSelectedFolderId(null);
+          setSelectedFolderName(null);
+        }}
+      >
         <ItemMedia>
           <FileText className="size-4" />
         </ItemMedia>
@@ -55,7 +74,7 @@ export function Document({ item }: { item: TItem }) {
             >
               <EllipsisVertical className="size-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent className="w-72">
               <DropdownMenuItem onClick={() => setOpenRenameItemDialog(true)}>
                 <PencilLine />
                 Rename
@@ -66,12 +85,35 @@ export function Document({ item }: { item: TItem }) {
                   Organize
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
-                  <DropdownMenuSubContent>
+                  <DropdownMenuSubContent className="w-72">
                     <DropdownMenuItem
                       onClick={() => setOpenMoveItemDialog(true)}
                     >
                       <FolderInput />
                       Move
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <CircleAlert />
+                  Document information
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent className="w-72">
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSelectedDocumentId(item.id);
+                        setSelectedDocumentFileName(item.name);
+                        setSelectedFolderId(null);
+                        setSelectedFolderName(null);
+                        setOpenRail(true);
+                        setRailTab("details");
+                      }}
+                    >
+                      <FolderInput />
+                      Details
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>

@@ -22,6 +22,7 @@ import { useUserStore } from "@/stores/user-store";
 import { TItem } from "@/types/item";
 import { TPaginate } from "@/types/paginate";
 import {
+  CircleAlert,
   EllipsisVertical,
   FileText,
   Folder,
@@ -32,6 +33,7 @@ import {
 import { useState } from "react";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { MoveItemDialog } from "./move-item-dialog";
+import { useRailStore } from "@/stores/rail-store";
 
 export function ItemTable({
   data,
@@ -45,15 +47,26 @@ export function ItemTable({
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);
 
+  const {
+    setSelectedDocumentId,
+    setSelectedDocumentFileName,
+    setSelectedFolderId,
+    setSelectedFolderName,
+    setRailTab,
+    openRail,
+    setOpenRail,
+  } = useRailStore();
+
   return (
     <>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
-            <TableHead>Owner</TableHead>
+            {!openRail && <TableHead>Owner</TableHead>}
             <TableHead>Date modified</TableHead>
-            <TableHead>File size</TableHead>
+            {!openRail && <TableHead>File size</TableHead>}
+            {!openRail && <TableHead>Classification</TableHead>}
             <TableHead></TableHead>
           </TableRow>
         </TableHeader>
@@ -61,6 +74,19 @@ export function ItemTable({
           {data.map((item) => (
             <TableRow
               key={item.id}
+              onClick={() => {
+                if (item.is_folder) {
+                  setSelectedFolderId(item.id);
+                  setSelectedFolderName(item.name);
+                  setSelectedDocumentId(null);
+                  setSelectedDocumentFileName(null);
+                } else {
+                  setSelectedDocumentId(item.id);
+                  setSelectedDocumentFileName(item.name);
+                  setSelectedFolderId(null);
+                  setSelectedFolderName(null);
+                }
+              }}
               onDoubleClick={() => {
                 if (item.is_folder) {
                   onDoubleClick(item.id);
@@ -77,19 +103,28 @@ export function ItemTable({
                   {item.name}
                 </div>
               </TableCell>
-              <TableCell>
-                {userId === item.owner.id
-                  ? "me"
-                  : `${item.owner.first_name} ${item.owner.middle_name ?? ""} ${item.owner.last_name}`}
-              </TableCell>
+              {!openRail && (
+                <TableCell>
+                  {userId === item.owner.id
+                    ? "me"
+                    : `${item.owner.first_name} ${item.owner.middle_name ?? ""} ${item.owner.last_name}`}
+                </TableCell>
+              )}
               <TableCell>{item.updated_at}</TableCell>
-              <TableCell>
-                {item?.current_version?.file_size ? (
-                  formatFileSize(item.current_version.file_size)
-                ) : (
-                  <>&mdash;</>
-                )}
-              </TableCell>
+              {!openRail && (
+                <TableCell>
+                  {item?.current_version?.file_size ? (
+                    formatFileSize(item.current_version.file_size)
+                  ) : (
+                    <>&mdash;</>
+                  )}
+                </TableCell>
+              )}
+              {!openRail && (
+                <TableCell>
+                  {item.classification ? item.classification : <>&mdash;</>}
+                </TableCell>
+              )}
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger
@@ -103,7 +138,7 @@ export function ItemTable({
                   >
                     <EllipsisVertical className="size-4" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent className="w-72">
                     <DropdownMenuItem
                       onClick={() => {
                         setSelectedItem(item);
@@ -119,7 +154,7 @@ export function ItemTable({
                         Organize
                       </DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
+                        <DropdownMenuSubContent className="w-72">
                           <DropdownMenuItem
                             onClick={() => {
                               setSelectedItem(item);
@@ -128,6 +163,37 @@ export function ItemTable({
                           >
                             <FolderInput />
                             Move
+                          </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>
+                        <CircleAlert />
+                        {item.is_folder ? "Folder" : "File"} information
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent className="w-72">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              if (item.is_folder) {
+                                setSelectedFolderId(item.id);
+                                setSelectedFolderName(item.name);
+                                setSelectedDocumentId(null);
+                                setSelectedDocumentFileName(null);
+                              } else {
+                                setSelectedDocumentId(item.id);
+                                setSelectedDocumentFileName(item.name);
+                                setSelectedFolderId(null);
+                                setSelectedFolderName(null);
+                              }
+
+                              setRailTab("details");
+                              setOpenRail(true);
+                            }}
+                          >
+                            <FolderInput />
+                            Details
                           </DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>

@@ -16,6 +16,7 @@ export function LogoutButton() {
       localStorage.removeItem("folder-storage");
       localStorage.removeItem("organization-unit-storage");
       localStorage.removeItem("user-storage");
+      localStorage.removeItem("rail-storage");
       router.replace("/");
     } catch (error: unknown) {
       if (error instanceof Error) {

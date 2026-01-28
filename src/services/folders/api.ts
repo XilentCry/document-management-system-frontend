@@ -84,3 +84,28 @@ export const getFolderSubfolders = async (
 
   return data;
 };
+
+export const getFolderDetails = async (
+  id: number | null,
+): Promise<
+  Pick<TItem, "id" | "name" | "owner" | "created_at" | "updated_at">
+> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/folders/${id}/details`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Application: "application/json",
+      },
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data.folderDetails;
+};

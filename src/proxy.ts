@@ -14,8 +14,12 @@ export async function proxy(request: NextRequest) {
           Cookie: request.headers.get("cookie") ?? "",
           Origin: process.env.FRONTEND_URL!,
         },
-      }
+      },
     );
+
+    if (!response.ok && !isAuthPage) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
 
     if (response.ok) {
       const data = await response.json();
@@ -25,12 +29,12 @@ export async function proxy(request: NextRequest) {
           return NextResponse.redirect(
             new URL(
               `/drive/department-drive/${data.currentOrganizationUnitId}`,
-              request.url
-            )
+              request.url,
+            ),
           );
         } else if (data.user.role === "Admin") {
           return NextResponse.redirect(
-            new URL("/admin/user-management", request.url)
+            new URL("/admin/user-management", request.url),
           );
         }
       }
@@ -39,18 +43,14 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(
           new URL(
             `/drive/department-drive/${data.currentOrganizationUnitId}`,
-            request.url
-          )
+            request.url,
+          ),
         );
       } else if (data.user.role === "Admin" && pathname.startsWith("/drive")) {
         return NextResponse.redirect(
-          new URL("/admin/user-management", request.url)
+          new URL("/admin/user-management", request.url),
         );
       }
-    }
-
-    if (!response.ok && !isAuthPage) {
-      return NextResponse.redirect(new URL("/", request.url));
     }
 
     return NextResponse.next();
