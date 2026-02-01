@@ -28,7 +28,7 @@ import {
   moveItemFormSchema,
   TMoveItemFormSchema,
 } from "@/schemas/items/move-item-form-schema";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMoveItem } from "@/services/items/mutations";
 
@@ -50,7 +50,7 @@ export function MoveItemDialog({
     (state) => state.currentOrganizationUnitId,
   );
 
-  const isSelectedSelfParent = item.parent_item_id === currentParentFolderId;
+  const isSelectedSelfParent = item.parent_item_id === selectedFolderId;
 
   const {
     isLoading: isOrganizationUnitFoldersLoading,
@@ -94,11 +94,17 @@ export function MoveItemDialog({
     formState: { isSubmitting, isSubmitSuccessful },
     reset,
     setValue,
+    control,
   } = useForm<TMoveItemFormSchema>({
     resolver: zodResolver(moveItemFormSchema),
     defaultValues: {
       parent_folder_id: selectedFolderId,
     },
+  });
+
+  const parentFolderId = useWatch({
+    control,
+    name: "parent_folder_id",
   });
 
   useEffect(() => {
@@ -244,7 +250,11 @@ export function MoveItemDialog({
             </DialogClose>
             <Button
               type="submit"
-              disabled={isSelectedSelfParent || isSubmitting}
+              disabled={
+                (!parentFolderId && !!currentParentFolderId) ||
+                isSelectedSelfParent ||
+                isSubmitting
+              }
             >
               {isSubmitting ? (
                 <>
