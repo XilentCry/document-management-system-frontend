@@ -1,6 +1,30 @@
 import { getCookie } from "@/lib/get-cookie";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 import { TRenameItemFormSchema } from "@/schemas/items/rename-item-form-schema";
+import { TActivity } from "@/types/activity";
+
+export async function getItemActivities(
+  id: number | null,
+): Promise<TActivity[]> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/items/${id}/activities`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data.itemActivities;
+}
 
 export async function renameItem(
   id: number,

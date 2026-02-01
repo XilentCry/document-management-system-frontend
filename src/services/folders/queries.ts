@@ -20,11 +20,14 @@ export const useGetFolderSubfolders = (id: number | null) => {
   return { isLoading, isError, error, data };
 };
 
-export const useGetFolderDetails = (id: number | null) => {
+export const useGetFolderDetails = (
+  id: number | null,
+  isRailTabDetails: boolean,
+) => {
   const { isLoading, isError, error, data } = useQuery({
     queryKey: [`folder-${id}-details`],
     queryFn: () => getFolderDetails(id),
-    enabled: !!id,
+    enabled: !!id && isRailTabDetails,
   });
 
   return { isLoading, isError, error, data };

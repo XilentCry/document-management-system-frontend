@@ -18,7 +18,7 @@ export async function proxy(request: NextRequest) {
     );
 
     if (!response.ok && !isAuthPage) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.redirect(new URL("/", request.url));
     }
 
     if (response.ok) {
