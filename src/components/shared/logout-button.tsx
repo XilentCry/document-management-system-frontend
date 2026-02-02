@@ -11,8 +11,9 @@ export function LogoutButton() {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      const data = await logout();
 
+      toast.success(data.message);
       localStorage.removeItem("folder-storage");
       localStorage.removeItem("organization-unit-storage");
       localStorage.removeItem("user-storage");

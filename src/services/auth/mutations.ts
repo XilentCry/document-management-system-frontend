@@ -9,7 +9,7 @@ import { useUserStore } from "@/stores/user-store";
 
 export const useLogin = () => {
   const setCurrentOrganizationUnitId = useOrganizationUnitStore(
-    (state) => state.setCurrentOrganizationUnitId
+    (state) => state.setCurrentOrganizationUnitId,
   );
   const setUserId = useUserStore((state) => state.setUserId);
 
@@ -18,12 +18,13 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: login,
     onSuccess: (data) => {
+      toast.success(data.message);
       setUserId(data.user.id);
 
       if (data.user.role === "User" && data.currentOrganizationUnitId) {
         setCurrentOrganizationUnitId(data.currentOrganizationUnitId);
         router.replace(
-          `/drive/department-drive/${data.currentOrganizationUnitId}`
+          `/drive/department-drive/${data.currentOrganizationUnitId}`,
         );
       } else if (data.user.role === "Admin") {
         router.replace("/admin/user-management");
@@ -45,7 +46,7 @@ export const useLogin = () => {
 };
 
 export const useRegister = (
-  setFormErrors: Dispatch<SetStateAction<TFormError | null>>
+  setFormErrors: Dispatch<SetStateAction<TFormError | null>>,
 ) => {
   const router = useRouter();
 

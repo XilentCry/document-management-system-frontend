@@ -4,6 +4,7 @@ import { TRegisterFormSchema } from "@/schemas/auth/register-form-schema";
 import { TCurrentUser } from "@/types/current-user";
 
 export type TLoginResponse = {
+  message: string;
   user: TCurrentUser;
   currentOrganizationUnitId?: number;
 };
@@ -15,7 +16,7 @@ export async function getCsrfCookie() {
 }
 
 export async function login(
-  loginData: TLoginFormSchema
+  loginData: TLoginFormSchema,
 ): Promise<TLoginResponse> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
@@ -28,7 +29,7 @@ export async function login(
       },
       credentials: "include",
       body: JSON.stringify(loginData),
-    }
+    },
   );
 
   const data = await response.json();
@@ -45,7 +46,7 @@ export async function login(
 }
 
 export async function register(
-  registerData: TRegisterFormSchema
+  registerData: TRegisterFormSchema,
 ): Promise<{ message: string }> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
@@ -58,7 +59,7 @@ export async function register(
       },
       credentials: "include",
       body: JSON.stringify(registerData),
-    }
+    },
   );
 
   const data = await response.json();
@@ -74,7 +75,7 @@ export async function register(
   return { message: data.message };
 }
 
-export async function logout() {
+export async function logout(): Promise<{ message: string }> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,
     {
@@ -84,12 +85,16 @@ export async function logout() {
         Accept: "application/json",
       },
       credentials: "include",
-    }
+    },
   );
 
   if (!response.ok) {
     throw new Error("Failed to logout.");
   }
+
+  const data = response.json();
+
+  return data;
 }
 
 export async function resendVerificationEmail(): Promise<{ message: string }> {
@@ -103,7 +108,7 @@ export async function resendVerificationEmail(): Promise<{ message: string }> {
         Accept: "application/json",
       },
       credentials: "include",
-    }
+    },
   );
 
   const data = await response.json();
