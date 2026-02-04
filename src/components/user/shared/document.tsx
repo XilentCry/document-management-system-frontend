@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/item";
 import { TItem } from "@/types/item";
 import {
+  Activity,
   CircleAlert,
   EllipsisVertical,
   FileText,
@@ -108,12 +109,25 @@ export function Document({ item }: { item: TItem }) {
                         setSelectedDocumentFileName(item.name);
                         setSelectedFolderId(null);
                         setSelectedFolderName(null);
-                        setOpenRail(true);
                         setRailTab("details");
+                        setOpenRail(true);
                       }}
                     >
                       <FolderInput />
                       Details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSelectedDocumentId(item.id);
+                        setSelectedDocumentFileName(item.name);
+                        setSelectedFolderId(null);
+                        setSelectedFolderName(null);
+                        setRailTab("activity");
+                        setOpenRail(true);
+                      }}
+                    >
+                      <Activity />
+                      Activity
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
@@ -121,7 +135,9 @@ export function Document({ item }: { item: TItem }) {
             </DropdownMenuContent>
           </DropdownMenu>
         </ItemActions>
-        <ItemFooter>Image</ItemFooter>
+        <ItemFooter className="justify-center bg-accent p-4 h-40 rounded-md">
+          <FileText className="size-16" strokeWidth={1} />
+        </ItemFooter>
       </Item>
 
       {openRenameItemDialog && (

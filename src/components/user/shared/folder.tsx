@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/item";
 import { TItem } from "@/types/item";
 import {
+  Activity,
   CircleAlert,
   EllipsisVertical,
   FolderIcon,
@@ -120,6 +121,19 @@ export function Folder({
                     >
                       <FolderInput />
                       Details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSelectedFolderId(item.id);
+                        setSelectedFolderName(item.name);
+                        setSelectedDocumentId(null);
+                        setSelectedDocumentFileName(null);
+                        setRailTab("activity");
+                        setOpenRail(true);
+                      }}
+                    >
+                      <Activity />
+                      Activity
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>

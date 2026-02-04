@@ -58,7 +58,7 @@ export function LoginForm() {
           <InputGroup>
             <InputGroupInput
               id="email"
-              placeholder="Enter your email"
+              placeholder="Enter email"
               {...register("email")}
             />
             <InputGroupAddon align="inline-end">
@@ -73,7 +73,7 @@ export function LoginForm() {
           <Input
             id="password"
             type="password"
-            placeholder="Enter your password"
+            placeholder="Enter password"
             {...register("password")}
           />
           {errors.password && (

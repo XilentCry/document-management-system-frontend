@@ -1,6 +1,6 @@
 "use client";
 
-import { EmailVerificationStatus } from "@/components/user/auth/email-status";
+import { EmailVerificationStatus } from "@/components/user/auth/email-verification-status";
 import { useResendVerificationEmail } from "@/services/auth/mutations";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -17,7 +17,7 @@ export function VerifyEmail() {
   };
 
   return (
-    <div className="h-svh flex flex-col items-center justify-center py-24 sm:px-4 max-w-sm mx-auto">
+    <div className="h-svh flex flex-col items-center justify-center py-24 px-4 sm:px-0 max-w-sm mx-auto">
       <div className="flex flex-col items-center gap-2 text-center">
         <Image src="/logo.png" alt="NORSU" width={80} height={80} />
         <span className="text-2xl font-bold">

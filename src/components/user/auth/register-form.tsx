@@ -77,7 +77,7 @@ export function RegisterForm() {
           <Field>
             <FieldLabel>First Name</FieldLabel>
             <Input
-              placeholder="Enter your first name"
+              placeholder="Enter first name"
               {...methods.register("first_name")}
             />
             {errors.first_name && (
@@ -90,7 +90,7 @@ export function RegisterForm() {
           <Field>
             <FieldLabel>Middle Name</FieldLabel>
             <Input
-              placeholder="Enter your middle name"
+              placeholder="Enter middle name"
               {...methods.register("middle_name")}
             />
             {errors.middle_name && (
@@ -103,7 +103,7 @@ export function RegisterForm() {
           <Field>
             <FieldLabel>Last Name</FieldLabel>
             <Input
-              placeholder="Enter your last name"
+              placeholder="Enter last name"
               {...methods.register("last_name")}
             />
             {errors.last_name && (
@@ -129,7 +129,7 @@ export function RegisterForm() {
             <FieldLabel>Email</FieldLabel>
             <InputGroup>
               <InputGroupInput
-                placeholder="Enter your email"
+                placeholder="Enter email"
                 {...methods.register("email")}
               />
               <InputGroupAddon align="inline-end">
@@ -143,7 +143,7 @@ export function RegisterForm() {
             <FieldLabel>Password</FieldLabel>
             <Input
               type="password"
-              placeholder="Enter your password"
+              placeholder="Enter password"
               {...methods.register("password")}
             />
             {errors.password && (

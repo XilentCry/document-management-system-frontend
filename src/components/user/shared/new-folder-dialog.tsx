@@ -43,7 +43,7 @@ export default function NewFolderDialog({
   } = useForm<TNewFolderFormSchema>({
     resolver: zodResolver(newFolderFormSchema),
     defaultValues: {
-      name: "Untitled folder",
+      name: "",
       folder_id: currentParentFolderId,
       organization_unit_id: currentOrganizationUnitId!,
     },
@@ -72,7 +72,11 @@ export default function NewFolderDialog({
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Name</FieldLabel>
-              <Input id="name" {...register("name")} />
+              <Input
+                id="name"
+                placeholder="Enter folder name"
+                {...register("name")}
+              />
               {errors.name && <FieldError>{errors.name.message}</FieldError>}
             </Field>
           </FieldGroup>

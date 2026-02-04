@@ -5,15 +5,18 @@ import { useRouter } from "next/navigation";
 import { logout } from "@/services/auth/api";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function LogoutButton() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleLogout = async () => {
     try {
       const data = await logout();
 
       toast.success(data.message);
+      queryClient.clear();
       localStorage.removeItem("folder-storage");
       localStorage.removeItem("organization-unit-storage");
       localStorage.removeItem("user-storage");

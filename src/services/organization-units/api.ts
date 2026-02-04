@@ -45,7 +45,7 @@ export const getOrganizationUnitItems = async (
     {
       headers: {
         "Content-Type": "application/json",
-        Application: "application/json",
+        Accept: "application/json",
       },
       credentials: "include",
     },
