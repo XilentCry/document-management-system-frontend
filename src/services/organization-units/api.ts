@@ -44,7 +44,6 @@ export const getOrganizationUnitItems = async (
     `${process.env.NEXT_PUBLIC_API_URL}/api/organization-units/${id}/items`,
     {
       headers: {
-        "Content-Type": "application/json",
         Accept: "application/json",
       },
       credentials: "include",

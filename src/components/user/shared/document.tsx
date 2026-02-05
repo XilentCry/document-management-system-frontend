@@ -32,7 +32,13 @@ import { RenameItemDialog } from "./rename-item-dialog";
 import { MoveItemDialog } from "./move-item-dialog";
 import { useRailStore } from "@/stores/rail-store";
 
-export function Document({ item }: { item: TItem }) {
+export function Document({
+  item,
+  onDoubleClick,
+}: {
+  item: TItem;
+  onDoubleClick: (documentId: number) => Promise<void>;
+}) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
 
@@ -55,6 +61,7 @@ export function Document({ item }: { item: TItem }) {
           setSelectedFolderId(null);
           setSelectedFolderName(null);
         }}
+        onDoubleClick={() => onDoubleClick(item.id)}
       >
         <ItemMedia>
           <FileText className="size-4" />
@@ -99,7 +106,7 @@ export function Document({ item }: { item: TItem }) {
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <CircleAlert />
-                  Document information
+                  File information
                 </DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent className="w-72">

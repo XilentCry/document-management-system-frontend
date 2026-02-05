@@ -37,10 +37,12 @@ import { useRailStore } from "@/stores/rail-store";
 
 export function ItemTable({
   data,
-  onDoubleClick,
+  onFolderDoubleClick,
+  onDocumentDoubleClick,
 }: {
   data: TPaginate<TItem>["data"];
-  onDoubleClick: (id: number) => void;
+  onFolderDoubleClick: (folderId: number) => void;
+  onDocumentDoubleClick: (documentId: number) => Promise<void>;
 }) {
   const userId = useUserStore((state) => state.userId);
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
@@ -89,7 +91,9 @@ export function ItemTable({
               }}
               onDoubleClick={() => {
                 if (item.is_folder) {
-                  onDoubleClick(item.id);
+                  onFolderDoubleClick(item.id);
+                } else {
+                  onDocumentDoubleClick(item.id);
                 }
               }}
             >

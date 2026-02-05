@@ -62,6 +62,17 @@ export function ItemActivity({ itemActivity }: { itemActivity: TActivity }) {
             </span>
           </>
         );
+      case "viewed":
+        return (
+          <>
+            {actor} viewed{" "}
+            <span className="text-primary">{itemActivity.properties.name}</span>{" "}
+            in{" "}
+            <span className="text-primary">
+              {itemActivity.properties.parent}
+            </span>
+          </>
+        );
     }
   };
 

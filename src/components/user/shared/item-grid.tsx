@@ -1,9 +1,11 @@
+import { useRailStore } from "@/stores/rail-store";
 import type { TItem } from "@/types/item";
 import { TPaginate } from "@/types/paginate";
 import { useRouter } from "next/navigation";
-import { Folder } from "./folder";
 import { Document } from "./document";
-import { useRailStore } from "@/stores/rail-store";
+import { Folder } from "./folder";
+import { viewDocument } from "@/services/documents/api";
+import { toast } from "sonner";
 
 export function ItemGrid({
   data,
@@ -18,8 +20,26 @@ export function ItemGrid({
 
   const { openRail } = useRailStore();
 
-  const handleDoubleClick = (id: number) => {
-    router.push(`/drive/folders/${id}`);
+  const handleFolderDoubleClick = (folderId: number) => {
+    router.push(`/drive/folders/${folderId}`);
+  };
+
+  const handleDocumentDoubleClick = async (documentId: number) => {
+    try {
+      const url = await viewDocument(documentId);
+      const newWindow = window.open(url);
+
+      if (newWindow) {
+        newWindow.addEventListener("load", () => URL.revokeObjectURL(url));
+      } else {
+        URL.revokeObjectURL(url);
+        toast.error("Please allow popups for this site.");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
   };
 
   const folders = data.filter((item) => item.is_folder);
@@ -32,13 +52,17 @@ export function ItemGrid({
           <Folder
             key={folder.id}
             item={folder}
-            onDoubleClick={() => handleDoubleClick(folder.id)}
+            onDoubleClick={handleFolderDoubleClick}
           />
         ))}
       </div>
       <div className={`grid ${openRail ? "grid-cols-2" : "grid-cols-4"} gap-4`}>
         {documents.map((document) => (
-          <Document key={document.id} item={document} />
+          <Document
+            key={document.id}
+            item={document}
+            onDoubleClick={handleDocumentDoubleClick}
+          />
         ))}
       </div>
     </div>

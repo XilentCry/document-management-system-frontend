@@ -74,7 +74,7 @@ export function Rail() {
   } = useGetItemActivities(activitySubjectId, railTab === "activity");
 
   return openRail ? (
-    <div className="border-l w-80 sticky top-14 flex flex-col">
+    <div className="border-l w-80 sticky top-14 flex flex-col h-[calc(100svh-56px)]">
       <Item>
         <ItemMedia>
           {isDocumentSelected ? (

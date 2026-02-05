@@ -37,8 +37,14 @@ export type TMovedActivity = TBaseActivity & {
   };
 };
 
+export type TViewedActivity = TBaseActivity & {
+  action: "viewed";
+  properties: TNamedInParentProps;
+};
+
 export type TActivity =
   | TUploadedActivity
   | TCreatedActivity
   | TRenamedActivity
-  | TMovedActivity;
+  | TMovedActivity
+  | TViewedActivity;

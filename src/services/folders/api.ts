@@ -47,7 +47,6 @@ export const getFolderItems = async (
     `${process.env.NEXT_PUBLIC_API_URL}/api/folders/${id}/items`,
     {
       headers: {
-        "Content-Type": "application/json",
         Accept: "application/json",
       },
       credentials: "include",

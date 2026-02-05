@@ -2,6 +2,28 @@ import { getCookie } from "@/lib/get-cookie";
 import { TSingleFile } from "@/schemas/documents/upload-file-form-schema";
 import { TItem } from "@/types/item";
 
+export const viewDocument = async (id: number): Promise<string> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/documents/${id}/view`,
+    {
+      headers: {
+        Accept: "application/pdf",
+      },
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+
+    throw new Error(error.message);
+  }
+
+  const blob = await response.blob();
+
+  return URL.createObjectURL(blob);
+};
+
 export async function uploadDocument(documentData: TSingleFile) {
   const formData = new FormData();
   formData.append(
