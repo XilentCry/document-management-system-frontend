@@ -22,6 +22,7 @@ import { useUserStore } from "@/stores/user-store";
 import { TItem } from "@/types/item";
 import { TPaginate } from "@/types/paginate";
 import {
+  Activity,
   CircleAlert,
   EllipsisVertical,
   FileText,
@@ -198,6 +199,27 @@ export function ItemTable({
                           >
                             <FolderInput />
                             Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              if (item.is_folder) {
+                                setSelectedFolderId(item.id);
+                                setSelectedFolderName(item.name);
+                                setSelectedDocumentId(null);
+                                setSelectedDocumentFileName(null);
+                              } else {
+                                setSelectedDocumentId(item.id);
+                                setSelectedDocumentFileName(item.name);
+                                setSelectedFolderId(null);
+                                setSelectedFolderName(null);
+                              }
+
+                              setRailTab("activity");
+                              setOpenRail(true);
+                            }}
+                          >
+                            <Activity />
+                            Activity
                           </DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>

@@ -142,7 +142,7 @@ export function Document({
             </DropdownMenuContent>
           </DropdownMenu>
         </ItemActions>
-        <ItemFooter className="justify-center bg-accent p-4 h-40 rounded-md">
+        <ItemFooter className="justify-center bg-background p-4 h-40 rounded-md">
           <FileText className="size-16" strokeWidth={1} />
         </ItemFooter>
       </Item>
