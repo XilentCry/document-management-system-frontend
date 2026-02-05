@@ -7,7 +7,7 @@ export async function proxy(request: NextRequest) {
 
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/user`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user`,
       {
         headers: {
           Accept: "application/json",

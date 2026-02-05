@@ -6,10 +6,12 @@ import { logout } from "@/services/auth/api";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { useRailStore } from "@/stores/rail-store";
 
 export function LogoutButton() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const resetRail = useRailStore((s) => s.reset);
 
   const handleLogout = async () => {
     try {
@@ -17,6 +19,7 @@ export function LogoutButton() {
 
       toast.success(data.message);
       queryClient.clear();
+      resetRail();
       localStorage.removeItem("folder-storage");
       localStorage.removeItem("organization-unit-storage");
       localStorage.removeItem("user-storage");

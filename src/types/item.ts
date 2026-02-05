@@ -12,6 +12,7 @@ export type TItem = {
     id: number;
     item_id: number;
     file_size: number;
+    file_path: string;
     version_number: number;
   } | null;
   created_at?: string;

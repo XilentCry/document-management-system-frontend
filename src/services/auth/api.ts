@@ -10,7 +10,7 @@ export type TLoginResponse = {
 };
 
 export async function getCsrfCookie() {
-  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`, {
+  await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sanctum/csrf-cookie`, {
     credentials: "include",
   });
 }
@@ -19,7 +19,7 @@ export async function login(
   loginData: TLoginFormSchema,
 ): Promise<TLoginResponse> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
     {
       method: "POST",
       headers: {
@@ -49,7 +49,7 @@ export async function register(
   registerData: TRegisterFormSchema,
 ): Promise<{ message: string }> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
     {
       method: "POST",
       headers: {
@@ -77,7 +77,7 @@ export async function register(
 
 export async function logout(): Promise<{ message: string }> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`,
     {
       method: "POST",
       headers: {
@@ -99,7 +99,7 @@ export async function logout(): Promise<{ message: string }> {
 
 export async function resendVerificationEmail(): Promise<{ message: string }> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/email/verification-notification`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/email/verification-notification`,
     {
       method: "POST",
       headers: {

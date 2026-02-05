@@ -14,7 +14,7 @@ type TUpdateUserResponse =
 
 export async function getAllUsers(page: number): Promise<TPaginate<TUser>> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/users?page=${page}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users?page=${page}`,
     {
       headers: {
         Accept: "application/json",
@@ -37,7 +37,7 @@ export async function updateStatus(
   statusId: number,
 ): Promise<{ message: string }> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}/status`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId}/status`,
     {
       method: "PATCH",
       headers: {
@@ -61,7 +61,7 @@ export async function updateStatus(
 
 export async function getUser(id: string): Promise<TGetUserResponse> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${id}`,
     {
       headers: {
         Accept: "application/json",
@@ -84,7 +84,7 @@ export async function updateUser(
   userId: number,
 ): Promise<TUpdateUserResponse> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId}`,
     {
       method: "PATCH",
       headers: {

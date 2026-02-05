@@ -1,21 +1,4 @@
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemFooter,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item";
-import { TItem } from "@/types/item";
-import {
-  Activity,
-  CircleAlert,
-  EllipsisVertical,
-  FileText,
-  FolderInput,
-  FolderOpen,
-  PencilLine,
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,11 +9,32 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { RenameItemDialog } from "./rename-item-dialog";
-import { MoveItemDialog } from "./move-item-dialog";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemFooter,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+import { useCopyLink } from "@/hooks/use-copy-link";
 import { useRailStore } from "@/stores/rail-store";
+import { TItem } from "@/types/item";
+import {
+  Activity,
+  CircleAlert,
+  EllipsisVertical,
+  FileText,
+  FolderInput,
+  FolderOpen,
+  Link2,
+  PencilLine,
+  UserRoundPlus,
+} from "lucide-react";
+import { useState } from "react";
+import { MoveItemDialog } from "./move-item-dialog";
+import { RenameItemDialog } from "./rename-item-dialog";
+import { toast } from "sonner";
 
 export function Document({
   item,
@@ -50,6 +54,8 @@ export function Document({
     setRailTab,
     setOpenRail,
   } = useRailStore();
+
+  const { copyLink } = useCopyLink();
 
   return (
     <>
@@ -87,6 +93,26 @@ export function Document({
                 <PencilLine />
                 Rename
               </DropdownMenuItem>
+              {item.classification === "Protected" ? (
+                <DropdownMenuItem>
+                  <UserRoundPlus />
+                  Share
+                </DropdownMenuItem>
+              ) : item.classification === "Public" ? (
+                <DropdownMenuItem
+                  onClick={() => {
+                    if (!item?.current_version?.file_path) {
+                      toast.error("File path is unavailable.");
+                      return;
+                    }
+
+                    copyLink(item.current_version.file_path);
+                  }}
+                >
+                  <Link2 />
+                  Copy link
+                </DropdownMenuItem>
+              ) : null}
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <FolderOpen />

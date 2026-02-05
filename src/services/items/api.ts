@@ -7,7 +7,7 @@ export async function getItemActivities(
   id: number | null,
 ): Promise<TActivity[]> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/items/${id}/activities`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/items/${id}/activities`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -31,7 +31,7 @@ export async function renameItem(
   renameData: TRenameItemFormSchema,
 ): Promise<{ message: string }> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/items/${id}/rename`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/items/${id}/rename`,
     {
       method: "PATCH",
       headers: {
@@ -58,7 +58,7 @@ export async function moveItem(
   moveData: TMoveItemFormSchema,
 ): Promise<{ message: string }> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/items/${id}/move`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/items/${id}/move`,
     {
       method: "PATCH",
       headers: {

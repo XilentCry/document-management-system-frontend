@@ -18,7 +18,7 @@ export async function createFolder(
   folderData: TNewFolderFormSchema,
 ): Promise<{ message: string }> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/folders`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/folders`,
     {
       method: "POST",
       headers: {
@@ -44,7 +44,7 @@ export const getFolderItems = async (
   id: string,
 ): Promise<TGetFolderItemsResponse> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/folders/${id}/items`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/folders/${id}/items`,
     {
       headers: {
         Accept: "application/json",
@@ -66,7 +66,7 @@ export const getFolderSubfolders = async (
   id: number | null,
 ): Promise<TGetFolderSuboldersResponse> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/folders/${id}/subfolders`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/folders/${id}/subfolders`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export const getFolderDetails = async (
   Pick<TItem, "id" | "name" | "owner" | "created_at" | "updated_at">
 > => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/folders/${id}/details`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/folders/${id}/details`,
     {
       headers: {
         "Content-Type": "application/json",

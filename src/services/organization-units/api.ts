@@ -20,7 +20,7 @@ export async function getAllOrganizationUnits(): Promise<
   >[]
 > {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/organization-units`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units`,
     {
       headers: {
         Accept: "application/json",
@@ -41,7 +41,7 @@ export const getOrganizationUnitItems = async (
   id: string,
 ): Promise<TGetOrganizationUnitItemsResponse> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/organization-units/${id}/items`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/${id}/items`,
     {
       headers: {
         Accept: "application/json",
@@ -63,7 +63,7 @@ export const getOrganizationUnitFolders = async (
   id: number | null,
 ): Promise<TGetOrganizationUnitFoldersResponse> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/organization-units/${id}/folders`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/${id}/folders`,
     {
       headers: {
         "Content-Type": "application/json",

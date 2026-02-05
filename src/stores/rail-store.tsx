@@ -16,17 +16,22 @@ export interface RailStore {
   setSelectedDocumentFileName: (fileName: string | null) => void;
   setSelectedFolderId: (folderId: number | null) => void;
   setSelectedFolderName: (folderName: string | null) => void;
+  reset: () => void;
 }
+
+const initialState = {
+  openRail: false,
+  railTab: "details",
+  selectedDocumentId: null,
+  selectedDocumentFileName: null,
+  selectedFolderId: null,
+  selectedFolderName: null,
+};
 
 const railStore = create<RailStore>()(
   persist(
     immer((set) => ({
-      openRail: false,
-      railTab: "details",
-      selectedDocumentId: null,
-      selectedDocumentFileName: null,
-      selectedFolderId: null,
-      selectedFolderName: null,
+      ...initialState,
       setOpenRail: (openRail: boolean) => set({ openRail }),
       setRailTab: (tab: "details" | "activity") => set({ railTab: tab }),
       setSelectedDocumentId: (documentId: number | null) =>
@@ -37,6 +42,7 @@ const railStore = create<RailStore>()(
         set({ selectedFolderId: folderId }),
       setSelectedFolderName: (folderName: string | null) =>
         set({ selectedFolderName: folderName }),
+      reset: () => set(initialState),
     })),
     {
       name: "rail-storage",

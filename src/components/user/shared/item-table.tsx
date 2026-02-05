@@ -29,12 +29,16 @@ import {
   Folder,
   FolderInput,
   FolderOpen,
+  Link2,
   PencilLine,
+  UserRoundPlus,
 } from "lucide-react";
 import { useState } from "react";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { MoveItemDialog } from "./move-item-dialog";
 import { useRailStore } from "@/stores/rail-store";
+import { toast } from "sonner";
+import { useCopyLink } from "@/hooks/use-copy-link";
 
 export function ItemTable({
   data,
@@ -59,6 +63,8 @@ export function ItemTable({
     openRail,
     setOpenRail,
   } = useRailStore();
+
+  const { copyLink } = useCopyLink();
 
   return (
     <>
@@ -153,6 +159,32 @@ export function ItemTable({
                       <PencilLine />
                       Rename
                     </DropdownMenuItem>
+                    {!item.is_folder && (
+                      <>
+                        {item.classification === "Protected" ? (
+                          <DropdownMenuItem>
+                            <UserRoundPlus />
+                            Share
+                          </DropdownMenuItem>
+                        ) : (
+                          item.classification === "Public" && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                if (!item?.current_version?.file_path) {
+                                  toast.error("File path is unavailable.");
+                                  return;
+                                }
+
+                                copyLink(item.current_version.file_path);
+                              }}
+                            >
+                              <Link2 />
+                              Copy link
+                            </DropdownMenuItem>
+                          )
+                        )}
+                      </>
+                    )}
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
                         <FolderOpen />

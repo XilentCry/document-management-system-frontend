@@ -4,7 +4,7 @@ import { TItem } from "@/types/item";
 
 export const viewDocument = async (id: number): Promise<string> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/documents/${id}/view`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/view`,
     {
       headers: {
         Accept: "application/pdf",
@@ -42,7 +42,7 @@ export async function uploadDocument(documentData: TSingleFile) {
   formData.append("file", documentData.file);
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/documents`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents`,
     {
       method: "POST",
       headers: {
@@ -76,7 +76,7 @@ export const getDocumentDetails = async (
   }
 > => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/documents/${id}/details`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/details`,
     {
       headers: {
         "Content-Type": "application/json",

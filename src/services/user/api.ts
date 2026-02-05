@@ -7,13 +7,13 @@ export async function getUserOrganizationUnits(): Promise<
   >[]
 > {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/user/organization-units`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/organization-units`,
     {
       headers: {
         Accept: "application/json",
       },
       credentials: "include",
-    }
+    },
   );
 
   const data = await response.json();
