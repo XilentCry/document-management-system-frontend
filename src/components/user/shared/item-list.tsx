@@ -1,19 +1,11 @@
-import { TItem } from "@/types/item";
-import { TPaginate } from "@/types/paginate";
-import { useRouter } from "next/navigation";
-import { ItemTable } from "./item-table";
 import { viewDocument } from "@/services/documents/api";
+import { TCursorPaginate } from "@/types/cursor-paginate";
+import { TItem } from "@/types/item";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { ItemTable } from "./item-table";
 
-export function ItemList({
-  data,
-  links,
-  meta,
-}: {
-  data: TPaginate<TItem>["data"];
-  links: TPaginate<TItem>["links"];
-  meta: TPaginate<TItem>["meta"];
-}) {
+export function ItemList({ data }: { data: TCursorPaginate<TItem>["data"] }) {
   const router = useRouter();
 
   const handleFolderDoubleClick = (folderId: number) => {

@@ -88,7 +88,7 @@ export function UserSidebar() {
                     onClick={() => setOpenUserOrganizationUnitsDialog(true)}
                   >
                     <Folder />
-                    <span>Department Drive</span>
+                    Department Drive
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>

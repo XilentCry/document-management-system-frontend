@@ -99,11 +99,11 @@ export function Rail() {
           </Button>
         </ItemActions>
       </Item>
-      <div className="p-4 pt-0 flex-1 flex flex-col">
+      <div className="min-h-0 p-4 pt-0 flex-1 flex flex-col">
         <Tabs
           value={railTab}
           onValueChange={(value) => setRailTab(value as "details" | "activity")}
-          className="gap-4 flex-1"
+          className="min-h-0 gap-4 flex-1 flex flex-col"
         >
           <TabsList variant="line" className="w-full">
             <TabsTrigger value="details" className="w-1/2">
@@ -126,7 +126,10 @@ export function Rail() {
               <ItemDetails item={folder} />
             ) : null}
           </TabsContent>
-          <TabsContent value="activity" className="flex flex-col gap-4">
+          <TabsContent
+            value="activity"
+            className="min-h-0 flex-1 flex flex-col"
+          >
             {isItemActivityLoading ? (
               <ItemActivitySkeleton />
             ) : isItemActivityError && itemActivityError ? (

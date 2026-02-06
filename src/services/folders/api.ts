@@ -1,18 +1,18 @@
 import { getCookie } from "@/lib/get-cookie";
 import { TNewFolderFormSchema } from "@/schemas/folders/new-folder-form-schema";
 import { TBreadcrumb } from "@/types/breadcrumb";
+import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
-import { TPaginate } from "@/types/paginate";
 
 type TGetFolderItemsResponse = {
   currentParentFolderId: number;
   breadcrumb: TBreadcrumb[];
-} & TPaginate<TItem>;
+} & TCursorPaginate<TItem>;
 
 type TGetFolderSuboldersResponse = {
   currentOrganizationUnitId: number;
   breadcrumb: TBreadcrumb;
-} & TPaginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
+} & TCursorPaginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
 
 export async function createFolder(
   folderData: TNewFolderFormSchema,
@@ -40,11 +40,15 @@ export async function createFolder(
   return data;
 }
 
-export const getFolderItems = async (
-  id: string,
-): Promise<TGetFolderItemsResponse> => {
+export const getFolderItems = async ({
+  id,
+  pageParam,
+}: {
+  id: string;
+  pageParam: string | null;
+}): Promise<TGetFolderItemsResponse> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/folders/${id}/items`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/folders/${id}/items${pageParam ? `?cursor=${pageParam}` : ""}`,
     {
       headers: {
         Accept: "application/json",
@@ -64,9 +68,10 @@ export const getFolderItems = async (
 
 export const getFolderSubfolders = async (
   id: number | null,
+  pageParam: string | null = null,
 ): Promise<TGetFolderSuboldersResponse> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/folders/${id}/subfolders`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/folders/${id}/subfolders${pageParam ? `?cursor=${pageParam}` : ""}`,
     {
       headers: {
         "Content-Type": "application/json",

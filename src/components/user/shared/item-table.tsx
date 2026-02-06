@@ -17,10 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useCopyLink } from "@/hooks/use-copy-link";
 import { formatFileSize } from "@/lib/format-file-size";
+import { useRailStore } from "@/stores/rail-store";
 import { useUserStore } from "@/stores/user-store";
+import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
-import { TPaginate } from "@/types/paginate";
 import {
   Activity,
   CircleAlert,
@@ -34,18 +36,16 @@ import {
   UserRoundPlus,
 } from "lucide-react";
 import { useState } from "react";
-import { RenameItemDialog } from "./rename-item-dialog";
-import { MoveItemDialog } from "./move-item-dialog";
-import { useRailStore } from "@/stores/rail-store";
 import { toast } from "sonner";
-import { useCopyLink } from "@/hooks/use-copy-link";
+import { MoveItemDialog } from "./move-item-dialog";
+import { RenameItemDialog } from "./rename-item-dialog";
 
 export function ItemTable({
   data,
   onFolderDoubleClick,
   onDocumentDoubleClick,
 }: {
-  data: TPaginate<TItem>["data"];
+  data: TCursorPaginate<TItem>["data"];
   onFolderDoubleClick: (folderId: number) => void;
   onDocumentDoubleClick: (documentId: number) => Promise<void>;
 }) {

@@ -17,20 +17,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetFolderSubfolders } from "@/services/folders/queries";
-import { useGetOrganizationUnitFolders } from "@/services/organization-units/queries";
-import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
-import { TItem } from "@/types/item";
-import { ChevronRight, Folder } from "lucide-react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { MoveItemBreadCrumb } from "./move-item-breadcrumb";
 import {
   moveItemFormSchema,
   TMoveItemFormSchema,
 } from "@/schemas/items/move-item-form-schema";
-import { SubmitHandler, useForm, useWatch } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useGetFolderSubfolders } from "@/services/folders/queries";
 import { useMoveItem } from "@/services/items/mutations";
+import { useGetOrganizationUnitFolders } from "@/services/organization-units/queries";
+import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
+import { TItem } from "@/types/item";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ChevronRight, Folder } from "lucide-react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { MoveItemBreadCrumb } from "./move-item-breadcrumb";
 
 export function MoveItemDialog({
   item,
@@ -52,11 +52,15 @@ export function MoveItemDialog({
 
   const isSelectedSelfParent = item.parent_item_id === selectedFolderId;
 
+  // Infinite query hooks for folders/subfolders
   const {
     isLoading: isOrganizationUnitFoldersLoading,
     isError: isOrganizationUnitFoldersError,
     error: organizationUnitFoldersError,
-    data: organizationUnitFolders,
+    data: organizationUnitFoldersData,
+    fetchNextPage: fetchNextOrganizationUnitFolders,
+    hasNextPage: hasNextOrganizationUnitFolders,
+    isFetchingNextPage: isFetchingNextOrganizationUnitFolders,
   } = useGetOrganizationUnitFolders(
     currentOrganizationUnitId,
     currentParentFolderId,
@@ -66,28 +70,42 @@ export function MoveItemDialog({
     isLoading: isFolderSubfoldersLoading,
     isError: isFolderSubfoldersError,
     error: folderSubfoldersError,
-    data: folderSubfolders,
+    data: folderSubfoldersData,
+    fetchNextPage: fetchNextFolderSubfolders,
+    hasNextPage: hasNextFolderSubfolders,
+    isFetchingNextPage: isFetchingNextFolderSubfolders,
   } = useGetFolderSubfolders(currentParentFolderId);
 
+  // Determine which set to use
   const isLoading = currentParentFolderId
     ? isFolderSubfoldersLoading
     : isOrganizationUnitFoldersLoading;
-
   const isError = currentParentFolderId
     ? isFolderSubfoldersError
     : isOrganizationUnitFoldersError;
-
   const error = currentParentFolderId
     ? folderSubfoldersError
     : organizationUnitFoldersError;
 
+  // Infinite scroll: flatten pages
   const folders = currentParentFolderId
-    ? folderSubfolders?.data
-    : organizationUnitFolders?.data;
+    ? (folderSubfoldersData?.pages?.flatMap((page) => page.data) ?? [])
+    : (organizationUnitFoldersData?.pages?.flatMap((page) => page.data) ?? []);
 
   const breadcrumb = currentParentFolderId
-    ? folderSubfolders?.breadcrumb
-    : organizationUnitFolders?.breadcrumb;
+    ? folderSubfoldersData?.pages?.[0]?.breadcrumb
+    : organizationUnitFoldersData?.pages?.[0]?.breadcrumb;
+
+  // Infinite scroll: fetch next page handler
+  const fetchNextPage = currentParentFolderId
+    ? fetchNextFolderSubfolders
+    : fetchNextOrganizationUnitFolders;
+  const hasNextPage = currentParentFolderId
+    ? hasNextFolderSubfolders
+    : hasNextOrganizationUnitFolders;
+  const isFetchingNextPage = currentParentFolderId
+    ? isFetchingNextFolderSubfolders
+    : isFetchingNextOrganizationUnitFolders;
 
   const {
     handleSubmit,
@@ -143,10 +161,6 @@ export function MoveItemDialog({
               {isLoading ? (
                 <div className="flex-1 flex items-center justify-center">
                   <Spinner className="text-primary size-9" />
-                </div>
-              ) : isError && error ? (
-                <div className="flex-1 flex items-center justify-center">
-                  <p className="text-destructive text-sm">{error.message}</p>
                 </div>
               ) : (
                 <Table>
@@ -241,6 +255,28 @@ export function MoveItemDialog({
                     })}
                   </TableBody>
                 </Table>
+              )}
+              {isError && error && (
+                <div className="py-4 flex items-center justify-center">
+                  <p className="text-destructive text-sm">{error.message}</p>
+                </div>
+              )}
+              {hasNextPage && (
+                <div className="flex justify-center mt-4">
+                  <Button
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                  >
+                    {isFetchingNextPage ? (
+                      <>
+                        <Spinner />
+                        Loading more...
+                      </>
+                    ) : (
+                      "Load more folders"
+                    )}
+                  </Button>
+                </div>
               )}
             </ScrollArea>
           </div>

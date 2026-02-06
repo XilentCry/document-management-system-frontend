@@ -1,5 +1,7 @@
 "use client";
 
+import { InfiniteScrollContainer } from "@/components/shared/infinite-scroll-container";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { EmptyFiles } from "@/components/user/shared/empty-files";
@@ -20,8 +22,17 @@ export default function FoldersPage() {
     isLoading,
     isError,
     error,
-    data: folderItems,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
   } = useGetFolderItems(id);
+
+  const folderItems = data?.pages.flatMap((page) => page.data) ?? [];
+  const currentParentFolderId = data?.pages[0].currentParentFolderId;
+  const breadcrumb = data?.pages[0].breadcrumb;
 
   const setCurrentParentFolderId = useFolderStore(
     (state) => state.setCurrentParentFolderId,
@@ -30,57 +41,81 @@ export default function FoldersPage() {
   const setViewMode = useViewModeStore((state) => state.setViewMode);
 
   useEffect(() => {
-    if (folderItems?.currentParentFolderId) {
-      setCurrentParentFolderId(folderItems.currentParentFolderId);
+    if (currentParentFolderId) {
+      setCurrentParentFolderId(currentParentFolderId);
     }
-  }, [folderItems?.currentParentFolderId, setCurrentParentFolderId]);
+  }, [currentParentFolderId, setCurrentParentFolderId]);
 
-  return isLoading ? (
-    <div className="flex-1 flex items-center justify-center">
-      <Spinner className="text-primary size-9" />
-    </div>
-  ) : isError && error ? (
-    <div className="flex-1 flex items-center justify-center">
-      <p className="text-destructive text-sm">{error.message}</p>
-    </div>
-  ) : (
-    folderItems && (
-      <div className="flex-1 flex flex-col p-4 pt-0">
-        <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
-          <UserBreadCrumb breadcrumb={folderItems.breadcrumb} />
-          <ToggleGroup
-            variant="outline"
-            value={[viewMode]}
-            onValueChange={(value) => {
-              if (!value[0]) return;
-
-              setViewMode(value[0] as "grid" | "list");
-            }}
-          >
-            <ToggleGroupItem value="list">
-              <List />
-            </ToggleGroupItem>
-            <ToggleGroupItem value="grid">
-              <LayoutGrid />
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
-        {folderItems.data.length === 0 ? (
-          <EmptyFiles />
-        ) : viewMode === "list" ? (
-          <ItemList
-            data={folderItems.data}
-            links={folderItems.links}
-            meta={folderItems.meta}
-          />
-        ) : (
-          <ItemGrid
-            data={folderItems.data}
-            links={folderItems.links}
-            meta={folderItems.meta}
-          />
-        )}
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <Spinner className="text-primary size-9" />
       </div>
-    )
+    );
+  }
+
+  return (
+    <div className="flex-1 flex flex-col p-4 pt-0">
+      {isSuccess && folderItems.length === 0 ? (
+        <EmptyFiles />
+      ) : (
+        <>
+          <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
+            {breadcrumb && <UserBreadCrumb breadcrumb={breadcrumb} />}
+            <ToggleGroup
+              variant="outline"
+              value={[viewMode]}
+              onValueChange={(value) => {
+                if (!value[0]) return;
+
+                setViewMode(value[0] as "grid" | "list");
+              }}
+            >
+              <ToggleGroupItem value="list">
+                <List />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="grid">
+                <LayoutGrid />
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+          {viewMode === "list" ? (
+            <InfiniteScrollContainer
+              onBottomReached={() =>
+                hasNextPage && !isFetching && fetchNextPage()
+              }
+            >
+              <ItemList data={folderItems} />
+              {isFetchingNextPage && (
+                <div className="py-4 flex items-center justify-center">
+                  <Spinner className="text-primary size-9" />
+                </div>
+              )}
+            </InfiniteScrollContainer>
+          ) : (
+            <InfiniteScrollContainer
+              onBottomReached={() =>
+                hasNextPage && !isFetching && fetchNextPage()
+              }
+            >
+              <ItemGrid data={folderItems} />
+              {isFetchingNextPage && (
+                <div className="py-4 flex items-center justify-center">
+                  <Spinner className="text-primary size-9" />
+                </div>
+              )}
+            </InfiniteScrollContainer>
+          )}
+        </>
+      )}
+      {isError && error && (
+        <div className="py-4 flex flex-col items-center justify-center gap-4">
+          <p className="text-destructive text-sm">{error.message}</p>
+          <Button onClick={() => hasNextPage && !isFetching && fetchNextPage()}>
+            Retry
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }

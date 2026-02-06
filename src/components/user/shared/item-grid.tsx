@@ -1,21 +1,13 @@
+import { viewDocument } from "@/services/documents/api";
 import { useRailStore } from "@/stores/rail-store";
+import { TCursorPaginate } from "@/types/cursor-paginate";
 import type { TItem } from "@/types/item";
-import { TPaginate } from "@/types/paginate";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Document } from "./document";
 import { Folder } from "./folder";
-import { viewDocument } from "@/services/documents/api";
-import { toast } from "sonner";
 
-export function ItemGrid({
-  data,
-  links,
-  meta,
-}: {
-  data: TPaginate<TItem>["data"];
-  links: TPaginate<TItem>["links"];
-  meta: TPaginate<TItem>["meta"];
-}) {
+export function ItemGrid({ data }: { data: TCursorPaginate<TItem>["data"] }) {
   const router = useRouter();
 
   const { openRail } = useRailStore();

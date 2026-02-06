@@ -1,5 +1,7 @@
 "use client";
 
+import { InfiniteScrollContainer } from "@/components/shared/infinite-scroll-container";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { EmptyFiles } from "@/components/user/shared/empty-files";
@@ -21,8 +23,17 @@ export default function DepartmentDrivePage() {
     isLoading,
     isError,
     error,
-    data: organizationUnitItems,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
   } = useGetOrganizationUnitItems(id);
+
+  const organizationUnitItems = data?.pages.flatMap((page) => page.data) ?? [];
+  const currentOrganizationUnitId = data?.pages[0].currentOrganizationUnitId;
+  const breadcrumb = data?.pages[0].breadcrumb;
 
   const setCurrentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.setCurrentOrganizationUnitId,
@@ -34,64 +45,86 @@ export default function DepartmentDrivePage() {
   const setViewMode = useViewModeStore((state) => state.setViewMode);
 
   useEffect(() => {
-    if (organizationUnitItems?.currentOrganizationUnitId) {
-      setCurrentOrganizationUnitId(
-        organizationUnitItems.currentOrganizationUnitId,
-      );
+    if (currentOrganizationUnitId) {
+      setCurrentOrganizationUnitId(currentOrganizationUnitId);
       setCurrentParentFolderId(null);
     }
   }, [
-    organizationUnitItems?.currentOrganizationUnitId,
+    currentOrganizationUnitId,
     setCurrentOrganizationUnitId,
     setCurrentParentFolderId,
   ]);
 
-  return isLoading ? (
-    <div className="flex-1 flex items-center justify-center">
-      <Spinner className="text-primary size-9" />
-    </div>
-  ) : isError && error ? (
-    <div className="flex-1 flex items-center justify-center">
-      <p className="text-destructive text-sm">{error.message}</p>
-    </div>
-  ) : (
-    organizationUnitItems && (
-      <div className="flex-1 flex flex-col p-4 pt-0">
-        <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
-          <UserBreadCrumb breadcrumb={organizationUnitItems.breadcrumb} />
-          <ToggleGroup
-            variant="outline"
-            value={[viewMode]}
-            onValueChange={(value) => {
-              if (!value[0]) return;
-
-              setViewMode(value[0] as "grid" | "list");
-            }}
-          >
-            <ToggleGroupItem value="list">
-              <List />
-            </ToggleGroupItem>
-            <ToggleGroupItem value="grid">
-              <LayoutGrid />
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
-        {organizationUnitItems.data.length === 0 ? (
-          <EmptyFiles />
-        ) : viewMode === "list" ? (
-          <ItemList
-            data={organizationUnitItems.data}
-            links={organizationUnitItems.links}
-            meta={organizationUnitItems.meta}
-          />
-        ) : (
-          <ItemGrid
-            data={organizationUnitItems.data}
-            links={organizationUnitItems.links}
-            meta={organizationUnitItems.meta}
-          />
-        )}
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <Spinner className="text-primary size-9" />
       </div>
-    )
+    );
+  }
+
+  return (
+    <div className="flex-1 flex flex-col p-4 pt-0">
+      {isSuccess && organizationUnitItems.length === 0 ? (
+        <EmptyFiles />
+      ) : (
+        <>
+          <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
+            {breadcrumb && <UserBreadCrumb breadcrumb={breadcrumb} />}
+            <ToggleGroup
+              variant="outline"
+              value={[viewMode]}
+              onValueChange={(value) => {
+                if (!value[0]) return;
+
+                setViewMode(value[0] as "grid" | "list");
+              }}
+            >
+              <ToggleGroupItem value="list">
+                <List />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="grid">
+                <LayoutGrid />
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+          {viewMode === "list" ? (
+            <InfiniteScrollContainer
+              onBottomReached={() =>
+                hasNextPage && !isFetching && fetchNextPage()
+              }
+            >
+              <ItemList data={organizationUnitItems} />
+              {isFetchingNextPage && (
+                <div className="py-4 flex items-center justify-center">
+                  <Spinner className="text-primary size-9" />
+                </div>
+              )}
+            </InfiniteScrollContainer>
+          ) : (
+            <InfiniteScrollContainer
+              onBottomReached={() =>
+                hasNextPage && !isFetching && fetchNextPage()
+              }
+            >
+              <ItemGrid data={organizationUnitItems} />
+              {isFetchingNextPage && (
+                <div className="py-4 flex items-center justify-center">
+                  <Spinner className="text-primary size-9" />
+                </div>
+              )}
+            </InfiniteScrollContainer>
+          )}
+        </>
+      )}
+      {isError && error && (
+        <div className="py-4 flex flex-col items-center justify-center gap-4">
+          <p className="text-destructive text-sm">{error.message}</p>
+          <Button onClick={() => hasNextPage && !isFetching && fetchNextPage()}>
+            Retry
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }

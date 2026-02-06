@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   getAllOrganizationUnits,
   getOrganizationUnitFolders,
@@ -15,23 +15,68 @@ export const useGetAllOrganizationUnits = () => {
 };
 
 export const useGetOrganizationUnitItems = (id: string) => {
-  const { isLoading, isError, error, data } = useQuery({
+  const {
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: [`organization-unit-${id}-items`],
-    queryFn: () => getOrganizationUnitItems(id),
+    queryFn: ({ pageParam }) => getOrganizationUnitItems({ id, pageParam }),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
   });
 
-  return { isLoading, isError, error, data };
+  return {
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  };
 };
 
 export const useGetOrganizationUnitFolders = (
   organizationUnitId: number | null,
   folderId: number | null,
 ) => {
-  const { isLoading, isError, error, data } = useQuery({
+  const {
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: [`organization-unit-${organizationUnitId}-folders`],
-    queryFn: () => getOrganizationUnitFolders(organizationUnitId),
+    queryFn: ({ pageParam }) =>
+      getOrganizationUnitFolders(organizationUnitId, pageParam),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage?.meta?.next_cursor,
     enabled: !!organizationUnitId && !folderId,
   });
 
-  return { isLoading, isError, error, data };
+  return {
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+  };
 };

@@ -14,7 +14,7 @@ export function EmptyFiles() {
         <EmptyMedia variant="icon">
           <Files />
         </EmptyMedia>
-        <EmptyTitle>No files yet</EmptyTitle>
+        <EmptyTitle>No items yet</EmptyTitle>
         <EmptyDescription>
           Files and folders you add will appear here.
         </EmptyDescription>

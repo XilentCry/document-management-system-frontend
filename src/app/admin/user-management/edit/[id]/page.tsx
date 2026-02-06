@@ -1,6 +1,7 @@
 "use client";
 
 import { EditUser } from "@/components/admin/user-management/edit-user";
+import { ModeToggle } from "@/components/shared/mode-toggle";
 import { LogoutButton } from "@/components/shared/logout-button";
 import {
   Breadcrumb,
@@ -36,7 +37,10 @@ export default function EditUserPage() {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        <LogoutButton />
+        <div className="flex items-center gap-2">
+          <ModeToggle />
+          <LogoutButton />
+        </div>
       </header>
       <div className="p-4 flex-1 flex flex-col gap-4">
         <h1 className="text-2xl">Edit User</h1>
