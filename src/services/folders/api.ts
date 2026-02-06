@@ -66,10 +66,13 @@ export const getFolderItems = async ({
   return data;
 };
 
-export const getFolderSubfolders = async (
-  id: number | null,
-  pageParam: string | null = null,
-): Promise<TGetFolderSuboldersResponse> => {
+export const getFolderSubfolders = async ({
+  id,
+  pageParam,
+}: {
+  id: number | null;
+  pageParam: string | null;
+}): Promise<TGetFolderSuboldersResponse> => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/folders/${id}/subfolders${pageParam ? `?cursor=${pageParam}` : ""}`,
     {

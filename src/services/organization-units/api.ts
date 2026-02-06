@@ -63,10 +63,13 @@ export const getOrganizationUnitItems = async ({
   return data;
 };
 
-export const getOrganizationUnitFolders = async (
-  id: number | null,
-  pageParam: string | null = null,
-): Promise<TGetOrganizationUnitFoldersResponse> => {
+export const getOrganizationUnitFolders = async ({
+  id,
+  pageParam,
+}: {
+  id: number | null;
+  pageParam: string | null;
+}): Promise<TGetOrganizationUnitFoldersResponse> => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/${id}/folders${pageParam ? `?cursor=${pageParam}` : ""}`,
     {

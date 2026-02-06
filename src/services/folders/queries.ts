@@ -45,9 +45,9 @@ export const useGetFolderSubfolders = (id: number | null) => {
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: [`folder-${id}-subfolders`],
-    queryFn: ({ pageParam }) => getFolderSubfolders(id, pageParam),
+    queryFn: ({ pageParam }) => getFolderSubfolders({ id, pageParam }),
     initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage?.meta?.next_cursor,
+    getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
     enabled: !!id,
   });
 

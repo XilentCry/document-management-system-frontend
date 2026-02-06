@@ -62,9 +62,9 @@ export const useGetOrganizationUnitFolders = (
   } = useInfiniteQuery({
     queryKey: [`organization-unit-${organizationUnitId}-folders`],
     queryFn: ({ pageParam }) =>
-      getOrganizationUnitFolders(organizationUnitId, pageParam),
+      getOrganizationUnitFolders({ id: organizationUnitId, pageParam }),
     initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage?.meta?.next_cursor,
+    getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
     enabled: !!organizationUnitId && !folderId,
   });
 

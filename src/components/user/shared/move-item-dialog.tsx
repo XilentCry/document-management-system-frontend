@@ -52,7 +52,6 @@ export function MoveItemDialog({
 
   const isSelectedSelfParent = item.parent_item_id === selectedFolderId;
 
-  // Infinite query hooks for folders/subfolders
   const {
     isLoading: isOrganizationUnitFoldersLoading,
     isError: isOrganizationUnitFoldersError,
@@ -76,7 +75,6 @@ export function MoveItemDialog({
     isFetchingNextPage: isFetchingNextFolderSubfolders,
   } = useGetFolderSubfolders(currentParentFolderId);
 
-  // Determine which set to use
   const isLoading = currentParentFolderId
     ? isFolderSubfoldersLoading
     : isOrganizationUnitFoldersLoading;
@@ -87,16 +85,14 @@ export function MoveItemDialog({
     ? folderSubfoldersError
     : organizationUnitFoldersError;
 
-  // Infinite scroll: flatten pages
   const folders = currentParentFolderId
     ? (folderSubfoldersData?.pages?.flatMap((page) => page.data) ?? [])
     : (organizationUnitFoldersData?.pages?.flatMap((page) => page.data) ?? []);
 
   const breadcrumb = currentParentFolderId
-    ? folderSubfoldersData?.pages?.[0]?.breadcrumb
-    : organizationUnitFoldersData?.pages?.[0]?.breadcrumb;
+    ? folderSubfoldersData?.pages?.[0].breadcrumb
+    : organizationUnitFoldersData?.pages?.[0].breadcrumb;
 
-  // Infinite scroll: fetch next page handler
   const fetchNextPage = currentParentFolderId
     ? fetchNextFolderSubfolders
     : fetchNextOrganizationUnitFolders;
