@@ -2,12 +2,17 @@ import { getCookie } from "@/lib/get-cookie";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 import { TRenameItemFormSchema } from "@/schemas/items/rename-item-form-schema";
 import { TActivity } from "@/types/activity";
+import { TCursorPaginate } from "@/types/cursor-paginate";
 
-export async function getItemActivities(
-  id: number | null,
-): Promise<TActivity[]> {
+export async function getItemActivities({
+  id,
+  pageParam,
+}: {
+  id: number | null;
+  pageParam: string | null;
+}): Promise<TCursorPaginate<TActivity>> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/items/${id}/activities`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/items/${id}/activities${pageParam ? `?cursor=${pageParam}` : ""}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -23,7 +28,7 @@ export async function getItemActivities(
     throw new Error(data.message);
   }
 
-  return data.itemActivities;
+  return data;
 }
 
 export async function renameItem(

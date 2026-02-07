@@ -23,7 +23,6 @@ export const useGetOrganizationUnitItems = (id: string) => {
     data,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: [`organization-unit-${id}-items`],
@@ -40,7 +39,6 @@ export const useGetOrganizationUnitItems = (id: string) => {
     data,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
   };
 };
@@ -57,7 +55,6 @@ export const useGetOrganizationUnitFolders = (
     data,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: [`organization-unit-${organizationUnitId}-folders`],
@@ -76,7 +73,6 @@ export const useGetOrganizationUnitFolders = (
     data,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
   };
 };

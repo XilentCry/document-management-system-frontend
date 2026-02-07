@@ -26,7 +26,6 @@ export default function FoldersPage() {
     data,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
   } = useGetFolderItems(id);
 
@@ -82,7 +81,7 @@ export default function FoldersPage() {
           {viewMode === "list" ? (
             <InfiniteScrollContainer
               onBottomReached={() =>
-                hasNextPage && !isFetching && fetchNextPage()
+                hasNextPage && !isFetchingNextPage && fetchNextPage()
               }
             >
               <ItemList data={folderItems} />
@@ -95,7 +94,7 @@ export default function FoldersPage() {
           ) : (
             <InfiniteScrollContainer
               onBottomReached={() =>
-                hasNextPage && !isFetching && fetchNextPage()
+                hasNextPage && !isFetchingNextPage && fetchNextPage()
               }
             >
               <ItemGrid data={folderItems} />
@@ -111,7 +110,11 @@ export default function FoldersPage() {
       {isError && error && (
         <div className="py-4 flex flex-col items-center justify-center gap-4">
           <p className="text-destructive text-sm">{error.message}</p>
-          <Button onClick={() => hasNextPage && !isFetching && fetchNextPage()}>
+          <Button
+            onClick={() =>
+              hasNextPage && !isFetchingNextPage && fetchNextPage()
+            }
+          >
             Retry
           </Button>
         </div>

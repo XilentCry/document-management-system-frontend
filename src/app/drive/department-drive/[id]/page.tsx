@@ -27,7 +27,6 @@ export default function DepartmentDrivePage() {
     data,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
   } = useGetOrganizationUnitItems(id);
 
@@ -91,7 +90,7 @@ export default function DepartmentDrivePage() {
           {viewMode === "list" ? (
             <InfiniteScrollContainer
               onBottomReached={() =>
-                hasNextPage && !isFetching && fetchNextPage()
+                hasNextPage && !isFetchingNextPage && fetchNextPage()
               }
             >
               <ItemList data={organizationUnitItems} />
@@ -104,7 +103,7 @@ export default function DepartmentDrivePage() {
           ) : (
             <InfiniteScrollContainer
               onBottomReached={() =>
-                hasNextPage && !isFetching && fetchNextPage()
+                hasNextPage && !isFetchingNextPage && fetchNextPage()
               }
             >
               <ItemGrid data={organizationUnitItems} />
@@ -120,7 +119,11 @@ export default function DepartmentDrivePage() {
       {isError && error && (
         <div className="py-4 flex flex-col items-center justify-center gap-4">
           <p className="text-destructive text-sm">{error.message}</p>
-          <Button onClick={() => hasNextPage && !isFetching && fetchNextPage()}>
+          <Button
+            onClick={() =>
+              hasNextPage && !isFetchingNextPage && fetchNextPage()
+            }
+          >
             Retry
           </Button>
         </div>

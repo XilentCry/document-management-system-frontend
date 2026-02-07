@@ -18,6 +18,8 @@ import { ItemActivityList } from "./item-activity-list";
 import { ItemDetails } from "./item-details";
 import { ItemDetailsSkeleton } from "./item-details-skeleton";
 import { ItemActivitySkeleton } from "./item-activity-skeleton";
+import { Spinner } from "@/components/ui/spinner";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export function Rail() {
   const {
@@ -70,8 +72,14 @@ export function Rail() {
     isLoading: isItemActivityLoading,
     isError: isItemActivityError,
     error: itemActivityError,
-    data: itemActivities = [],
+    data: itemActivityData,
+    fetchNextPage: fetchNextItemActivityPage,
+    hasNextPage: hasNextItemActivityPage,
+    isFetchingNextPage: isFetchingNextItemActivityPage,
   } = useGetItemActivities(activitySubjectId, railTab === "activity");
+
+  const itemActivities =
+    itemActivityData?.pages?.flatMap((page) => page.data) ?? [];
 
   return openRail ? (
     <div className="border-l w-80 sticky top-14 flex flex-col h-[calc(100svh-56px)]">
@@ -132,14 +140,34 @@ export function Rail() {
           >
             {isItemActivityLoading ? (
               <ItemActivitySkeleton />
-            ) : isItemActivityError && itemActivityError ? (
-              <div className="flex-1 flex items-center justify-center">
-                <p className="text-destructive text-sm">
-                  {itemActivityError.message}
-                </p>
-              </div>
             ) : (
-              <ItemActivityList itemActivities={itemActivities} />
+              <ScrollArea className="flex-1 min-h-0">
+                <ItemActivityList itemActivities={itemActivities} />
+                {isItemActivityError && itemActivityError && (
+                  <div className="py-4 flex items-center justify-center">
+                    <p className="text-destructive text-sm">
+                      {itemActivityError.message}
+                    </p>
+                  </div>
+                )}
+                {hasNextItemActivityPage && (
+                  <div className="flex justify-center mt-4">
+                    <Button
+                      onClick={() => fetchNextItemActivityPage()}
+                      disabled={isFetchingNextItemActivityPage}
+                    >
+                      {isFetchingNextItemActivityPage ? (
+                        <>
+                          <Spinner />
+                          Loading more...
+                        </>
+                      ) : (
+                        "Load more activities"
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </ScrollArea>
             )}
           </TabsContent>
         </Tabs>

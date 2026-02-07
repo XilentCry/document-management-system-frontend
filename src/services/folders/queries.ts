@@ -10,7 +10,6 @@ export const useGetFolderItems = (id: string) => {
     data,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: [`folder-${id}-items`],
@@ -27,7 +26,6 @@ export const useGetFolderItems = (id: string) => {
     data,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
   };
 };
@@ -41,7 +39,6 @@ export const useGetFolderSubfolders = (id: number | null) => {
     data,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: [`folder-${id}-subfolders`],
@@ -59,7 +56,6 @@ export const useGetFolderSubfolders = (id: number | null) => {
     data,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
   };
 };
