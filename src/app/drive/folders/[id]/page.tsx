@@ -55,57 +55,53 @@ export default function FoldersPage() {
 
   return (
     <div className="flex-1 flex flex-col p-4 pt-0">
+      <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
+        {breadcrumb && <UserBreadCrumb breadcrumb={breadcrumb} />}
+        <ToggleGroup
+          variant="outline"
+          value={[viewMode]}
+          onValueChange={(value) => {
+            if (!value[0]) return;
+
+            setViewMode(value[0] as "grid" | "list");
+          }}
+        >
+          <ToggleGroupItem value="list">
+            <List />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="grid">
+            <LayoutGrid />
+          </ToggleGroupItem>
+        </ToggleGroup>
+      </div>
       {isSuccess && folderItems.length === 0 ? (
         <EmptyFiles />
-      ) : (
-        <>
-          <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
-            {breadcrumb && <UserBreadCrumb breadcrumb={breadcrumb} />}
-            <ToggleGroup
-              variant="outline"
-              value={[viewMode]}
-              onValueChange={(value) => {
-                if (!value[0]) return;
-
-                setViewMode(value[0] as "grid" | "list");
-              }}
-            >
-              <ToggleGroupItem value="list">
-                <List />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="grid">
-                <LayoutGrid />
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
-          {viewMode === "list" ? (
-            <InfiniteScrollContainer
-              onBottomReached={() =>
-                hasNextPage && !isFetchingNextPage && fetchNextPage()
-              }
-            >
-              <ItemList data={folderItems} />
-              {isFetchingNextPage && (
-                <div className="py-4 flex items-center justify-center">
-                  <Spinner className="text-primary size-9" />
-                </div>
-              )}
-            </InfiniteScrollContainer>
-          ) : (
-            <InfiniteScrollContainer
-              onBottomReached={() =>
-                hasNextPage && !isFetchingNextPage && fetchNextPage()
-              }
-            >
-              <ItemGrid data={folderItems} />
-              {isFetchingNextPage && (
-                <div className="py-4 flex items-center justify-center">
-                  <Spinner className="text-primary size-9" />
-                </div>
-              )}
-            </InfiniteScrollContainer>
+      ) : viewMode === "list" ? (
+        <InfiniteScrollContainer
+          onBottomReached={() =>
+            hasNextPage && !isFetchingNextPage && fetchNextPage()
+          }
+        >
+          <ItemList data={folderItems} />
+          {isFetchingNextPage && (
+            <div className="py-4 flex items-center justify-center">
+              <Spinner className="text-primary size-9" />
+            </div>
           )}
-        </>
+        </InfiniteScrollContainer>
+      ) : (
+        <InfiniteScrollContainer
+          onBottomReached={() =>
+            hasNextPage && !isFetchingNextPage && fetchNextPage()
+          }
+        >
+          <ItemGrid data={folderItems} />
+          {isFetchingNextPage && (
+            <div className="py-4 flex items-center justify-center">
+              <Spinner className="text-primary size-9" />
+            </div>
+          )}
+        </InfiniteScrollContainer>
       )}
       {isError && error && (
         <div className="py-4 flex flex-col items-center justify-center gap-4">

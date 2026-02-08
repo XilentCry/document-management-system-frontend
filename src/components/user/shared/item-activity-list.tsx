@@ -1,4 +1,4 @@
-import { TActivity } from "@/types/activity";
+import { TActivity } from "@/types/audit-log";
 import { ItemActivity } from "./item-activity";
 
 export function ItemActivityList({

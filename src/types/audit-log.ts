@@ -1,6 +1,6 @@
 import { TCurrentUser } from "./current-user";
 
-type TBaseActivity = {
+type TBaseAuditLog = {
   id: number;
   actor: TCurrentUser;
   created_at: string;
@@ -11,17 +11,17 @@ type TNamedInParentProps = {
   parent: string;
 };
 
-export type TUploadedActivity = TBaseActivity & {
+export type TUploadedAuditLog = TBaseAuditLog & {
   action: "uploaded";
   properties: TNamedInParentProps;
 };
 
-export type TCreatedActivity = TBaseActivity & {
+export type TCreatedAuditLog = TBaseAuditLog & {
   action: "created";
   properties: TNamedInParentProps;
 };
 
-export type TRenamedActivity = TBaseActivity & {
+export type TRenamedAuditLog = TBaseAuditLog & {
   action: "renamed";
   properties: {
     old_name: string;
@@ -29,7 +29,7 @@ export type TRenamedActivity = TBaseActivity & {
   };
 };
 
-export type TMovedActivity = TBaseActivity & {
+export type TMovedAuditLog = TBaseAuditLog & {
   action: "moved";
   properties: {
     name: string;
@@ -37,14 +37,14 @@ export type TMovedActivity = TBaseActivity & {
   };
 };
 
-export type TViewedActivity = TBaseActivity & {
+export type TViewedAuditLog = TBaseAuditLog & {
   action: "viewed";
   properties: TNamedInParentProps;
 };
 
-export type TActivity =
-  | TUploadedActivity
-  | TCreatedActivity
-  | TRenamedActivity
-  | TMovedActivity
-  | TViewedActivity;
+export type TAuditLog =
+  | TUploadedAuditLog
+  | TCreatedAuditLog
+  | TRenamedAuditLog
+  | TMovedAuditLog
+  | TViewedAuditLog;

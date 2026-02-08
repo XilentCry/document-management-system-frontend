@@ -12,5 +12,6 @@ export function useCopyLink() {
       toast.error("Failed to copy link. Please try again.");
     }
   };
+
   return { copyLink };
 }

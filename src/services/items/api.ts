@@ -1,7 +1,7 @@
 import { getCookie } from "@/lib/get-cookie";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 import { TRenameItemFormSchema } from "@/schemas/items/rename-item-form-schema";
-import { TActivity } from "@/types/activity";
+import { TActivity } from "@/types/audit-log";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 
 export async function getItemActivities({

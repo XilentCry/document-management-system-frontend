@@ -43,7 +43,7 @@ export default function ViewUserPage() {
         </div>
       </header>
       <div className="p-4 flex-1 flex flex-col gap-4">
-        <h1 className="text-2xl">View User</h1>
+        <h1 className="text-xl">View User</h1>
         {isLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <Spinner className="text-primary size-9" />
