@@ -1,7 +1,7 @@
 import { getCookie } from "@/lib/get-cookie";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 import { TRenameItemFormSchema } from "@/schemas/items/rename-item-form-schema";
-import { TActivity } from "@/types/audit-log";
+import { TAuditLog } from "@/types/audit-log";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 
 export async function getItemActivities({
@@ -10,7 +10,7 @@ export async function getItemActivities({
 }: {
   id: number | null;
   pageParam: string | null;
-}): Promise<TCursorPaginate<TActivity>> {
+}): Promise<TCursorPaginate<TAuditLog>> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/items/${id}/activities${pageParam ? `?cursor=${pageParam}` : ""}`,
     {

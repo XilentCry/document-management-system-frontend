@@ -1,10 +1,10 @@
-import { TActivity } from "@/types/audit-log";
+import { TAuditLog } from "@/types/audit-log";
 import { ItemActivity } from "./item-activity";
 
 export function ItemActivityList({
   itemActivities,
 }: {
-  itemActivities: TActivity[];
+  itemActivities: TAuditLog[];
 }) {
   return (
     <div className="flex flex-col gap-4">
