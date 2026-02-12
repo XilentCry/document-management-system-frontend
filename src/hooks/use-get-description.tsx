@@ -59,6 +59,27 @@ export function useGetDescription() {
             <span className="text-primary">{auditLog.properties.parent}</span>
           </>
         );
+      case "user_status_updated":
+        return (
+          <>
+            {actor} updated{" "}
+            <span className="text-primary">
+              {auditLog.properties.name}
+              {auditLog.properties.name.endsWith("s") ? "'" : "'s"}
+            </span>{" "}
+            status to{" "}
+            <span className="text-primary">
+              {auditLog.properties.new_status}
+            </span>
+          </>
+        );
+      case "user_updated":
+        return (
+          <>
+            {actor} updated{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </>
+        );
     }
   };
 

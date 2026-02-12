@@ -42,9 +42,26 @@ export type TViewedAuditLog = TBaseAuditLog & {
   properties: TNamedInParentProps;
 };
 
+export type TUserStatusUpdatedAuditLog = TBaseAuditLog & {
+  action: "user_status_updated";
+  properties: {
+    name: string;
+    new_status: string;
+  };
+};
+
+export type TUserUpdatedAuditLog = TBaseAuditLog & {
+  action: "user_updated";
+  properties: {
+    name: string;
+  };
+};
+
 export type TAuditLog =
   | TUploadedAuditLog
   | TCreatedAuditLog
   | TRenamedAuditLog
   | TMovedAuditLog
-  | TViewedAuditLog;
+  | TViewedAuditLog
+  | TUserStatusUpdatedAuditLog
+  | TUserUpdatedAuditLog;
