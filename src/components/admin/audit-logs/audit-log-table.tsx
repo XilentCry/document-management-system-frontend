@@ -6,25 +6,44 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetDescription } from "@/hooks/use-get-description";
+import { useGetDetails } from "@/hooks/use-get-details";
+import { useUserStore } from "@/stores/user-store";
 import { TAuditLog } from "@/types/audit-log";
-
 export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
-  const { getDescription } = useGetDescription();
+  const userId = useUserStore((state) => state.userId);
+  const { getDetails } = useGetDetails();
 
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Description</TableHead>
           <TableHead>Occurred</TableHead>
+          <TableHead>Actor</TableHead>
+          <TableHead>Action</TableHead>
+          <TableHead>Subject</TableHead>
+          <TableHead>Details</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {auditLogs.map((auditLog) => (
           <TableRow key={auditLog.id}>
-            <TableCell>{getDescription(auditLog)}</TableCell>
             <TableCell>{auditLog.created_at}</TableCell>
+            <TableCell>
+              {userId === auditLog.actor.id
+                ? "You"
+                : `${auditLog.actor.first_name} ${
+                    auditLog.actor.middle_name ?? ""
+                  } ${auditLog.actor.last_name}`}
+            </TableCell>
+            <TableCell>{auditLog.action}</TableCell>
+            <TableCell>
+              {auditLog.action === "renamed"
+                ? auditLog.properties.old_name
+                : auditLog.properties.name}
+            </TableCell>
+            <TableCell className="whitespace-normal">
+              {getDetails(auditLog)}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

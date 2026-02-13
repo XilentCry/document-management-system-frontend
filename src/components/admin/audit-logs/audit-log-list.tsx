@@ -8,7 +8,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useGetAllAuditLogs } from "@/services/audit-logs/queries";
 import { useState } from "react";
 import { Spinner } from "../../ui/spinner";
@@ -47,7 +46,7 @@ export function AuditLogList() {
       <p className="text-sm">No audit logs found.</p>
     </div>
   ) : (
-    <ScrollArea>
+    <div className="flex-1 min-h-0 flex flex-col justify-between">
       <AuditLogTable auditLogs={auditLogs?.data ?? []} />
       <Pagination>
         <PaginationContent>
@@ -91,6 +90,6 @@ export function AuditLogList() {
           </PaginationItem>
         </PaginationContent>
       </Pagination>
-    </ScrollArea>
+    </div>
   );
 }

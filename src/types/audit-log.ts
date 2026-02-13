@@ -3,6 +3,7 @@ import { TCurrentUser } from "./current-user";
 type TBaseAuditLog = {
   id: number;
   actor: TCurrentUser;
+  subject: string;
   created_at: string;
 };
 
@@ -50,10 +51,22 @@ export type TUserStatusUpdatedAuditLog = TBaseAuditLog & {
   };
 };
 
+type ChangedField<T> = {
+  old: T;
+  new: T;
+};
+
 export type TUserUpdatedAuditLog = TBaseAuditLog & {
   action: "user_updated";
   properties: {
     name: string;
+    changed_fields: {
+      first_name?: ChangedField<string>;
+      middle_name?: ChangedField<string | null>;
+      last_name?: ChangedField<string>;
+      email?: ChangedField<string>;
+      organization_units?: ChangedField<string[]>;
+    };
   };
 };
 

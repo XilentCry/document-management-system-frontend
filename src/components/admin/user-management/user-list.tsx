@@ -8,7 +8,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useGetAllUsers } from "@/services/users/queries";
 import { useState } from "react";
 import { Spinner } from "../../ui/spinner";
@@ -47,7 +46,7 @@ export function UserList() {
       <p className="text-sm">No users found.</p>
     </div>
   ) : (
-    <ScrollArea>
+    <div className="flex-1 min-h-0 flex flex-col justify-between">
       <UserTable users={users?.data ?? []} />
       <Pagination>
         <PaginationContent>
@@ -91,6 +90,6 @@ export function UserList() {
           </PaginationItem>
         </PaginationContent>
       </Pagination>
-    </ScrollArea>
+    </div>
   );
 }
