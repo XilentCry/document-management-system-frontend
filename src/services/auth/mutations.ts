@@ -11,6 +11,9 @@ export const useLogin = () => {
   const setCurrentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.setCurrentOrganizationUnitId,
   );
+  const setCurrentOrganizationUnitName = useOrganizationUnitStore(
+    (state) => state.setCurrentOrganizationUnitName,
+  );
   const setUserId = useUserStore((state) => state.setUserId);
 
   const router = useRouter();
@@ -21,8 +24,13 @@ export const useLogin = () => {
       toast.success(data.message);
       setUserId(data.user.id);
 
-      if (data.user.role === "User" && data.currentOrganizationUnitId) {
+      if (
+        data.user.role === "User" &&
+        data.currentOrganizationUnitId &&
+        data.currentOrganizationUnitName
+      ) {
         setCurrentOrganizationUnitId(data.currentOrganizationUnitId);
+        setCurrentOrganizationUnitName(data.currentOrganizationUnitName);
         router.replace(
           `/drive/department-drive/${data.currentOrganizationUnitId}`,
         );

@@ -7,6 +7,7 @@ export type TLoginResponse = {
   message: string;
   user: TCurrentUser;
   currentOrganizationUnitId?: number;
+  currentOrganizationUnitName?: string;
 };
 
 export async function getCsrfCookie() {

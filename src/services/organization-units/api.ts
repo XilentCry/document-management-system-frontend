@@ -5,6 +5,7 @@ import { TOrganizationUnit } from "@/types/organization-unit";
 
 type TGetOrganizationUnitItemsResponse = {
   currentOrganizationUnitId: number;
+  currentOrganizationUnitName: string;
   breadcrumb: TBreadcrumb;
 } & TCursorPaginate<TItem>;
 
@@ -12,6 +13,38 @@ type TGetOrganizationUnitFoldersResponse = {
   currentOrganizationUnitId: number;
   breadcrumb: TBreadcrumb;
 } & TCursorPaginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
+
+export const searchOrganizationUnitItems = async ({
+  id,
+  pageParam,
+  searchTerm,
+  filterType,
+  filterClassification,
+}: {
+  id: number | null;
+  pageParam: string | null;
+  searchTerm: string | null;
+  filterType: string | null;
+  filterClassification: number | null;
+}): Promise<TCursorPaginate<TItem>> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/${id}/items/search?${pageParam ? `cursor=${pageParam}&` : ""}q=${searchTerm}${filterType ? `&type=${filterType}` : ""}${filterClassification ? `&classification=${filterClassification}` : ""}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
 
 export async function getAllOrganizationUnits(): Promise<
   Pick<

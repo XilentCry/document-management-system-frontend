@@ -1,23 +1,35 @@
 "use client";
 
 import { InfiniteScrollContainer } from "@/components/shared/infinite-scroll-container";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { EmptyFiles } from "@/components/user/shared/empty-files";
+import { EmptySearchResult } from "@/components/user/shared/empty-search-result";
 import { ItemGrid } from "@/components/user/shared/item-grid";
 import { ItemList } from "@/components/user/shared/item-list";
-import { UserBreadCrumb } from "@/components/user/shared/user-breadcrumb";
-import { useGetOrganizationUnitItems } from "@/services/organization-units/queries";
-import { useFolderStore } from "@/stores/folder-store";
+import { useSearchOrganizationUnitItems } from "@/services/organization-units/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
+import { useSearchStore } from "@/stores/search-store";
 import { useViewModeStore } from "@/stores/view-mode-store";
 import { LayoutGrid, List } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useEffect } from "react";
 
-export default function DepartmentDrivePage() {
-  const { id } = useParams<{ id: string }>();
+export default function Search() {
+  const searchTerm = useSearchStore((state) => state.searchTerm);
+  const filterType = useSearchStore((state) => state.filterType);
+  const filterClassification = useSearchStore(
+    (state) => state.filterClassification,
+  );
+  const currentOrganizationUnitId = useOrganizationUnitStore(
+    (state) => state.currentOrganizationUnitId,
+  );
+  const viewMode = useViewModeStore((state) => state.viewMode);
+  const setViewMode = useViewModeStore((state) => state.setViewMode);
 
   const {
     isLoading,
@@ -28,39 +40,14 @@ export default function DepartmentDrivePage() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetOrganizationUnitItems(id);
+  } = useSearchOrganizationUnitItems(
+    currentOrganizationUnitId,
+    searchTerm,
+    filterType,
+    filterClassification,
+  );
 
   const organizationUnitItems = data?.pages.flatMap((page) => page.data) ?? [];
-  const currentOrganizationUnitId = data?.pages[0].currentOrganizationUnitId;
-  const currentOrganizationUnitName =
-    data?.pages[0].currentOrganizationUnitName;
-  const breadcrumb = data?.pages[0].breadcrumb;
-
-  const setCurrentOrganizationUnitId = useOrganizationUnitStore(
-    (state) => state.setCurrentOrganizationUnitId,
-  );
-  const setCurrentOrganizationUnitName = useOrganizationUnitStore(
-    (state) => state.setCurrentOrganizationUnitName,
-  );
-  const setCurrentParentFolderId = useFolderStore(
-    (state) => state.setCurrentParentFolderId,
-  );
-  const viewMode = useViewModeStore((state) => state.viewMode);
-  const setViewMode = useViewModeStore((state) => state.setViewMode);
-
-  useEffect(() => {
-    if (currentOrganizationUnitId && currentOrganizationUnitName) {
-      setCurrentOrganizationUnitId(currentOrganizationUnitId);
-      setCurrentOrganizationUnitName(currentOrganizationUnitName);
-      setCurrentParentFolderId(null);
-    }
-  }, [
-    currentOrganizationUnitId,
-    currentOrganizationUnitName,
-    setCurrentOrganizationUnitName,
-    setCurrentOrganizationUnitId,
-    setCurrentParentFolderId,
-  ]);
 
   if (isLoading) {
     return (
@@ -73,7 +60,13 @@ export default function DepartmentDrivePage() {
   return (
     <div className="flex-1 flex flex-col p-4 pt-0">
       <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
-        {breadcrumb && <UserBreadCrumb breadcrumb={breadcrumb} />}
+        <Breadcrumb>
+          <BreadcrumbList className="text-xl">
+            <BreadcrumbItem>
+              <BreadcrumbPage>Search results</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
         <ToggleGroup
           variant="outline"
           value={[viewMode]}
@@ -92,7 +85,7 @@ export default function DepartmentDrivePage() {
         </ToggleGroup>
       </div>
       {isSuccess && organizationUnitItems.length === 0 ? (
-        <EmptyFiles />
+        <EmptySearchResult />
       ) : viewMode === "list" ? (
         <InfiniteScrollContainer
           onBottomReached={() =>
