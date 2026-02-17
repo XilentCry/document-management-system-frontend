@@ -10,14 +10,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { EmptySearchResult } from "@/components/user/shared/empty-search-result";
+import { EmptyState } from "@/components/shared/empty-state";
 import { ItemGrid } from "@/components/user/shared/item-grid";
 import { ItemList } from "@/components/user/shared/item-list";
 import { useSearchOrganizationUnitItems } from "@/services/organization-units/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useSearchStore } from "@/stores/search-store";
 import { useViewModeStore } from "@/stores/view-mode-store";
-import { LayoutGrid, List } from "lucide-react";
+import { LayoutGrid, List, Search as SearchIcon } from "lucide-react";
 
 export default function Search() {
   const searchTerm = useSearchStore((state) => state.searchTerm);
@@ -85,7 +85,11 @@ export default function Search() {
         </ToggleGroup>
       </div>
       {isSuccess && organizationUnitItems.length === 0 ? (
-        <EmptySearchResult />
+        <EmptyState
+          icon={SearchIcon}
+          title="None of your files or folders matched this search"
+          description="Try another search, or use search options to find a file by type, owner, and more."
+        />
       ) : viewMode === "list" ? (
         <InfiniteScrollContainer
           onBottomReached={() =>

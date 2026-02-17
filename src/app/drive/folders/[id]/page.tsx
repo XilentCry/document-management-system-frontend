@@ -4,14 +4,14 @@ import { InfiniteScrollContainer } from "@/components/shared/infinite-scroll-con
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { EmptyFiles } from "@/components/user/shared/empty-files";
+import { EmptyState } from "@/components/shared/empty-state";
 import { ItemGrid } from "@/components/user/shared/item-grid";
 import { ItemList } from "@/components/user/shared/item-list";
 import { UserBreadCrumb } from "@/components/user/shared/user-breadcrumb";
 import { useGetFolderItems } from "@/services/folders/queries";
 import { useFolderStore } from "@/stores/folder-store";
 import { useViewModeStore } from "@/stores/view-mode-store";
-import { LayoutGrid, List } from "lucide-react";
+import { Files, LayoutGrid, List } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -75,7 +75,11 @@ export default function FoldersPage() {
         </ToggleGroup>
       </div>
       {isSuccess && folderItems.length === 0 ? (
-        <EmptyFiles />
+        <EmptyState
+          icon={Files}
+          title="No items yet"
+          description="Files and folders you add will appear here."
+        />
       ) : viewMode === "list" ? (
         <InfiniteScrollContainer
           onBottomReached={() =>
