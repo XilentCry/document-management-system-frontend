@@ -64,7 +64,7 @@ export default function NewFolderDialog({
 
   return (
     <Dialog open={openNewFolderDialog} onOpenChange={setOpenNewFolderDialog}>
-      <DialogContent>
+      <DialogContent className="w-150 max-w-150!">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <DialogHeader>
             <DialogTitle>New folder</DialogTitle>

@@ -55,11 +55,8 @@ export function AdvanceSearchDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-200 max-w-200!">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6"
-        >
+      <DialogContent className="w-150 max-w-150!">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <DialogHeader>
             <DialogTitle>Advance search</DialogTitle>
           </DialogHeader>
