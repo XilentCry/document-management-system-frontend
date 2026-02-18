@@ -1,5 +1,6 @@
 import { TBreadcrumb } from "@/types/breadcrumb";
 import { TCursorPaginate } from "@/types/cursor-paginate";
+import { TFilterType } from "@/types/filter-type";
 import { TItem } from "@/types/item";
 import { TOrganizationUnit } from "@/types/organization-unit";
 
@@ -24,7 +25,7 @@ export const searchOrganizationUnitItems = async ({
   id: number | null;
   pageParam: string | null;
   searchTerm: string | null;
-  filterType: string | null;
+  filterType: TFilterType | null;
   filterClassification: number | null;
 }): Promise<TCursorPaginate<TItem>> => {
   const response = await fetch(

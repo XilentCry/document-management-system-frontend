@@ -4,22 +4,23 @@ import { LogoutButton } from "@/components/shared/logout-button";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { AdvanceSearchDialog } from "@/components/user/shared/advance-search-dialog";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { AdvanceSearchDialog } from "@/components/user/shared/advance-search-dialog";
 import {
   advancedSearchFormSchema,
   TAdvancedSearchFormSchema,
 } from "@/schemas/items/advanced-search-form-schema";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useSearchStore } from "@/stores/search-store";
+import { TFilterType } from "@/types/filter-type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -35,34 +36,40 @@ export function Header() {
   const setDraftSearchTerm = useSearchStore(
     (state) => state.setDraftSearchTerm,
   );
-  const filterType = useSearchStore((state) => state.filterType);
-  const filterClassification = useSearchStore(
-    (state) => state.filterClassification,
-  );
-  const commitSearch = useSearchStore((state) => state.commitSearch);
 
   const router = useRouter();
-  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const filterTypeParam = searchParams.get("type");
+  const filterType: TFilterType =
+    filterTypeParam === "file" || filterTypeParam === "folder"
+      ? filterTypeParam
+      : null;
+  const filterClassification = searchParams.get("classification");
 
   const handleSearch = () => {
     const trimmedDraftSearchTerm = draftSearchTerm.trim();
 
     if (!trimmedDraftSearchTerm) return;
 
-    const classification =
-      filterType === "folder" ? null : filterClassification;
-    commitSearch(trimmedDraftSearchTerm, filterType, classification);
+    const url = `/drive/search?q=${encodeURIComponent(trimmedDraftSearchTerm)}${
+      filterType ? `&type=${filterType}` : ""
+    }${
+      filterClassification && filterType !== "folder"
+        ? `&classification=${filterClassification}`
+        : ""
+    }`;
 
-    if (pathname !== "/drive/search") {
-      router.push("/drive/search");
-    }
+    router.push(url);
   };
 
   const handleOpen = () => {
     reset({
       type: filterType,
       itemName: draftSearchTerm,
-      classification: filterClassification,
+      classification: filterClassification
+        ? Number(filterClassification)
+        : null,
     });
     setOpen(true);
   };
@@ -79,13 +86,16 @@ export function Header() {
   const { reset } = form;
 
   const onSubmit: SubmitHandler<TAdvancedSearchFormSchema> = (data) => {
-    const classification = data.type === "folder" ? null : data.classification;
-    commitSearch(data.itemName, data.type, classification);
-    setOpen(false);
+    const url = `/drive/search?q=${encodeURIComponent(data.itemName)}${
+      data.type ? `&type=${data.type}` : ""
+    }${
+      data.classification && data.type !== "folder"
+        ? `&classification=${data.classification}`
+        : ""
+    }`;
 
-    if (pathname !== "/drive/search") {
-      router.push("/drive/search");
-    }
+    setOpen(false);
+    router.push(url);
   };
 
   return (

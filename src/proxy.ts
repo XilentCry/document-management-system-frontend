@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
   const isAuthPage = pathname === "/" || pathname.startsWith("/register");
 
@@ -49,6 +49,15 @@ export async function proxy(request: NextRequest) {
       } else if (data.user.role === "Admin" && pathname.startsWith("/drive")) {
         return NextResponse.redirect(
           new URL("/admin/user-management", request.url),
+        );
+      }
+
+      if (pathname === "/drive/search" && !searchParams.get("q")) {
+        return NextResponse.redirect(
+          new URL(
+            `/drive/department-drive/${data.currentOrganizationUnitId}`,
+            request.url,
+          ),
         );
       }
     }

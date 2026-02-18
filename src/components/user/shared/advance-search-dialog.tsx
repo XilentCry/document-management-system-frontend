@@ -78,18 +78,8 @@ export function AdvanceSearchDialog({
                         <SelectTrigger className="w-full">
                           <SelectValue>
                             {field.value === null && <p>Any</p>}
-                            {field.value === "folder" && (
-                              <div className="flex items-center gap-2">
-                                <Folder />
-                                Folder
-                              </div>
-                            )}
-                            {field.value === "file" && (
-                              <div className="flex items-center gap-2">
-                                <FileText />
-                                File
-                              </div>
-                            )}
+                            {field.value === "folder" && <p>Folder</p>}
+                            {field.value === "file" && <p>File</p>}
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent>

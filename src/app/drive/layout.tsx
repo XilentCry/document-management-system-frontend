@@ -3,6 +3,7 @@ import { Header } from "@/components/user/layout/header";
 import { UserSidebar } from "@/components/user/layout/user-sidebar";
 import { Rail } from "@/components/user/shared/rail";
 import { UploadProgress } from "@/components/user/shared/upload-progress";
+import { Suspense } from "react";
 
 export default function AdminLayout({
   children,
@@ -13,7 +14,9 @@ export default function AdminLayout({
     <SidebarProvider>
       <UserSidebar />
       <div className="flex-1 flex flex-col">
-        <Header />
+        <Suspense>
+          <Header />
+        </Suspense>
         <div className="flex-1 flex">
           {children}
           <Rail />

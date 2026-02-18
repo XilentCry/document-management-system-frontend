@@ -10,7 +10,7 @@ import { TFilterType } from "@/types/filter-type";
 export const useSearchOrganizationUnitItems = (
   id: number | null,
   searchTerm: string | null,
-  filterType: TFilterType,
+  filterType: TFilterType | null,
   filterClassification: number | null,
 ) => {
   const {
