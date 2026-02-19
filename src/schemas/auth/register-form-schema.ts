@@ -3,10 +3,13 @@ import { loginFormSchema } from "./login-form-schema";
 
 export const registerFormSchema = loginFormSchema
   .extend({
-    password: loginFormSchema.shape.password.min(
-      8,
-      "Password must be at least 8 characters.",
-    ),
+    password: loginFormSchema.shape.password
+      .min(8, "Password must be at least 8 characters.")
+      .regex(/[a-zA-Z]/, "Password must contain at least one letter.")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
+      .regex(/[0-9]/, "Password must contain at least one number.")
+      .regex(/[^a-zA-Z0-9]/, "Password must contain at least one symbol."),
     first_name: z
       .string()
       .trim()

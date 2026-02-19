@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -35,7 +36,9 @@ export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
                     auditLog.actor.middle_name ?? ""
                   } ${auditLog.actor.last_name}`}
             </TableCell>
-            <TableCell>{auditLog.action}</TableCell>
+            <TableCell>
+              <Badge variant="secondary">{auditLog.action}</Badge>
+            </TableCell>
             <TableCell>
               {auditLog.action === "renamed"
                 ? auditLog.properties.old_name

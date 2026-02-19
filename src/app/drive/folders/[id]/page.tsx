@@ -108,7 +108,7 @@ export default function FoldersPage() {
         </InfiniteScrollContainer>
       )}
       {isError && error && (
-        <div className="py-4 flex flex-col items-center justify-center gap-4">
+        <div className="py-4 flex-1 flex flex-col items-center justify-center gap-4">
           <p className="text-destructive text-sm">{error.message}</p>
           <Button
             onClick={() =>

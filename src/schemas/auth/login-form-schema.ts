@@ -15,8 +15,8 @@ export const loginFormSchema = z.object({
   //   .refine((val) => val.endsWith("@norsu.edu.ph"), {
   //     message: "Email must end with @norsu.edu.ph.",
   //   }),
-  email: z.email(),
-  password: z.string().trim().nonempty("Password is required."),
+  email: z.email("Invalid email address."),
+  password: z.string(),
 });
 
 export type TLoginFormSchema = z.infer<typeof loginFormSchema>;

@@ -8,6 +8,8 @@ export type TLoginResponse = {
   user: TCurrentUser;
   currentOrganizationUnitId?: number;
   currentOrganizationUnitName?: string;
+  lastLogin: string;
+  lastFailedLogin: string;
 };
 
 export async function getCsrfCookie() {

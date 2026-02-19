@@ -26,6 +26,7 @@ import { TItem } from "@/types/item";
 import {
   Activity,
   CircleAlert,
+  Download,
   EllipsisVertical,
   FileText,
   Folder,
@@ -150,6 +151,12 @@ export function ItemTable({
                     <EllipsisVertical className="size-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-72">
+                    {!item.is_folder && (
+                      <DropdownMenuItem>
+                        <Download />
+                        Download
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem
                       onClick={() => {
                         setSelectedItem(item);

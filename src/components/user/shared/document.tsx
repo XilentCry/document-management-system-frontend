@@ -23,6 +23,7 @@ import { TItem } from "@/types/item";
 import {
   Activity,
   CircleAlert,
+  Download,
   EllipsisVertical,
   FileText,
   FolderInput,
@@ -89,6 +90,10 @@ export function Document({
               <EllipsisVertical className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-72">
+              <DropdownMenuItem>
+                <Download />
+                Download
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setOpenRenameItemDialog(true)}>
                 <PencilLine />
                 Rename

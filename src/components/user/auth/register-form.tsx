@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -24,15 +25,21 @@ import { useRegister } from "@/services/auth/mutations";
 import { useGetAllOrganizationUnits } from "@/services/organization-units/queries";
 import { TFormError } from "@/types/form-error";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CheckCircle2, Circle, CircleX } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import {
+  FormProvider,
+  SubmitHandler,
+  useForm,
+  useWatch,
+} from "react-hook-form";
 import { OrganizationUnitsDialog } from "./organization-units-dialog";
 
 export function RegisterForm() {
   const [formErrors, setFormErrors] = useState<TFormError | null>(null);
 
-  const methods = useForm<TRegisterFormSchema>({
+  const form = useForm<TRegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
       first_name: "",
@@ -48,8 +55,10 @@ export function RegisterForm() {
   const {
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
-  } = methods;
+    formState: { errors, isSubmitting, isSubmitSuccessful, isSubmitted },
+  } = form;
+
+  const watchedPassword = useWatch({ control: form.control, name: "password" });
 
   const {
     isLoading,
@@ -71,14 +80,14 @@ export function RegisterForm() {
   };
 
   return (
-    <FormProvider {...methods}>
+    <FormProvider {...form}>
       <form className="px-4 sm:px-0" onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
           <Field>
             <FieldLabel>First Name</FieldLabel>
             <Input
               placeholder="Enter first name"
-              {...methods.register("first_name")}
+              {...form.register("first_name")}
             />
             {errors.first_name && (
               <FieldError>{errors.first_name.message}</FieldError>
@@ -91,7 +100,7 @@ export function RegisterForm() {
             <FieldLabel>Middle Name</FieldLabel>
             <Input
               placeholder="Enter middle name"
-              {...methods.register("middle_name")}
+              {...form.register("middle_name")}
             />
             {errors.middle_name && (
               <FieldError>{errors.middle_name.message}</FieldError>
@@ -104,7 +113,7 @@ export function RegisterForm() {
             <FieldLabel>Last Name</FieldLabel>
             <Input
               placeholder="Enter last name"
-              {...methods.register("last_name")}
+              {...form.register("last_name")}
             />
             {errors.last_name && (
               <FieldError>{errors.last_name.message}</FieldError>
@@ -121,6 +130,9 @@ export function RegisterForm() {
               isError={isError}
               error={error}
             />
+            <FieldDescription>
+              Select your office/s or unit/s you are currently assigned to.
+            </FieldDescription>
             {errors.organization_unit_ids && (
               <FieldError>{errors.organization_unit_ids.message}</FieldError>
             )}
@@ -130,12 +142,15 @@ export function RegisterForm() {
             <InputGroup>
               <InputGroupInput
                 placeholder="Enter email"
-                {...methods.register("email")}
+                {...form.register("email")}
               />
               <InputGroupAddon align="inline-end">
                 <InputGroupText>@norsu.edu.ph</InputGroupText>
               </InputGroupAddon>
             </InputGroup>
+            <FieldDescription>
+              Use your official NORSU email address.
+            </FieldDescription>
             {errors.email && <FieldError>{errors.email.message}</FieldError>}
             {formErrors?.email && <FieldError>{formErrors.email}</FieldError>}
           </Field>
@@ -144,10 +159,44 @@ export function RegisterForm() {
             <Input
               type="password"
               placeholder="Enter password"
-              {...methods.register("password")}
+              {...form.register("password")}
             />
-            {errors.password && (
-              <FieldError>{errors.password.message}</FieldError>
+            <>
+              {[
+                { label: "At least 8 characters", regex: /.{8,}/ },
+                { label: "One uppercase letter", regex: /[A-Z]/ },
+                { label: "One lowercase letter", regex: /[a-z]/ },
+                { label: "One number", regex: /[0-9]/ },
+                { label: "One symbol (e.g. !@#$%)", regex: /[^a-zA-Z0-9]/ },
+              ].map(({ label, regex }) => {
+                const passed = regex.test(watchedPassword);
+                const showError = isSubmitted && !passed;
+
+                return (
+                  <div
+                    key={label}
+                    className={`flex items-center gap-2 ${
+                      passed
+                        ? "text-green-500"
+                        : showError
+                          ? "text-destructive"
+                          : "text-muted-foreground"
+                    }`}
+                  >
+                    {passed ? (
+                      <CheckCircle2 className="size-4" />
+                    ) : showError ? (
+                      <CircleX className="size-4 text-destructive" />
+                    ) : (
+                      <Circle className="size-4" />
+                    )}
+                    <FieldDescription>{label}</FieldDescription>
+                  </div>
+                );
+              })}
+            </>
+            {formErrors?.password && (
+              <FieldError>{formErrors.password}</FieldError>
             )}
           </Field>
           <Field>
@@ -155,7 +204,7 @@ export function RegisterForm() {
             <Input
               type="password"
               placeholder="Confirm your password"
-              {...methods.register("password_confirmation")}
+              {...form.register("password_confirmation")}
             />
             {errors.password_confirmation && (
               <FieldError>{errors.password_confirmation.message}</FieldError>
