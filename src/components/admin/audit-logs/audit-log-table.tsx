@@ -15,41 +15,43 @@ export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
   const { getDetails } = useGetDetails();
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Occurred</TableHead>
-          <TableHead>Actor</TableHead>
-          <TableHead>Action</TableHead>
-          <TableHead>Subject</TableHead>
-          <TableHead>Details</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {auditLogs.map((auditLog) => (
-          <TableRow key={auditLog.id}>
-            <TableCell>{auditLog.created_at}</TableCell>
-            <TableCell>
-              {userId === auditLog.actor.id
-                ? "You"
-                : `${auditLog.actor.first_name} ${
-                    auditLog.actor.middle_name ?? ""
-                  } ${auditLog.actor.last_name}`}
-            </TableCell>
-            <TableCell>
-              <Badge variant="secondary">{auditLog.action}</Badge>
-            </TableCell>
-            <TableCell>
-              {auditLog.action === "renamed"
-                ? auditLog.properties.old_name
-                : auditLog.properties.name}
-            </TableCell>
-            <TableCell className="whitespace-normal">
-              {getDetails(auditLog)}
-            </TableCell>
+    <div className="rounded-lg border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Occurred</TableHead>
+            <TableHead>Actor</TableHead>
+            <TableHead>Action</TableHead>
+            <TableHead>Subject</TableHead>
+            <TableHead>Details</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {auditLogs.map((auditLog) => (
+            <TableRow key={auditLog.id}>
+              <TableCell>{auditLog.created_at}</TableCell>
+              <TableCell>
+                {userId === auditLog.actor.id
+                  ? "You"
+                  : `${auditLog.actor.first_name} ${
+                      auditLog.actor.middle_name ?? ""
+                    } ${auditLog.actor.last_name}`}
+              </TableCell>
+              <TableCell>
+                <Badge variant="secondary">{auditLog.action}</Badge>
+              </TableCell>
+              <TableCell>
+                {auditLog.action === "renamed"
+                  ? auditLog.properties.old_name
+                  : auditLog.properties.name}
+              </TableCell>
+              <TableCell className="whitespace-normal">
+                {getDetails(auditLog)}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

@@ -46,7 +46,7 @@ export function AuditLogList() {
       <p className="text-sm">No audit logs found.</p>
     </div>
   ) : (
-    <div className="flex-1 min-h-0 flex flex-col justify-between">
+    <div className="flex-1 flex flex-col gap-4">
       <AuditLogTable auditLogs={auditLogs?.data ?? []} />
       <Pagination>
         <PaginationContent>

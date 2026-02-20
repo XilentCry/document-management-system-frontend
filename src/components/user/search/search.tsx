@@ -108,7 +108,7 @@ export function Search() {
         <EmptyState
           icon={SearchIcon}
           title="None of your files or folders matched this search"
-          description="Try another search, or use search options to find a file by type, owner, and more."
+          description="Try another search, or use search options to find a file by type, classification, and more."
         />
       ) : viewMode === "list" ? (
         <InfiniteScrollContainer
