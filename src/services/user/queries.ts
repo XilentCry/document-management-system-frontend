@@ -3,7 +3,7 @@ import { getUserOrganizationUnits } from "./api";
 
 export const useGetUserOrganizationUnits = () => {
   const { isLoading, isError, error, data } = useQuery({
-    queryKey: ["user-organization-units"],
+    queryKey: ["user", "organization-units"],
     queryFn: getUserOrganizationUnits,
   });
 

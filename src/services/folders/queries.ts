@@ -6,13 +6,14 @@ export const useGetFolderItems = (id: string) => {
     isLoading,
     isError,
     error,
+    isFetchNextPageError,
     isSuccess,
     data,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: [`folder-${id}-items`],
+    queryKey: ["folder", Number(id), "items"],
     queryFn: ({ pageParam }) => getFolderItems({ id, pageParam }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
@@ -22,6 +23,7 @@ export const useGetFolderItems = (id: string) => {
     isLoading,
     isError,
     error,
+    isFetchNextPageError,
     isSuccess,
     data,
     fetchNextPage,
@@ -41,7 +43,7 @@ export const useGetFolderSubfolders = (id: number | null) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: [`folder-${id}-subfolders`],
+    queryKey: ["folder", id, "subfolders"],
     queryFn: ({ pageParam }) => getFolderSubfolders({ id, pageParam }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
@@ -65,7 +67,7 @@ export const useGetFolderDetails = (
   isRailTabDetails: boolean,
 ) => {
   const { isLoading, isError, error, data } = useQuery({
-    queryKey: [`folder-${id}-details`],
+    queryKey: ["folder", id, "details"],
     queryFn: () => getFolderDetails(id),
     enabled: !!id && isRailTabDetails,
   });

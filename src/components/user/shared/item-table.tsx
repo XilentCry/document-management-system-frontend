@@ -40,6 +40,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
+import { useDownloadDocument } from "@/services/documents/mutations";
 
 export function ItemTable({
   data,
@@ -66,6 +67,11 @@ export function ItemTable({
   } = useRailStore();
 
   const { copyLink } = useCopyLink();
+  const { mutate: downloadDocumentMutation } = useDownloadDocument();
+
+  const handleDownload = (id: number, fileName: string) => {
+    downloadDocumentMutation({ id, fileName });
+  };
 
   return (
     <>
@@ -152,7 +158,9 @@ export function ItemTable({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-72">
                     {!item.is_folder && (
-                      <DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => handleDownload(item.id, item.name)}
+                      >
                         <Download />
                         Download
                       </DropdownMenuItem>

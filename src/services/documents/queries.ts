@@ -6,7 +6,7 @@ export const useGetDocumentDetails = (
   isRailTabDetails: boolean,
 ) => {
   const { isLoading, isError, error, data } = useQuery({
-    queryKey: [`document-${id}-details`],
+    queryKey: ["document", id, "details"],
     queryFn: () => getDocumentDetails(id),
     enabled: !!id && isRailTabDetails,
   });

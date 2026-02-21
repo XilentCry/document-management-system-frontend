@@ -155,7 +155,7 @@ export function MoveItemDialog({
             )}
             <ScrollArea className="flex-1 flex flex-col min-h-0">
               {isLoading ? (
-                <div className="size-full flex items-center justify-center">
+                <div className="h-full flex items-center justify-center">
                   <Spinner className="text-primary size-9" />
                 </div>
               ) : (

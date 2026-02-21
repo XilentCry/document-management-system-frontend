@@ -22,6 +22,7 @@ export default function DepartmentDrivePage() {
   const {
     isLoading,
     isError,
+    isFetchNextPageError,
     error,
     isSuccess,
     data,
@@ -61,6 +62,14 @@ export default function DepartmentDrivePage() {
     setCurrentOrganizationUnitId,
     setCurrentParentFolderId,
   ]);
+
+  if (isError && error) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p className="text-destructive text-sm">{error.message}</p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -124,7 +133,7 @@ export default function DepartmentDrivePage() {
           )}
         </InfiniteScrollContainer>
       )}
-      {isError && error && (
+      {isFetchNextPageError && error && (
         <div className="py-4 flex-1 flex flex-col items-center justify-center gap-4">
           <p className="text-destructive text-sm">{error.message}</p>
           <Button

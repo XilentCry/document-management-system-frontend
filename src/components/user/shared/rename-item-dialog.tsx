@@ -53,7 +53,9 @@ export function RenameItemDialog({
     }
   }, [isSubmitSuccessful, reset, setOpenRenameItemDialog]);
 
-  const { mutateAsync: renameItemMutation } = useRenameItem();
+  const { mutateAsync: renameItemMutation } = useRenameItem(
+    item.is_folder ? "folder" : "document",
+  );
 
   const onSubmit: SubmitHandler<TRenameItemFormSchema> = async (data) => {
     await renameItemMutation({

@@ -14,7 +14,7 @@ export const useGetItemActivities = (
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: [`item-${id}-activities`],
+    queryKey: ["item", id, "activities"],
     queryFn: ({ pageParam }) => getItemActivities({ id, pageParam }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,

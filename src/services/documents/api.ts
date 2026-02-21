@@ -2,6 +2,30 @@ import { getCookie } from "@/lib/get-cookie";
 import { TSingleFile } from "@/schemas/documents/upload-file-form-schema";
 import { TItem } from "@/types/item";
 
+export const downloadDocument = async (id: number, fileName: string) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/download`,
+    {
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
 export const viewDocument = async (id: number): Promise<string> => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/view`,

@@ -36,6 +36,7 @@ import { useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { toast } from "sonner";
+import { useDownloadDocument } from "@/services/documents/mutations";
 
 export function Document({
   item,
@@ -57,6 +58,14 @@ export function Document({
   } = useRailStore();
 
   const { copyLink } = useCopyLink();
+  const { mutate: downloadDocumentMutation } = useDownloadDocument();
+
+  const handleDownload = () => {
+    downloadDocumentMutation({
+      id: item.id,
+      fileName: item.name,
+    });
+  };
 
   return (
     <>
@@ -90,7 +99,7 @@ export function Document({
               <EllipsisVertical className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-72">
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDownload}>
                 <Download />
                 Download
               </DropdownMenuItem>

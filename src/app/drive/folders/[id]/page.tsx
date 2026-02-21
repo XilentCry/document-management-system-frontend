@@ -22,6 +22,7 @@ export default function FoldersPage() {
     isLoading,
     isError,
     error,
+    isFetchNextPageError,
     isSuccess,
     data,
     fetchNextPage,
@@ -49,6 +50,14 @@ export default function FoldersPage() {
     return (
       <div className="flex-1 flex items-center justify-center">
         <Spinner className="text-primary size-9" />
+      </div>
+    );
+  }
+
+  if (isError && error) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p className="text-destructive text-sm">{error.message}</p>
       </div>
     );
   }
@@ -107,7 +116,7 @@ export default function FoldersPage() {
           )}
         </InfiniteScrollContainer>
       )}
-      {isError && error && (
+      {isFetchNextPageError && error && (
         <div className="py-4 flex-1 flex flex-col items-center justify-center gap-4">
           <p className="text-destructive text-sm">{error.message}</p>
           <Button

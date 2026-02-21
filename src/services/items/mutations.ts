@@ -6,7 +6,7 @@ import { moveItem, renameItem } from "./api";
 import { toast } from "sonner";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 
-export const useRenameItem = () => {
+export const useRenameItem = (type: "folder" | "document") => {
   const currentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
@@ -24,18 +24,22 @@ export const useRenameItem = () => {
       id: number;
       renameData: TRenameItemFormSchema;
     }) => renameItem(id, renameData),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       toast.success(data.message);
 
       if (currentParentFolderId) {
         queryClient.invalidateQueries({
-          queryKey: [`folder-${currentParentFolderId}-items`],
+          queryKey: ["folder", currentParentFolderId, "items"],
         });
       } else {
         queryClient.invalidateQueries({
-          queryKey: [`organization-unit-${currentOrganizationUnitId}-items`],
+          queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
         });
       }
+
+      queryClient.invalidateQueries({
+        queryKey: [type, variables.id, "details"],
+      });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -66,11 +70,11 @@ export const useMoveItem = () => {
 
       if (currentParentFolderId) {
         queryClient.invalidateQueries({
-          queryKey: [`folder-${currentParentFolderId}-items`],
+          queryKey: ["folder", currentParentFolderId, "items"],
         });
       } else {
         queryClient.invalidateQueries({
-          queryKey: [`organization-unit-${currentOrganizationUnitId}-items`],
+          queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
         });
       }
     },
