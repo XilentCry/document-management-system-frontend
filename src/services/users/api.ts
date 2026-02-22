@@ -1,11 +1,11 @@
 import { getCookie } from "@/lib/get-cookie";
-import { TOrganizationUnit } from "@/types/organization-unit";
+import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
 import { TPaginate } from "@/types/paginate";
 
 type TGetUserResponse = TUser & {
-  organizationUnits: Pick<TOrganizationUnit, "id" | "name">[];
+  organizationUnits: TOrganizationUnitBase[];
 };
 
 type TUpdateUserResponse =

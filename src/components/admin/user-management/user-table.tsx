@@ -59,12 +59,8 @@ export function UserTable({ users }: { users: TUser[] }) {
                   {user.status}
                 </Badge>
               </TableCell>
-              <TableCell>
-                {new Date(user.created_at).toLocaleString()}
-              </TableCell>
-              <TableCell>
-                {new Date(user.updated_at).toLocaleString()}
-              </TableCell>
+              <TableCell>{user.created_at}</TableCell>
+              <TableCell>{user.updated_at}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger
@@ -74,7 +70,7 @@ export function UserTable({ users }: { users: TUser[] }) {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuGroup>
-                      <DropdownMenuLabel>Action</DropdownMenuLabel>
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem
                         onClick={() =>
                           router.push(`/admin/user-management/view/${user.id}`)

@@ -28,7 +28,7 @@ export async function proxy(request: NextRequest) {
         if (data.user.role === "User") {
           return NextResponse.redirect(
             new URL(
-              `/drive/department-drive/${data.currentOrganizationUnitId}`,
+              `/drive/organizational-drive/${data.currentOrganizationUnitId}`,
               request.url,
             ),
           );
@@ -42,7 +42,7 @@ export async function proxy(request: NextRequest) {
       if (data.user.role === "User" && pathname.startsWith("/admin")) {
         return NextResponse.redirect(
           new URL(
-            `/drive/department-drive/${data.currentOrganizationUnitId}`,
+            `/drive/organizational-drive/${data.currentOrganizationUnitId}`,
             request.url,
           ),
         );
@@ -55,7 +55,7 @@ export async function proxy(request: NextRequest) {
       if (pathname === "/drive/search" && !searchParams.get("q")) {
         return NextResponse.redirect(
           new URL(
-            `/drive/department-drive/${data.currentOrganizationUnitId}`,
+            `/drive/organizational-drive/${data.currentOrganizationUnitId}`,
             request.url,
           ),
         );

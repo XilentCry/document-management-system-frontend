@@ -22,7 +22,7 @@ import {
 } from "@/schemas/auth/register-form-schema";
 import { getCsrfCookie } from "@/services/auth/api";
 import { useRegister } from "@/services/auth/mutations";
-import { useGetAllOrganizationUnits } from "@/services/organization-units/queries";
+import { useGetAllOrganizationUnitsTree } from "@/services/organization-units/queries";
 import { TFormError } from "@/types/form-error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Circle, CircleX } from "lucide-react";
@@ -65,7 +65,7 @@ export function RegisterForm() {
     isError,
     error,
     data: organizationUnits = [],
-  } = useGetAllOrganizationUnits();
+  } = useGetAllOrganizationUnitsTree();
   const { mutateAsync: registerMutation } = useRegister(setFormErrors);
 
   useEffect(() => {

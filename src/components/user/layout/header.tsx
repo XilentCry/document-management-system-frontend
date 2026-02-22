@@ -113,7 +113,7 @@ export function Header() {
             </Button>
             <InputGroup>
               <InputGroupInput
-                placeholder={`Search in ${currentOrganizationUnitName ?? "Department Drive"}`}
+                placeholder={`Search in ${currentOrganizationUnitName ?? "Organizational Drive"}`}
                 className="truncate"
                 value={draftSearchTerm}
                 onChange={(e) => setDraftSearchTerm(e.target.value)}

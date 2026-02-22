@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { STATUSES } from "@/lib/constants";
 import { useUpdateStatus } from "@/services/users/mutations";
-import { TOrganizationUnit } from "@/types/organization-unit";
+import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,7 +22,7 @@ export function ViewUser({
   user,
 }: {
   user: TUser & {
-    organizationUnits: Pick<TOrganizationUnit, "id" | "name">[];
+    organizationUnits: TOrganizationUnitBase[];
   };
 }) {
   const [status, setStatus] = useState(user.status);

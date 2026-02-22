@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/input-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
-import { TOrganizationUnit } from "@/types/organization-unit";
+import { TOrganizationUnitTree } from "@/types/organization-unit-tree";
 import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
@@ -24,14 +24,8 @@ import { Spinner } from "../../ui/spinner";
 import { OrganizationUnitTreeNode } from "./organization-unit-tree-node";
 
 function flattenOrganizationUnits(
-  organizationUnits: Pick<
-    TOrganizationUnit,
-    "id" | "name" | "parent_organization_unit_id" | "children"
-  >[],
-  acc: Pick<
-    TOrganizationUnit,
-    "id" | "name" | "parent_organization_unit_id" | "children"
-  >[] = [],
+  organizationUnits: TOrganizationUnitTree[],
+  acc: TOrganizationUnitTree[] = [],
 ) {
   for (const organizationUnit of organizationUnits) {
     acc.push(organizationUnit);
@@ -48,10 +42,7 @@ export function OrganizationUnitsDialog({
   isError,
   error,
 }: {
-  organizationUnits: Pick<
-    TOrganizationUnit,
-    "id" | "name" | "parent_organization_unit_id" | "children"
-  >[];
+  organizationUnits: TOrganizationUnitTree[];
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
@@ -87,41 +78,25 @@ export function OrganizationUnitsDialog({
   );
 
   const filterOrganizationUnits = (
-    organizationUnits: Pick<
-      TOrganizationUnit,
-      "id" | "name" | "parent_organization_unit_id" | "children"
-    >[],
+    organizationUnits: TOrganizationUnitTree[],
     searchTerm: string,
-  ): Pick<
-    TOrganizationUnit,
-    "id" | "name" | "parent_organization_unit_id" | "children"
-  >[] => {
+  ): TOrganizationUnitTree[] => {
     if (!searchTerm) return organizationUnits;
     const lower = searchTerm.toLowerCase();
     return organizationUnits
-      .map(
-        (
-          organizationUnit: Pick<
-            TOrganizationUnit,
-            "id" | "name" | "parent_organization_unit_id" | "children"
-          >,
-        ) => {
-          const children = organizationUnit.children
-            ? filterOrganizationUnits(organizationUnit.children, searchTerm)
-            : [];
-          if (
-            organizationUnit.name.toLowerCase().includes(lower) ||
-            children.length > 0
-          ) {
-            return { ...organizationUnit, children };
-          }
-          return null;
-        },
-      )
-      .filter(Boolean) as Pick<
-      TOrganizationUnit,
-      "id" | "name" | "parent_organization_unit_id" | "children"
-    >[];
+      .map((organizationUnit: TOrganizationUnitTree) => {
+        const children = organizationUnit.children
+          ? filterOrganizationUnits(organizationUnit.children, searchTerm)
+          : [];
+        if (
+          organizationUnit.name.toLowerCase().includes(lower) ||
+          children.length > 0
+        ) {
+          return { ...organizationUnit, children };
+        }
+        return null;
+      })
+      .filter(Boolean) as TOrganizationUnitTree[];
   };
 
   const filteredOrganizationUnits = filterOrganizationUnits(

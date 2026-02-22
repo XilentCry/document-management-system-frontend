@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Activity, UsersRound } from "lucide-react";
+import { Activity, Building2, UsersRound } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -41,6 +41,15 @@ export function AdminSidebar() {
                 >
                   <UsersRound />
                   User Management
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={pathname.startsWith("/admin/organization-units")}
+                  render={<Link href="/admin/organization-units" />}
+                >
+                  <Building2 />
+                  Organization Units
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>

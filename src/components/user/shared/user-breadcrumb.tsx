@@ -54,7 +54,7 @@ export function UserBreadCrumb({
                           <Link
                             href={
                               item.type === "organization_unit"
-                                ? `/drive/department-drive/${item.id}`
+                                ? `/drive/organizational-drive/${item.id}`
                                 : `/drive/folders/${item.id}`
                             }
                           />
@@ -89,7 +89,7 @@ export function UserBreadCrumb({
                       <Link
                         href={
                           item.type === "organization_unit"
-                            ? `/drive/department-drive/${item.id}`
+                            ? `/drive/organizational-drive/${item.id}`
                             : `/drive/folders/${item.id}`
                         }
                       />

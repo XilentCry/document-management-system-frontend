@@ -88,13 +88,13 @@ export function UserSidebar() {
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     isActive={
-                      pathname.startsWith("/drive/department-drive") ||
+                      pathname.startsWith("/drive/organizational-drive") ||
                       pathname.startsWith("/drive/folders")
                     }
                     onClick={() => setOpenUserOrganizationUnitsDialog(true)}
                   >
                     <Folder />
-                    Department Drive
+                    Organizational Drive
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>

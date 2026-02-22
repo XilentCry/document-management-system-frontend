@@ -16,7 +16,7 @@ import { Files, LayoutGrid, List } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
-export default function DepartmentDrivePage() {
+export default function OrganizationalDrivePage() {
   const { id } = useParams<{ id: string }>();
 
   const {

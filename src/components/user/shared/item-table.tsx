@@ -139,9 +139,7 @@ export function ItemTable({
                 </TableCell>
               )}
               {!openRail && (
-                <TableCell>
-                  {item.classification ? item.classification : <>&mdash;</>}
-                </TableCell>
+                <TableCell>{item.classification ?? <>&mdash;</>}</TableCell>
               )}
               <TableCell className="text-right">
                 <DropdownMenu>

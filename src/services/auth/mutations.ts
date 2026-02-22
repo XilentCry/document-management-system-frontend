@@ -36,7 +36,7 @@ export const useLogin = () => {
         setCurrentOrganizationUnitId(data.currentOrganizationUnitId);
         setCurrentOrganizationUnitName(data.currentOrganizationUnitName);
         router.replace(
-          `/drive/department-drive/${data.currentOrganizationUnitId}`,
+          `/drive/organizational-drive/${data.currentOrganizationUnitId}`,
         );
       } else if (data.user.role === "Admin") {
         router.replace("/admin/user-management");

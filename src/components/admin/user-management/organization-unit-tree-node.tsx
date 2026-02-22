@@ -3,7 +3,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { TOrganizationUnit } from "@/types/organization-unit";
+import { TOrganizationUnitTree } from "@/types/organization-unit-tree";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -15,10 +15,7 @@ export function OrganizationUnitTreeNode({
   selectedIds,
   onToggle,
 }: {
-  node: Pick<
-    TOrganizationUnit,
-    "id" | "name" | "parent_organization_unit_id" | "children"
-  >;
+  node: TOrganizationUnitTree;
   selectedIds: number[];
   onToggle: (id: number) => void;
 }) {

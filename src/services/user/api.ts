@@ -1,10 +1,7 @@
-import { TOrganizationUnit } from "@/types/organization-unit";
+import { TOrganizationUnitTree } from "@/types/organization-unit-tree";
 
 export async function getUserOrganizationUnits(): Promise<
-  Pick<
-    TOrganizationUnit,
-    "id" | "name" | "parent_organization_unit_id" | "children"
-  >[]
+  TOrganizationUnitTree[]
 > {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/organization-units`,

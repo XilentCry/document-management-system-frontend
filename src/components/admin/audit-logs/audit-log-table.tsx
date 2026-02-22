@@ -10,6 +10,7 @@ import {
 import { useGetDetails } from "@/hooks/use-get-details";
 import { useUserStore } from "@/stores/user-store";
 import { TAuditLog } from "@/types/audit-log";
+
 export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
   const userId = useUserStore((state) => state.userId);
   const { getDetails } = useGetDetails();
@@ -21,7 +22,7 @@ export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
           <TableRow>
             <TableHead>Occurred</TableHead>
             <TableHead>Actor</TableHead>
-            <TableHead>Action</TableHead>
+            <TableHead>Actions</TableHead>
             <TableHead>Subject</TableHead>
             <TableHead>Details</TableHead>
           </TableRow>

@@ -1,11 +1,16 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { TFilterType } from "@/types/filter-type";
 import {
-  getAllOrganizationUnits,
+  keepPreviousData,
+  useInfiniteQuery,
+  useQuery,
+} from "@tanstack/react-query";
+import {
+  getAllOrganizationUnitsFlat,
+  getAllOrganizationUnitsTree,
   getOrganizationUnitFolders,
   getOrganizationUnitItems,
   searchOrganizationUnitItems,
 } from "./api";
-import { TFilterType } from "@/types/filter-type";
 
 export const useSearchOrganizationUnitItems = (
   id: number | null,
@@ -58,13 +63,24 @@ export const useSearchOrganizationUnitItems = (
   };
 };
 
-export const useGetAllOrganizationUnits = () => {
+export const useGetAllOrganizationUnitsTree = () => {
   const { isLoading, isError, error, data } = useQuery({
     queryKey: ["organization-units"],
-    queryFn: getAllOrganizationUnits,
+    queryFn: getAllOrganizationUnitsTree,
   });
 
   return { isLoading, isError, error, data };
+};
+
+export const useGetAllOrganizationUnitsFlat = (page: number) => {
+  const { isLoading, isError, error, isSuccess, data, isPlaceholderData } =
+    useQuery({
+      queryKey: ["organization-units", page],
+      queryFn: () => getAllOrganizationUnitsFlat(page),
+      placeholderData: keepPreviousData,
+    });
+
+  return { isLoading, isError, error, isSuccess, data, isPlaceholderData };
 };
 
 export const useGetOrganizationUnitItems = (id: string) => {

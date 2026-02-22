@@ -4,7 +4,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { TOrganizationUnit } from "@/types/organization-unit";
+import { TOrganizationUnitTree } from "@/types/organization-unit-tree";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,22 +14,19 @@ import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 export function UserOrganizationUnitTreeNode({
   node,
 }: {
-  node: Pick<
-    TOrganizationUnit,
-    "id" | "name" | "parent_organization_unit_id" | "children"
-  >;
+  node: TOrganizationUnitTree;
 }) {
   const [open, setOpen] = useState(true);
 
   const hasChildren = !!node.children?.length;
   const currentOrganizationUnitId = useOrganizationUnitStore(
-    (state) => state.currentOrganizationUnitId
+    (state) => state.currentOrganizationUnitId,
   );
 
   const router = useRouter();
 
   const handleSelectOrganizationUnit = (id: number) => {
-    router.push(`/drive/department-drive/${id}`);
+    router.push(`/drive/organizational-drive/${id}`);
   };
 
   return (

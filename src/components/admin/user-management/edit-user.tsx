@@ -2,7 +2,7 @@ import {
   TUpdateUserFormSchema,
   updateUserFormSchema,
 } from "@/schemas/users/update-user-form-schema";
-import { TOrganizationUnit } from "@/types/organization-unit";
+import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
@@ -22,7 +22,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
 import { TFormError } from "@/types/form-error";
-import { useGetAllOrganizationUnits } from "@/services/organization-units/queries";
+import { useGetAllOrganizationUnitsTree } from "@/services/organization-units/queries";
 import { Button } from "@/components/ui/button";
 import { OrganizationUnitsDialog } from "./organization-units-dialog";
 import { useUpdateUser } from "@/services/users/mutations";
@@ -32,7 +32,7 @@ export function EditUser({
   user,
 }: {
   user: TUser & {
-    organizationUnits: Pick<TOrganizationUnit, "id" | "name">[];
+    organizationUnits: TOrganizationUnitBase[];
   };
 }) {
   const [formErrors, setFormErrors] = useState<TFormError | null>(null);
@@ -47,7 +47,7 @@ export function EditUser({
       last_name: user.last_name,
       ...(user.role === "User" && {
         organization_unit_ids: user.organizationUnits.map(
-          (organizationUnit) => organizationUnit.id
+          (organizationUnit) => organizationUnit.id,
         ),
       }),
       email: user.email,
@@ -65,10 +65,10 @@ export function EditUser({
     isError,
     error,
     data: organizationUnits = [],
-  } = useGetAllOrganizationUnits();
+  } = useGetAllOrganizationUnitsTree();
   const { mutateAsync: updateUserMutation } = useUpdateUser(
     setFormErrors,
-    reset
+    reset,
   );
 
   const onSubmit: SubmitHandler<TUpdateUserFormSchema> = async (data) => {

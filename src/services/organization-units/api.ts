@@ -2,7 +2,9 @@ import { TBreadcrumb } from "@/types/breadcrumb";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TFilterType } from "@/types/filter-type";
 import { TItem } from "@/types/item";
-import { TOrganizationUnit } from "@/types/organization-unit";
+import { TOrganizationUnitFlat } from "@/types/organization-unit-flat";
+import { TOrganizationUnitTree } from "@/types/organization-unit-tree";
+import { TPaginate } from "@/types/paginate";
 
 type TGetOrganizationUnitItemsResponse = {
   currentOrganizationUnitId: number;
@@ -47,14 +49,11 @@ export const searchOrganizationUnitItems = async ({
   return data;
 };
 
-export async function getAllOrganizationUnits(): Promise<
-  Pick<
-    TOrganizationUnit,
-    "id" | "name" | "parent_organization_unit_id" | "children"
-  >[]
+export async function getAllOrganizationUnitsTree(): Promise<
+  TOrganizationUnitTree[]
 > {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/tree`,
     {
       headers: {
         Accept: "application/json",
@@ -69,6 +68,28 @@ export async function getAllOrganizationUnits(): Promise<
   }
 
   return data.organizationUnits;
+}
+
+export async function getAllOrganizationUnitsFlat(
+  page: number,
+): Promise<TPaginate<TOrganizationUnitFlat>> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/flat?page=${page}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
 }
 
 export const getOrganizationUnitItems = async ({
