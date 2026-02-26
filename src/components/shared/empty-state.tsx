@@ -1,5 +1,5 @@
 import {
-  Empty as EmptyRoot,
+  Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
@@ -15,7 +15,7 @@ interface EmptyProps {
 
 export function EmptyState({ icon: Icon, title, description }: EmptyProps) {
   return (
-    <EmptyRoot>
+    <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <Icon />
@@ -23,6 +23,6 @@ export function EmptyState({ icon: Icon, title, description }: EmptyProps) {
         <EmptyTitle>{title}</EmptyTitle>
         <EmptyDescription>{description}</EmptyDescription>
       </EmptyHeader>
-    </EmptyRoot>
+    </Empty>
   );
 }

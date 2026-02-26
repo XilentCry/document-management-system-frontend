@@ -18,18 +18,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useCopyLink } from "@/hooks/use-copy-link";
-import { formatFileSize } from "@/lib/format-file-size";
+import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
-import { useUserStore } from "@/stores/user-store";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
+import { TSharedWithMe } from "@/types/shared-with-me";
 import {
   Activity,
   CircleAlert,
   Download,
   EllipsisVertical,
   FileText,
-  Folder,
   FolderInput,
   FolderOpen,
   Link2,
@@ -38,21 +37,17 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { MoveItemDialog } from "./move-item-dialog";
-import { RenameItemDialog } from "./rename-item-dialog";
-import { useDownloadDocument } from "@/services/documents/mutations";
-import { ShareDocumentDialog } from "./share-document-dialog";
+import { MoveItemDialog } from "../shared/move-item-dialog";
+import { RenameItemDialog } from "../shared/rename-item-dialog";
+import { ShareDocumentDialog } from "../shared/share-document-dialog";
 
-export function ItemTable({
+export function SharedDocumentTable({
   data,
-  onFolderDoubleClick,
   onDocumentDoubleClick,
 }: {
-  data: TCursorPaginate<TItem>["data"];
-  onFolderDoubleClick: (folderId: number) => void;
+  data: TCursorPaginate<TSharedWithMe>["data"];
   onDocumentDoubleClick: (documentId: number) => Promise<void>;
 }) {
-  const userId = useUserStore((state) => state.userId);
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);
@@ -81,68 +76,31 @@ export function ItemTable({
         <TableHeader>
           <TableRow>
             <TableHead>Name</TableHead>
-            {!openRail && <TableHead>Owner</TableHead>}
-            <TableHead>Date modified</TableHead>
-            {!openRail && <TableHead>File size</TableHead>}
-            {!openRail && <TableHead>Classification</TableHead>}
+            <TableHead>Shared by</TableHead>
+            {!openRail && <TableHead>Date shared</TableHead>}
             <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((item) => (
+          {data.map((sharedDocument) => (
             <TableRow
-              key={item.id}
+              key={sharedDocument.id}
               onClick={() => {
-                if (item.is_folder) {
-                  setSelectedFolderId(item.id);
-                  setSelectedFolderName(item.name);
-                  setSelectedDocumentId(null);
-                  setSelectedDocumentFileName(null);
-                } else {
-                  setSelectedDocumentId(item.id);
-                  setSelectedDocumentFileName(item.name);
-                  setSelectedFolderId(null);
-                  setSelectedFolderName(null);
-                }
+                setSelectedDocumentId(sharedDocument.id);
+                setSelectedDocumentFileName(sharedDocument.item.name);
+                setSelectedFolderId(null);
+                setSelectedFolderName(null);
               }}
-              onDoubleClick={() => {
-                if (item.is_folder) {
-                  onFolderDoubleClick(item.id);
-                } else {
-                  onDocumentDoubleClick(item.id);
-                }
-              }}
+              onDoubleClick={() => onDocumentDoubleClick(sharedDocument.id)}
             >
               <TableCell>
                 <div className="flex items-center gap-2">
-                  {item.is_folder ? (
-                    <Folder className="size-4" />
-                  ) : (
-                    <FileText className="size-4" />
-                  )}
-                  {item.name}
+                  {<FileText className="size-4" />}
+                  {sharedDocument.item.name}
                 </div>
               </TableCell>
-              {!openRail && (
-                <TableCell>
-                  {userId === item.owner.id
-                    ? "me"
-                    : `${item.owner.first_name} ${item.owner.middle_name ?? ""} ${item.owner.last_name}`}
-                </TableCell>
-              )}
-              <TableCell>{item.updated_at}</TableCell>
-              {!openRail && (
-                <TableCell>
-                  {item?.current_version?.file_size ? (
-                    formatFileSize(item.current_version.file_size)
-                  ) : (
-                    <>&mdash;</>
-                  )}
-                </TableCell>
-              )}
-              {!openRail && (
-                <TableCell>{item.classification ?? <>&mdash;</>}</TableCell>
-              )}
+              <TableCell>{`${sharedDocument.item.owner.first_name} ${sharedDocument.item.owner.middle_name ?? ""} ${sharedDocument.item.owner.last_name}`}</TableCell>
+              {!openRail && <TableCell>{sharedDocument.created_at}</TableCell>}
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger
@@ -157,54 +115,59 @@ export function ItemTable({
                     <EllipsisVertical className="size-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-72">
-                    {!item.is_folder && (
-                      <DropdownMenuItem
-                        onClick={() => handleDownload(item.id, item.name)}
-                      >
-                        <Download />
-                        Download
-                      </DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem
+                      onClick={() =>
+                        handleDownload(
+                          sharedDocument.item.id,
+                          sharedDocument.item.name,
+                        )
+                      }
+                    >
+                      <Download />
+                      Download
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => {
-                        setSelectedItem(item);
+                        setSelectedItem(sharedDocument.item);
                         setOpenRenameItemDialog(true);
                       }}
                     >
                       <PencilLine />
                       Rename
                     </DropdownMenuItem>
-                    {!item.is_folder && item.owner.id === userId && (
-                      <>
-                        {item.classification === "Protected" ? (
+                    <>
+                      {sharedDocument.item.classification === "Protected" ? (
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedItem(sharedDocument.item);
+                            setOpenShareDialog(true);
+                          }}
+                        >
+                          <UserRoundPlus />
+                          Share
+                        </DropdownMenuItem>
+                      ) : (
+                        sharedDocument.item.classification === "Public" && (
                           <DropdownMenuItem
                             onClick={() => {
-                              setSelectedItem(item);
-                              setOpenShareDialog(true);
+                              if (
+                                !sharedDocument.item?.current_version?.file_path
+                              ) {
+                                toast.error("File path is unavailable.");
+                                return;
+                              }
+
+                              copyLink(
+                                sharedDocument.item.current_version.file_path,
+                              );
                             }}
                           >
-                            <UserRoundPlus />
-                            Share
+                            <Link2 />
+                            Copy link
                           </DropdownMenuItem>
-                        ) : (
-                          item.classification === "Public" && (
-                            <DropdownMenuItem
-                              onClick={() => {
-                                if (!item?.current_version?.file_path) {
-                                  toast.error("File path is unavailable.");
-                                  return;
-                                }
-
-                                copyLink(item.current_version.file_path);
-                              }}
-                            >
-                              <Link2 />
-                              Copy link
-                            </DropdownMenuItem>
-                          )
-                        )}
-                      </>
-                    )}
+                        )
+                      )}
+                    </>
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
                         <FolderOpen />
@@ -214,7 +177,7 @@ export function ItemTable({
                         <DropdownMenuSubContent className="w-72">
                           <DropdownMenuItem
                             onClick={() => {
-                              setSelectedItem(item);
+                              setSelectedItem(sharedDocument.item);
                               setOpenMoveItemDialog(true);
                             }}
                           >
@@ -227,24 +190,18 @@ export function ItemTable({
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
                         <CircleAlert />
-                        {item.is_folder ? "Folder" : "File"} information
+                        File information
                       </DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent className="w-72">
                           <DropdownMenuItem
                             onClick={() => {
-                              if (item.is_folder) {
-                                setSelectedFolderId(item.id);
-                                setSelectedFolderName(item.name);
-                                setSelectedDocumentId(null);
-                                setSelectedDocumentFileName(null);
-                              } else {
-                                setSelectedDocumentId(item.id);
-                                setSelectedDocumentFileName(item.name);
-                                setSelectedFolderId(null);
-                                setSelectedFolderName(null);
-                              }
-
+                              setSelectedDocumentId(sharedDocument.item.id);
+                              setSelectedDocumentFileName(
+                                sharedDocument.item.name,
+                              );
+                              setSelectedFolderId(null);
+                              setSelectedFolderName(null);
                               setRailTab("details");
                               setOpenRail(true);
                             }}
@@ -254,18 +211,12 @@ export function ItemTable({
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
-                              if (item.is_folder) {
-                                setSelectedFolderId(item.id);
-                                setSelectedFolderName(item.name);
-                                setSelectedDocumentId(null);
-                                setSelectedDocumentFileName(null);
-                              } else {
-                                setSelectedDocumentId(item.id);
-                                setSelectedDocumentFileName(item.name);
-                                setSelectedFolderId(null);
-                                setSelectedFolderName(null);
-                              }
-
+                              setSelectedDocumentId(sharedDocument.item.id);
+                              setSelectedDocumentFileName(
+                                sharedDocument.item.name,
+                              );
+                              setSelectedFolderId(null);
+                              setSelectedFolderName(null);
                               setRailTab("activity");
                               setOpenRail(true);
                             }}

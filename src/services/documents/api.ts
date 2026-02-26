@@ -1,6 +1,34 @@
 import { getCookie } from "@/lib/get-cookie";
+import { TShareDocumentFormSchema } from "@/schemas/documents/share-document-form-schema";
 import { TSingleFile } from "@/schemas/documents/upload-file-form-schema";
 import { TItem } from "@/types/item";
+
+export const shareDocument = async (
+  id: number,
+  shareData: TShareDocumentFormSchema,
+) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/share`,
+    {
+      method: "POST",
+      headers: {
+        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(shareData),
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
 
 export const downloadDocument = async (id: number, fileName: string) => {
   const response = await fetch(

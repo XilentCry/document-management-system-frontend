@@ -1,5 +1,14 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { getItemActivities } from "./api";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { getItemActivities, getShareableUsers } from "./api";
+
+export const useGetShareableUsers = (id: number) => {
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["documents", id, "shareable-users"],
+    queryFn: () => getShareableUsers(id),
+  });
+
+  return { isLoading, isError, error, data };
+};
 
 export const useGetItemActivities = (
   id: number | null,

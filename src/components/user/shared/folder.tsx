@@ -54,6 +54,7 @@ export function Folder({
     <>
       <Item
         variant="muted"
+        size="sm"
         onClick={() => {
           setSelectedFolderId(item.id);
           setSelectedFolderName(item.name);

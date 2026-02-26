@@ -73,7 +73,7 @@ export async function getUser(id: string): Promise<TGetUserResponse> {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message);
+    throw new Error("Failed to fetch user. Please try again.");
   }
 
   return data.user;

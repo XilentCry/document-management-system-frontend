@@ -37,6 +37,8 @@ import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { toast } from "sonner";
 import { useDownloadDocument } from "@/services/documents/mutations";
+import { ShareDocumentDialog } from "./share-document-dialog";
+import { useUserStore } from "@/stores/user-store";
 
 export function Document({
   item,
@@ -47,6 +49,9 @@ export function Document({
 }) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
+  const [openShareDialog, setOpenShareDialog] = useState(false);
+
+  const userId = useUserStore((state) => state.userId);
 
   const {
     setSelectedDocumentId,
@@ -71,6 +76,7 @@ export function Document({
     <>
       <Item
         variant="muted"
+        size="sm"
         onClick={() => {
           setSelectedDocumentId(item.id);
           setSelectedDocumentFileName(item.name);
@@ -107,26 +113,30 @@ export function Document({
                 <PencilLine />
                 Rename
               </DropdownMenuItem>
-              {item.classification === "Protected" ? (
-                <DropdownMenuItem>
-                  <UserRoundPlus />
-                  Share
-                </DropdownMenuItem>
-              ) : item.classification === "Public" ? (
-                <DropdownMenuItem
-                  onClick={() => {
-                    if (!item?.current_version?.file_path) {
-                      toast.error("File path is unavailable.");
-                      return;
-                    }
+              {item.owner.id === userId && (
+                <>
+                  {item.classification === "Protected" ? (
+                    <DropdownMenuItem onClick={() => setOpenShareDialog(true)}>
+                      <UserRoundPlus />
+                      Share
+                    </DropdownMenuItem>
+                  ) : item.classification === "Public" ? (
+                    <DropdownMenuItem
+                      onClick={() => {
+                        if (!item?.current_version?.file_path) {
+                          toast.error("File path is unavailable.");
+                          return;
+                        }
 
-                    copyLink(item.current_version.file_path);
-                  }}
-                >
-                  <Link2 />
-                  Copy link
-                </DropdownMenuItem>
-              ) : null}
+                        copyLink(item.current_version.file_path);
+                      }}
+                    >
+                      <Link2 />
+                      Copy link
+                    </DropdownMenuItem>
+                  ) : null}
+                </>
+              )}
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <FolderOpen />
@@ -200,6 +210,14 @@ export function Document({
           item={item}
           openMoveItemDialog={openMoveItemDialog}
           setOpenMoveItemDialog={setOpenMoveItemDialog}
+        />
+      )}
+
+      {openShareDialog && (
+        <ShareDocumentDialog
+          item={item}
+          openShareDialog={openShareDialog}
+          setOpenShareDialog={setOpenShareDialog}
         />
       )}
     </>

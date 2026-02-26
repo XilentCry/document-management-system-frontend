@@ -38,7 +38,7 @@ export function ItemGrid({ data }: { data: TCursorPaginate<TItem>["data"] }) {
   const documents = data.filter((item) => !item.is_folder);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={`flex flex-col gap-4 ${folders.length && "space-y-4"}`}>
       <div className={`grid ${openRail ? "grid-cols-2" : "grid-cols-4"} gap-4`}>
         {folders.map((folder) => (
           <Folder

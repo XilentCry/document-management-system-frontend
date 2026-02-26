@@ -61,8 +61,8 @@ export function ViewUser({
             <p>{user.email}</p>
             <p>{user.role}</p>
             <p>{user.status}</p>
-            <p>{new Date(user.created_at).toLocaleString()}</p>
-            <p>{new Date(user.updated_at).toLocaleString()}</p>
+            <p>{user.created_at}</p>
+            <p>{user.updated_at}</p>
           </div>
         </div>
         {user.role === "User" && (
