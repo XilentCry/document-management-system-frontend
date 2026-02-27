@@ -6,7 +6,10 @@ import { moveItem, renameItem } from "./api";
 import { toast } from "sonner";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 
-export const useRenameItem = (type: "folder" | "document") => {
+export const useRenameItem = (
+  type: "folder" | "document",
+  isInSharedWithMe: boolean,
+) => {
   const currentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
@@ -27,14 +30,18 @@ export const useRenameItem = (type: "folder" | "document") => {
     onSuccess: (data, variables) => {
       toast.success(data.message);
 
-      if (currentParentFolderId) {
-        queryClient.invalidateQueries({
-          queryKey: ["folder", currentParentFolderId, "items"],
-        });
+      if (isInSharedWithMe) {
+        queryClient.invalidateQueries({ queryKey: ["shared-with-me"] });
       } else {
-        queryClient.invalidateQueries({
-          queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
-        });
+        if (currentParentFolderId) {
+          queryClient.invalidateQueries({
+            queryKey: ["folder", currentParentFolderId, "items"],
+          });
+        } else {
+          queryClient.invalidateQueries({
+            queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
+          });
+        }
       }
 
       queryClient.invalidateQueries({

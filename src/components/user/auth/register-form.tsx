@@ -220,13 +220,17 @@ export function RegisterForm() {
               "Register"
             )}
           </Button>
-
-          <p className="text-center text-sm">
-            Already have an account?{" "}
-            <Link href="/" className="hover:underline underline-offset-4">
-              Log in
-            </Link>
-          </p>
+          <Field className="text-center">
+            <p className="text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link
+                href="/"
+                className="hover:text-primary underline underline-offset-4"
+              >
+                Log in
+              </Link>
+            </p>
+          </Field>
         </FieldGroup>
       </form>
     </FormProvider>

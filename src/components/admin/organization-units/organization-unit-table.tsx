@@ -33,56 +33,54 @@ export function OrganizationUnitTable({
 
   return (
     <>
-      <div className="rounded-lg border">
-        <ScrollArea>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Parent</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Updated</TableHead>
-                <TableHead></TableHead>
+      <ScrollArea>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Parent</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Updated</TableHead>
+              <TableHead></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {organizationUnits.map((organizationUnit) => (
+              <TableRow key={organizationUnit.id}>
+                <TableCell>{organizationUnit.name}</TableCell>
+                <TableCell>
+                  {organizationUnit.parent?.name ?? <>&mdash;</>}
+                </TableCell>
+                <TableCell>{organizationUnit.created_at}</TableCell>
+                <TableCell>{organizationUnit.updated_at}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      render={<Button variant="ghost" size="icon-sm" />}
+                    >
+                      <Ellipsis />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuGroup>
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedOrganizationUnit(organizationUnit);
+                            setOpenEditOrganizationUnitDialog(true);
+                          }}
+                        >
+                          Edit
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {organizationUnits.map((organizationUnit) => (
-                <TableRow key={organizationUnit.id}>
-                  <TableCell>{organizationUnit.name}</TableCell>
-                  <TableCell>
-                    {organizationUnit.parent?.name ?? <>&mdash;</>}
-                  </TableCell>
-                  <TableCell>{organizationUnit.created_at}</TableCell>
-                  <TableCell>{organizationUnit.updated_at}</TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        render={<Button variant="ghost" size="icon-sm" />}
-                      >
-                        <Ellipsis />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuGroup>
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedOrganizationUnit(organizationUnit);
-                              setOpenEditOrganizationUnitDialog(true);
-                            }}
-                          >
-                            Edit
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-      </div>
+            ))}
+          </TableBody>
+        </Table>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
 
       {openEditOrganizationUnitDialog && selectedOrganizationUnit && (
         <EditOrganizationUnitDialog

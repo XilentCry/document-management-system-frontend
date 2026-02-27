@@ -49,7 +49,9 @@ import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronsUpDown, UsersRound, X } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+const DEFAULT_ROLE_ID = 1;
 
 export function ShareDocumentDialog({
   item,
@@ -78,29 +80,19 @@ export function ShareDocumentDialog({
   const isError = isShareableUsersError || isShareRolesError;
   const error = ShareableUsersError || shareRolesError;
 
-  const [selectedShareableUserIds, setSelectedShareableUserIds] = useState<
-    number[]
+  const [selectedUsers, setSelectedUsers] = useState<
+    { userId: number; shareRoleId: number }[]
   >([]);
 
-  const toggleShareableUser = (userId: number) => {
-    setSelectedShareableUserIds((prev) => {
-      const updated = prev.includes(userId)
-        ? prev.filter((id) => id !== userId)
-        : [...prev, userId];
-
-      setValue("share_with", updated, { shouldValidate: true });
-
-      return updated;
-    });
-  };
+  const selectedShareableUserIds = selectedUsers.map((u) => u.userId);
 
   const selectedUsersLabel =
-    selectedShareableUserIds.length === 0
+    selectedUsers.length === 0
       ? "Select user(s)"
-      : `${selectedShareableUserIds.length} user(s) selected`;
+      : `${selectedUsers.length} user(s) selected`;
 
-  const selectedShareableUsers = shareableUsers.filter((shareableUser) =>
-    selectedShareableUserIds.includes(shareableUser.id),
+  const selectedShareableUsers = shareableUsers.filter((u) =>
+    selectedShareableUserIds.includes(u.id),
   );
 
   const {
@@ -108,14 +100,45 @@ export function ShareDocumentDialog({
     formState: { isSubmitting, isSubmitSuccessful },
     reset,
     setValue,
-    control,
   } = useForm<TShareDocumentFormSchema>({
     resolver: zodResolver(shareDocumentFormSchema),
     defaultValues: {
       share_with: [],
-      share_role_id: 1,
     },
   });
+
+  // Sync local state to the form value
+  const syncFormValue = (
+    updated: { userId: number; shareRoleId: number }[],
+  ) => {
+    setValue(
+      "share_with",
+      updated.map((u) => ({ user_id: u.userId, share_role_id: u.shareRoleId })),
+      { shouldValidate: true },
+    );
+  };
+
+  const toggleShareableUser = (userId: number) => {
+    setSelectedUsers((prev) => {
+      const updated = prev.some((u) => u.userId === userId)
+        ? prev.filter((u) => u.userId !== userId)
+        : [...prev, { userId, shareRoleId: DEFAULT_ROLE_ID }];
+
+      syncFormValue(updated);
+      return updated;
+    });
+  };
+
+  const updateUserRole = (userId: number, shareRoleId: number) => {
+    setSelectedUsers((prev) => {
+      const updated = prev.map((u) =>
+        u.userId === userId ? { ...u, shareRoleId } : u,
+      );
+
+      syncFormValue(updated);
+      return updated;
+    });
+  };
 
   useEffect(() => {
     if (isSubmitSuccessful) {
@@ -207,67 +230,75 @@ export function ShareDocumentDialog({
                     />
                   ) : (
                     <div className="space-y-2">
-                      {selectedShareableUsers.map((shareableUser) => (
-                        <Item
-                          key={shareableUser.id}
-                          variant="outline"
-                          size="xs"
-                        >
-                          <ItemContent>
-                            <ItemTitle>
-                              {shareableUser.first_name}{" "}
-                              {shareableUser.middle_name ?? ""}{" "}
-                              {shareableUser.last_name}
-                            </ItemTitle>
-                            <ItemDescription>
-                              {shareableUser.email}
-                            </ItemDescription>
-                          </ItemContent>
-                          <ItemActions>
-                            <Controller
-                              control={control}
-                              name="share_role_id"
-                              render={({ field }) => (
-                                <Select
-                                  value={String(field.value)}
-                                  onValueChange={(value) =>
-                                    field.onChange(Number(value))
-                                  }
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue>
-                                      {
-                                        shareRoles.find(
-                                          (role) => role.id === field.value,
-                                        )?.name
-                                      }
-                                    </SelectValue>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {shareRoles.map((shareRole) => (
-                                      <SelectItem
-                                        key={shareRole.id}
-                                        value={String(shareRole.id)}
-                                      >
-                                        {shareRole.name}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              )}
-                            />
-                            <Button
-                              variant="ghost"
-                              size="icon-sm"
-                              onClick={() =>
-                                toggleShareableUser(shareableUser.id)
-                              }
-                            >
-                              <X />
-                            </Button>
-                          </ItemActions>
-                        </Item>
-                      ))}
+                      {selectedShareableUsers.map((shareableUser) => {
+                        const selectedUser = selectedUsers.find(
+                          (u) => u.userId === shareableUser.id,
+                        );
+
+                        return (
+                          <Item
+                            key={shareableUser.id}
+                            size="xs"
+                            className="border-t-0 border-x-0 border-border rounded-none"
+                          >
+                            <ItemContent>
+                              <ItemTitle>
+                                {shareableUser.first_name}{" "}
+                                {shareableUser.middle_name ?? ""}{" "}
+                                {shareableUser.last_name}
+                              </ItemTitle>
+                              <ItemDescription>
+                                {shareableUser.email}
+                              </ItemDescription>
+                            </ItemContent>
+                            <ItemActions>
+                              <Select
+                                value={String(
+                                  selectedUser?.shareRoleId ?? DEFAULT_ROLE_ID,
+                                )}
+                                onValueChange={(value) =>
+                                  updateUserRole(
+                                    shareableUser.id,
+                                    Number(value),
+                                  )
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue>
+                                    {
+                                      shareRoles.find(
+                                        (role) =>
+                                          role.id ===
+                                          (selectedUser?.shareRoleId ??
+                                            DEFAULT_ROLE_ID),
+                                      )?.name
+                                    }
+                                  </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {shareRoles.map((shareRole) => (
+                                    <SelectItem
+                                      key={shareRole.id}
+                                      value={String(shareRole.id)}
+                                    >
+                                      {shareRole.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() =>
+                                  toggleShareableUser(shareableUser.id)
+                                }
+                              >
+                                <X />
+                              </Button>
+                            </ItemActions>
+                          </Item>
+                        );
+                      })}
                     </div>
                   )}
                 </ScrollArea>
@@ -280,7 +311,7 @@ export function ShareDocumentDialog({
             </DialogClose>
             <Button
               type="submit"
-              disabled={isSubmitting || selectedShareableUserIds.length === 0}
+              disabled={isSubmitting || selectedUsers.length === 0}
             >
               {isSubmitting ? (
                 <>

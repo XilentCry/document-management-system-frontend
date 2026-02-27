@@ -70,6 +70,15 @@ export type TUserUpdatedAuditLog = TBaseAuditLog & {
   };
 };
 
+export type TSharedAuditLog = TBaseAuditLog & {
+  action: "shared";
+  properties: {
+    name: string;
+    shared_with: string[];
+    parent: string;
+  };
+};
+
 export type TAuditLog =
   | TUploadedAuditLog
   | TCreatedAuditLog
@@ -77,4 +86,5 @@ export type TAuditLog =
   | TMovedAuditLog
   | TViewedAuditLog
   | TUserStatusUpdatedAuditLog
-  | TUserUpdatedAuditLog;
+  | TUserUpdatedAuditLog
+  | TSharedAuditLog;

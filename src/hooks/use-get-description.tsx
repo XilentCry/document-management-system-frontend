@@ -13,6 +13,35 @@ export function useGetDescription() {
           } ${auditLog.actor.last_name}`;
 
     switch (auditLog.action) {
+      case "shared":
+        return (
+          <>
+            {actor} shared{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>{" "}
+            with{" "}
+            {auditLog.properties.shared_with.length === 1 ? (
+              <span className="text-primary">
+                {auditLog.properties.shared_with[0]}
+              </span>
+            ) : (
+              <>
+                {auditLog.properties.shared_with
+                  .slice(0, -1)
+                  .map((name, index, array) => (
+                    <span key={name}>
+                      <span className="text-primary">{name}</span>
+                      {index < array.length - 1 && ", "}
+                    </span>
+                  ))}
+                {" and "}
+                <span className="text-primary">
+                  {auditLog.properties.shared_with.at(-1)}
+                </span>
+              </>
+            )}
+          </>
+        );
+
       case "uploaded":
         return (
           <>
@@ -51,6 +80,7 @@ export function useGetDescription() {
             </span>
           </>
         );
+
       case "viewed":
         return (
           <>
@@ -59,6 +89,7 @@ export function useGetDescription() {
             <span className="text-primary">{auditLog.properties.parent}</span>
           </>
         );
+
       case "user_status_updated":
         return (
           <>
@@ -73,6 +104,7 @@ export function useGetDescription() {
             </span>
           </>
         );
+
       case "user_updated":
         return (
           <>

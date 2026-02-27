@@ -3,7 +3,7 @@ import { useRailStore } from "@/stores/rail-store";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TSharedWithMe } from "@/types/shared-with-me";
 import { toast } from "sonner";
-import { Document } from "../shared/document";
+import { SharedDocument } from "./shared-document";
 
 export function SharedDocumentGrid({
   data,
@@ -34,10 +34,13 @@ export function SharedDocumentGrid({
     <div className="flex flex-col gap-4">
       <div className={`grid ${openRail ? "grid-cols-2" : "grid-cols-4"} gap-4`}>
         {data.map((sharedDocument) => (
-          <Document
+          <SharedDocument
             key={sharedDocument.id}
             item={sharedDocument.item}
-            onDoubleClick={() => handleDocumentDoubleClick(sharedDocument.id)}
+            sharePermissions={sharedDocument.sharePermissions}
+            onDoubleClick={() =>
+              handleDocumentDoubleClick(sharedDocument.item.id)
+            }
           />
         ))}
       </div>

@@ -17,7 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useCopyLink } from "@/hooks/use-copy-link";
 import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
 import { TCursorPaginate } from "@/types/cursor-paginate";
@@ -30,8 +29,6 @@ import {
   EllipsisVertical,
   FileText,
   FolderInput,
-  FolderOpen,
-  Link2,
   PencilLine,
   UserRoundPlus,
 } from "lucide-react";
@@ -63,7 +60,6 @@ export function SharedDocumentTable({
     setOpenRail,
   } = useRailStore();
 
-  const { copyLink } = useCopyLink();
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
   const handleDownload = (id: number, fileName: string) => {
@@ -84,14 +80,27 @@ export function SharedDocumentTable({
         <TableBody>
           {data.map((sharedDocument) => (
             <TableRow
-              key={sharedDocument.id}
+              key={sharedDocument.item.id}
               onClick={() => {
-                setSelectedDocumentId(sharedDocument.id);
+                setSelectedDocumentId(sharedDocument.item.id);
                 setSelectedDocumentFileName(sharedDocument.item.name);
                 setSelectedFolderId(null);
                 setSelectedFolderName(null);
               }}
-              onDoubleClick={() => onDocumentDoubleClick(sharedDocument.id)}
+              onDoubleClick={() => {
+                if (
+                  !sharedDocument.sharePermissions.some(
+                    (sharePermission) => sharePermission.name === "can_view",
+                  )
+                ) {
+                  toast.error(
+                    "You do not have permission to view this document.",
+                  );
+                  return;
+                }
+
+                onDocumentDoubleClick(sharedDocument.item.id);
+              }}
             >
               <TableCell>
                 <div className="flex items-center gap-2">
@@ -115,78 +124,49 @@ export function SharedDocumentTable({
                     <EllipsisVertical className="size-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-72">
-                    <DropdownMenuItem
-                      onClick={() =>
-                        handleDownload(
-                          sharedDocument.item.id,
-                          sharedDocument.item.name,
-                        )
-                      }
-                    >
-                      <Download />
-                      Download
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setSelectedItem(sharedDocument.item);
-                        setOpenRenameItemDialog(true);
-                      }}
-                    >
-                      <PencilLine />
-                      Rename
-                    </DropdownMenuItem>
-                    <>
-                      {sharedDocument.item.classification === "Protected" ? (
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedItem(sharedDocument.item);
-                            setOpenShareDialog(true);
-                          }}
-                        >
-                          <UserRoundPlus />
-                          Share
-                        </DropdownMenuItem>
-                      ) : (
-                        sharedDocument.item.classification === "Public" && (
-                          <DropdownMenuItem
-                            onClick={() => {
-                              if (
-                                !sharedDocument.item?.current_version?.file_path
-                              ) {
-                                toast.error("File path is unavailable.");
-                                return;
-                              }
-
-                              copyLink(
-                                sharedDocument.item.current_version.file_path,
-                              );
-                            }}
-                          >
-                            <Link2 />
-                            Copy link
-                          </DropdownMenuItem>
-                        )
-                      )}
-                    </>
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>
-                        <FolderOpen />
-                        Organize
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent className="w-72">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedItem(sharedDocument.item);
-                              setOpenMoveItemDialog(true);
-                            }}
-                          >
-                            <FolderInput />
-                            Move
-                          </DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
+                    {sharedDocument.sharePermissions.some(
+                      (sharePermission) =>
+                        sharePermission.name === "can_download",
+                    ) && (
+                      <DropdownMenuItem
+                        onClick={() =>
+                          handleDownload(
+                            sharedDocument.item.id,
+                            sharedDocument.item.name,
+                          )
+                        }
+                      >
+                        <Download />
+                        Download
+                      </DropdownMenuItem>
+                    )}
+                    {sharedDocument.sharePermissions.some(
+                      (sharePermission) =>
+                        sharePermission.name === "can_rename",
+                    ) && (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedItem(sharedDocument.item);
+                          setOpenRenameItemDialog(true);
+                        }}
+                      >
+                        <PencilLine />
+                        Rename
+                      </DropdownMenuItem>
+                    )}
+                    {sharedDocument.sharePermissions.some(
+                      (sharePermission) => sharePermission.name === "can_share",
+                    ) && (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedItem(sharedDocument.item);
+                          setOpenShareDialog(true);
+                        }}
+                      >
+                        <UserRoundPlus />
+                        Share
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
                         <CircleAlert />

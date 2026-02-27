@@ -39,8 +39,7 @@ export const downloadDocument = async (id: number, fileName: string) => {
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
+    throw new Error("Failed to download document. Please try again.");
   }
 
   const blob = await response.blob();
@@ -66,9 +65,7 @@ export const viewDocument = async (id: number): Promise<string> => {
   );
 
   if (!response.ok) {
-    const error = await response.json();
-
-    throw new Error(error.message);
+    throw new Error("Failed to view document. Please try again.");
   }
 
   const blob = await response.blob();

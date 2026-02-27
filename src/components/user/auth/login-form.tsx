@@ -95,11 +95,11 @@ export function LoginForm() {
         </Field>
 
         <Field className="text-center">
-          <p className="text-sm">
+          <p className="text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link
               href="/register"
-              className="hover:underline underline-offset-4"
+              className="hover:text-primary underline underline-offset-4"
             >
               Register
             </Link>

@@ -22,6 +22,7 @@ import {
 import { useRenameItem } from "@/services/items/mutations";
 import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePathname } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -34,6 +35,9 @@ export function RenameItemDialog({
   openRenameItemDialog: boolean;
   setOpenRenameItemDialog: Dispatch<SetStateAction<boolean>>;
 }) {
+  const pathname = usePathname();
+  const isInSharedWithMe = pathname.includes("shared-with-me");
+
   const {
     register,
     handleSubmit,
@@ -55,6 +59,7 @@ export function RenameItemDialog({
 
   const { mutateAsync: renameItemMutation } = useRenameItem(
     item.is_folder ? "folder" : "document",
+    isInSharedWithMe,
   );
 
   const onSubmit: SubmitHandler<TRenameItemFormSchema> = async (data) => {

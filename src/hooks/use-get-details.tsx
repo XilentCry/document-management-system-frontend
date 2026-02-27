@@ -3,6 +3,16 @@ import { TAuditLog } from "@/types/audit-log";
 export function useGetDetails() {
   const getDetails = (auditLog: TAuditLog) => {
     switch (auditLog.action) {
+      case "shared":
+        return (
+          <span>
+            Shared with:{" "}
+            <span className="text-primary">
+              {auditLog.properties.shared_with.join(", ")}
+            </span>
+          </span>
+        );
+
       case "uploaded":
         return (
           <span>
@@ -22,7 +32,7 @@ export function useGetDetails() {
       case "renamed":
         return (
           <span>
-            Location:{" "}
+            Renamed to:{" "}
             <span className="text-primary">{auditLog.properties.new_name}</span>
           </span>
         );
@@ -30,12 +40,13 @@ export function useGetDetails() {
       case "moved":
         return (
           <span>
-            Location:{" "}
+            Moved to:{" "}
             <span className="text-primary">
               {auditLog.properties.new_parent}
             </span>
           </span>
         );
+
       case "viewed":
         return (
           <span>
@@ -43,6 +54,7 @@ export function useGetDetails() {
             <span className="text-primary">{auditLog.properties.parent}</span>
           </span>
         );
+
       case "user_status_updated":
         return (
           <span>
@@ -52,6 +64,7 @@ export function useGetDetails() {
             </span>
           </span>
         );
+
       case "user_updated": {
         const formatValue = (value: string | string[] | null) => {
           if (Array.isArray(value)) {
