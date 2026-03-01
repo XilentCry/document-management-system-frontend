@@ -18,7 +18,9 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { useCopyLink } from "@/hooks/use-copy-link";
+import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
+import { useUserStore } from "@/stores/user-store";
 import { TItem } from "@/types/item";
 import {
   Activity,
@@ -27,18 +29,15 @@ import {
   EllipsisVertical,
   FileText,
   FolderInput,
-  FolderOpen,
   Link2,
   PencilLine,
   UserRoundPlus,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
-import { toast } from "sonner";
-import { useDownloadDocument } from "@/services/documents/mutations";
 import { ShareDocumentDialog } from "./share-document-dialog";
-import { useUserStore } from "@/stores/user-store";
 
 export function Document({
   item,
@@ -137,22 +136,10 @@ export function Document({
                   ) : null}
                 </>
               )}
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <FolderOpen />
-                  Organize
-                </DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent className="w-72">
-                    <DropdownMenuItem
-                      onClick={() => setOpenMoveItemDialog(true)}
-                    >
-                      <FolderInput />
-                      Move
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
+              <DropdownMenuItem onClick={() => setOpenMoveItemDialog(true)}>
+                <FolderInput />
+                Move
+              </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <CircleAlert />

@@ -51,8 +51,6 @@ import { ChevronsUpDown, UsersRound, X } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-const DEFAULT_ROLE_ID = 1;
-
 export function ShareDocumentDialog({
   item,
   openShareDialog,
@@ -84,15 +82,17 @@ export function ShareDocumentDialog({
     { userId: number; shareRoleId: number }[]
   >([]);
 
-  const selectedShareableUserIds = selectedUsers.map((u) => u.userId);
+  const selectedShareableUserIds = selectedUsers.map(
+    (selectedUser) => selectedUser.userId,
+  );
 
   const selectedUsersLabel =
     selectedUsers.length === 0
       ? "Select user(s)"
       : `${selectedUsers.length} user(s) selected`;
 
-  const selectedShareableUsers = shareableUsers.filter((u) =>
-    selectedShareableUserIds.includes(u.id),
+  const selectedShareableUsers = shareableUsers.filter((shareableUser) =>
+    selectedShareableUserIds.includes(shareableUser.id),
   );
 
   const {
@@ -107,36 +107,42 @@ export function ShareDocumentDialog({
     },
   });
 
-  // Sync local state to the form value
   const syncFormValue = (
-    updated: { userId: number; shareRoleId: number }[],
+    updatedSelectedUsers: { userId: number; shareRoleId: number }[],
   ) => {
     setValue(
       "share_with",
-      updated.map((u) => ({ user_id: u.userId, share_role_id: u.shareRoleId })),
+      updatedSelectedUsers.map((updatedSelectedUser) => ({
+        user_id: updatedSelectedUser.userId,
+        share_role_id: updatedSelectedUser.shareRoleId,
+      })),
       { shouldValidate: true },
     );
   };
 
   const toggleShareableUser = (userId: number) => {
     setSelectedUsers((prev) => {
-      const updated = prev.some((u) => u.userId === userId)
-        ? prev.filter((u) => u.userId !== userId)
-        : [...prev, { userId, shareRoleId: DEFAULT_ROLE_ID }];
+      const updatedSelectedUsers = prev.some(
+        (selectedUser) => selectedUser.userId === userId,
+      )
+        ? prev.filter((selectedUser) => selectedUser.userId !== userId)
+        : [...prev, { userId, shareRoleId: 1 }];
 
-      syncFormValue(updated);
-      return updated;
+      syncFormValue(updatedSelectedUsers);
+      return updatedSelectedUsers;
     });
   };
 
   const updateUserRole = (userId: number, shareRoleId: number) => {
     setSelectedUsers((prev) => {
-      const updated = prev.map((u) =>
-        u.userId === userId ? { ...u, shareRoleId } : u,
+      const updatedSelectedUsers = prev.map((selectedUser) =>
+        selectedUser.userId === userId
+          ? { ...selectedUser, shareRoleId }
+          : selectedUser,
       );
 
-      syncFormValue(updated);
-      return updated;
+      syncFormValue(updatedSelectedUsers);
+      return updatedSelectedUsers;
     });
   };
 
@@ -159,7 +165,10 @@ export function ShareDocumentDialog({
   return (
     <Dialog open={openShareDialog} onOpenChange={setOpenShareDialog}>
       <DialogContent className="w-150 max-w-150!">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-6 min-w-0"
+        >
           <DialogHeader>
             <DialogTitle>Share &quot;{item.name}&quot;</DialogTitle>
           </DialogHeader>
@@ -187,7 +196,9 @@ export function ShareDocumentDialog({
                     <Command>
                       <CommandInput placeholder="Search user..." />
                       <CommandList>
-                        <CommandEmpty>No users found.</CommandEmpty>
+                        <CommandEmpty>
+                          All users already have access.
+                        </CommandEmpty>
                         <CommandGroup>
                           {shareableUsers.map((shareableUser) => (
                             <CommandItem
@@ -210,7 +221,7 @@ export function ShareDocumentDialog({
                                   {shareableUser.middle_name ?? ""}{" "}
                                   {shareableUser.last_name}
                                 </p>
-                                <p className="truncate">
+                                <p className="truncate text-muted-foreground">
                                   {shareableUser.email}
                                 </p>
                               </div>
@@ -232,30 +243,25 @@ export function ShareDocumentDialog({
                     <div className="space-y-2">
                       {selectedShareableUsers.map((shareableUser) => {
                         const selectedUser = selectedUsers.find(
-                          (u) => u.userId === shareableUser.id,
+                          (selectedUser) =>
+                            selectedUser.userId === shareableUser.id,
                         );
 
                         return (
-                          <Item
-                            key={shareableUser.id}
-                            size="xs"
-                            className="border-t-0 border-x-0 border-border rounded-none"
-                          >
-                            <ItemContent>
-                              <ItemTitle>
+                          <Item key={shareableUser.id} size="xs">
+                            <ItemContent className="min-w-0">
+                              <ItemTitle className="block w-auto truncate">
                                 {shareableUser.first_name}{" "}
                                 {shareableUser.middle_name ?? ""}{" "}
                                 {shareableUser.last_name}
                               </ItemTitle>
-                              <ItemDescription>
+                              <ItemDescription className="truncate">
                                 {shareableUser.email}
                               </ItemDescription>
                             </ItemContent>
                             <ItemActions>
                               <Select
-                                value={String(
-                                  selectedUser?.shareRoleId ?? DEFAULT_ROLE_ID,
-                                )}
+                                value={String(selectedUser?.shareRoleId ?? 1)}
                                 onValueChange={(value) =>
                                   updateUserRole(
                                     shareableUser.id,
@@ -269,8 +275,7 @@ export function ShareDocumentDialog({
                                       shareRoles.find(
                                         (role) =>
                                           role.id ===
-                                          (selectedUser?.shareRoleId ??
-                                            DEFAULT_ROLE_ID),
+                                          (selectedUser?.shareRoleId ?? 1),
                                       )?.name
                                     }
                                   </SelectValue>

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import { useCopyLink } from "@/hooks/use-copy-link";
 import { formatFileSize } from "@/lib/format-file-size";
+import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
 import { useUserStore } from "@/stores/user-store";
 import { TCursorPaginate } from "@/types/cursor-paginate";
@@ -31,7 +32,6 @@ import {
   FileText,
   Folder,
   FolderInput,
-  FolderOpen,
   Link2,
   PencilLine,
   UserRoundPlus,
@@ -40,7 +40,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
-import { useDownloadDocument } from "@/services/documents/mutations";
 import { ShareDocumentDialog } from "./share-document-dialog";
 
 export function ItemTable({
@@ -205,25 +204,15 @@ export function ItemTable({
                         )}
                       </>
                     )}
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>
-                        <FolderOpen />
-                        Organize
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent className="w-72">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedItem(item);
-                              setOpenMoveItemDialog(true);
-                            }}
-                          >
-                            <FolderInput />
-                            Move
-                          </DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setSelectedItem(item);
+                        setOpenMoveItemDialog(true);
+                      }}
+                    >
+                      <FolderInput />
+                      Move
+                    </DropdownMenuItem>
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
                         <CircleAlert />

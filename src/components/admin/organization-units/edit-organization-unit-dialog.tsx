@@ -21,6 +21,7 @@ export function EditOrganizationUnitDialog({
   openEditOrganizationUnitDialog: boolean;
   setOpenEditOrganizationUnitDialog: Dispatch<SetStateAction<boolean>>;
 }) {
+  console.log(organizationUnit);
   return (
     <Dialog
       open={openEditOrganizationUnitDialog}

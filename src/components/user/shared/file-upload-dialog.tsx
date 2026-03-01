@@ -35,7 +35,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FileText, UploadIcon, X } from "lucide-react";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { CLASSIFICATIONS } from "@/lib/constants";
+import { useGetAllClassifications } from "@/services/classifications/queries";
+import { Spinner } from "@/components/ui/spinner";
 
 export function FileUploadDialog({
   openFileUploadDialog,
@@ -56,6 +57,13 @@ export function FileUploadDialog({
   const updateUpload = useUploadStore((state) => state.updateUpload);
 
   const { mutateAsync: uploadDocumentMutation } = useUploadDocument();
+
+  const {
+    isLoading: isClassificationsLoading,
+    isError: isClassificationsError,
+    error: classificationsError,
+    data: classifications = [],
+  } = useGetAllClassifications();
 
   const { control, handleSubmit } = useForm<TUploadFileFormSchema>({
     resolver: zodResolver(uploadFileFormSchema),
@@ -98,10 +106,14 @@ export function FileUploadDialog({
   const uploadSingleDocument = async (data: TSingleFile) => {
     const uploadId = crypto.randomUUID();
 
+    const classification = classifications.find(
+      (c) => c.id === data.classification_id,
+    );
+
     addUpload({
       id: uploadId,
       file: data.file,
-      classification: CLASSIFICATIONS[data.classification_id],
+      classification: classification!.name,
       status: "uploading",
     });
 
@@ -133,78 +145,101 @@ export function FileUploadDialog({
           <DialogHeader>
             <DialogTitle>Upload file</DialogTitle>
           </DialogHeader>
-          <div className="max-h-96 flex flex-col gap-6">
-            <div
-              className="border-2 border-dashed rounded-lg p-8 text-center hover:bg-muted/50 transition-colors cursor-pointer"
-              onClick={() => fileInputRef.current?.click()}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={handleDrop}
-            >
-              <UploadIcon className="mx-auto size-12 text-muted-foreground mb-4" />
-              <p className="text-sm font-medium mb-1">
-                Click to select or drag & drop
-              </p>
-              <p className="text-xs text-muted-foreground">
-                PDF files only, up to 10MB
+          {isClassificationsLoading ? (
+            <div className="flex-1 flex items-center justify-center">
+              <Spinner className="text-primary size-9" />
+            </div>
+          ) : isClassificationsError && classificationsError ? (
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-destructive text-sm">
+                {classificationsError.message}
               </p>
             </div>
-            {fields.length > 0 && (
-              <ScrollArea className="flex-1 min-h-0">
-                {fields.map((field, index) => (
-                  <Item key={field.id} size="xs">
-                    <ItemMedia variant="icon">
-                      <FileText className="size-4" />
-                    </ItemMedia>
-                    <ItemContent className="min-w-0">
-                      <ItemTitle className="block w-auto truncate">
-                        {field.file.name}
-                      </ItemTitle>
-                    </ItemContent>
-                    <ItemActions>
-                      <Controller
-                        control={control}
-                        name={`documents.${index}.classification_id`}
-                        render={({ field }) => (
-                          <Select
-                            value={field.value.toString()}
-                            onValueChange={(value) =>
-                              field.onChange(Number(value))
-                            }
+          ) : (
+            <>
+              <div className="max-h-96 flex flex-col gap-6">
+                <div
+                  className="border-2 border-dashed rounded-lg p-8 text-center hover:bg-muted/50 transition-colors cursor-pointer"
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={handleDrop}
+                >
+                  <UploadIcon className="mx-auto size-12 text-muted-foreground mb-4" />
+                  <p className="text-sm font-medium mb-1">
+                    Click to select or drag & drop
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    PDF files only, up to 10MB
+                  </p>
+                </div>
+                {fields.length > 0 && (
+                  <ScrollArea className="flex-1 min-h-0">
+                    {fields.map((field, index) => (
+                      <Item key={field.id} size="xs">
+                        <ItemMedia variant="icon">
+                          <FileText className="size-4" />
+                        </ItemMedia>
+                        <ItemContent className="min-w-0">
+                          <ItemTitle className="block w-auto truncate">
+                            {field.file.name}
+                          </ItemTitle>
+                        </ItemContent>
+                        <ItemActions>
+                          <Controller
+                            control={control}
+                            name={`documents.${index}.classification_id`}
+                            render={({ field }) => (
+                              <Select
+                                value={field.value.toString()}
+                                onValueChange={(value) =>
+                                  field.onChange(Number(value))
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue>
+                                    {
+                                      classifications.find(
+                                        (c) => c.id === field.value,
+                                      )?.name
+                                    }
+                                  </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {classifications.map((classification) => (
+                                    <SelectItem
+                                      key={classification.id}
+                                      value={classification.id.toString()}
+                                    >
+                                      {classification.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            )}
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => remove(index)}
                           >
-                            <SelectTrigger>
-                              <SelectValue>
-                                {CLASSIFICATIONS[field.value]}
-                              </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="1">Private</SelectItem>
-                              <SelectItem value="2">Protected</SelectItem>
-                              <SelectItem value="3">Public</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => remove(index)}
-                      >
-                        <X />
-                      </Button>
-                    </ItemActions>
-                  </Item>
-                ))}
-              </ScrollArea>
-            )}
-          </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            hidden
-            multiple
-            accept=".pdf,application/pdf"
-            onChange={handleFileSelect}
-          />
+                            <X />
+                          </Button>
+                        </ItemActions>
+                      </Item>
+                    ))}
+                  </ScrollArea>
+                )}
+              </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                hidden
+                multiple
+                accept=".pdf,application/pdf"
+                onChange={handleFileSelect}
+              />
+            </>
+          )}
           <DialogFooter>
             <DialogClose render={<Button variant="outline" />}>
               Cancel

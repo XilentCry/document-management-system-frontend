@@ -16,6 +16,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
+import { useRailStore } from "@/stores/rail-store";
 import { TItem } from "@/types/item";
 import {
   Activity,
@@ -23,13 +24,11 @@ import {
   EllipsisVertical,
   FolderIcon,
   FolderInput,
-  FolderOpen,
   PencilLine,
 } from "lucide-react";
 import { useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
-import { useRailStore } from "@/stores/rail-store";
 
 export function Folder({
   item,
@@ -87,22 +86,10 @@ export function Folder({
                 <PencilLine />
                 Rename
               </DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <FolderOpen />
-                  Organize
-                </DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent className="w-72">
-                    <DropdownMenuItem
-                      onClick={() => setOpenMoveItemDialog(true)}
-                    >
-                      <FolderInput />
-                      Move
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
+              <DropdownMenuItem onClick={() => setOpenMoveItemDialog(true)}>
+                <FolderInput />
+                Move
+              </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <CircleAlert />
