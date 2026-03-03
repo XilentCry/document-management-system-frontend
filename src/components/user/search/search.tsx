@@ -12,7 +12,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ItemGrid } from "@/components/user/shared/item-grid";
-import { ItemList } from "@/components/user/shared/item-list";
 import { useSearchOrganizationUnitItems } from "@/services/organization-units/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useSearchStore } from "@/stores/search-store";
@@ -21,6 +20,7 @@ import { TFilterType } from "@/types/filter-type";
 import { LayoutGrid, List, Search as SearchIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { SearchResultList } from "./search-result-list";
 
 export function Search() {
   const searchParams = useSearchParams();
@@ -125,7 +125,7 @@ export function Search() {
             hasNextPage && !isFetchingNextPage && fetchNextPage()
           }
         >
-          <ItemList data={organizationUnitItems} />
+          <SearchResultList data={organizationUnitItems} />
           {isFetchingNextPage && (
             <div className="py-4 flex items-center justify-center">
               <Spinner className="text-primary size-9" />
