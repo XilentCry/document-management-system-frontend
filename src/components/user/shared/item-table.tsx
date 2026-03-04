@@ -82,8 +82,8 @@ export function ItemTable({
             <TableHead>Name</TableHead>
             {!openRail && <TableHead>Owner</TableHead>}
             <TableHead>Date modified</TableHead>
-            {!openRail && <TableHead>File size</TableHead>}
             {!openRail && <TableHead>Classification</TableHead>}
+            {!openRail && <TableHead>File size</TableHead>}
             <TableHead></TableHead>
           </TableRow>
         </TableHeader>
@@ -131,6 +131,9 @@ export function ItemTable({
               )}
               <TableCell>{item.updated_at}</TableCell>
               {!openRail && (
+                <TableCell>{item.classification ?? <>&mdash;</>}</TableCell>
+              )}
+              {!openRail && (
                 <TableCell>
                   {item?.current_version?.file_size ? (
                     formatFileSize(item.current_version.file_size)
@@ -139,9 +142,7 @@ export function ItemTable({
                   )}
                 </TableCell>
               )}
-              {!openRail && (
-                <TableCell>{item.classification ?? <>&mdash;</>}</TableCell>
-              )}
+
               <TableCell className="text-right">
                 <DropdownMenu>
                   <DropdownMenuTrigger

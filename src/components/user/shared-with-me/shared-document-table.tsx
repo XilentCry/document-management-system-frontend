@@ -89,8 +89,9 @@ export function SharedDocumentTable({
               }}
               onDoubleClick={() => {
                 if (
-                  !sharedDocument.sharePermissions.some(
-                    (sharePermission) => sharePermission.name === "can_view",
+                  !sharedDocument.share_permissions.some(
+                    (share_permissions) =>
+                      share_permissions.name === "can_view",
                   )
                 ) {
                   toast.error(
@@ -124,7 +125,7 @@ export function SharedDocumentTable({
                     <EllipsisVertical className="size-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-72">
-                    {sharedDocument.sharePermissions.some(
+                    {sharedDocument.share_permissions.some(
                       (sharePermission) =>
                         sharePermission.name === "can_download",
                     ) && (
@@ -140,7 +141,7 @@ export function SharedDocumentTable({
                         Download
                       </DropdownMenuItem>
                     )}
-                    {sharedDocument.sharePermissions.some(
+                    {sharedDocument.share_permissions.some(
                       (sharePermission) =>
                         sharePermission.name === "can_rename",
                     ) && (
@@ -154,7 +155,7 @@ export function SharedDocumentTable({
                         Rename
                       </DropdownMenuItem>
                     )}
-                    {sharedDocument.sharePermissions.some(
+                    {sharedDocument.share_permissions.some(
                       (sharePermission) => sharePermission.name === "can_share",
                     ) && (
                       <DropdownMenuItem

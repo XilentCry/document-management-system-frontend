@@ -37,7 +37,7 @@ export function SharedDocumentGrid({
           <SharedDocument
             key={sharedDocument.id}
             item={sharedDocument.item}
-            sharePermissions={sharedDocument.sharePermissions}
+            sharePermissions={sharedDocument.share_permissions}
             onDoubleClick={() =>
               handleDocumentDoubleClick(sharedDocument.item.id)
             }
