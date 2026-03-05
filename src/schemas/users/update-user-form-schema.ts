@@ -13,7 +13,7 @@ export const updateUserFormSchema = (userRole: string) =>
     })
     .superRefine((data, ctx) => {
       if (
-        userRole === "User" &&
+        userRole === "user" &&
         (!data.organization_unit_ids || data.organization_unit_ids.length === 0)
       ) {
         ctx.addIssue({

@@ -1,6 +1,6 @@
 "use client";
 
-import { ViewUser } from "@/components/admin/user-management/view-user";
+import { UserDetails } from "@/components/admin/user-management/user-details";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { LogoutButton } from "@/components/shared/logout-button";
 import {
@@ -33,7 +33,7 @@ export default function ViewUserPage() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>View User</BreadcrumbPage>
+              <BreadcrumbPage>User Details</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -43,7 +43,7 @@ export default function ViewUserPage() {
         </div>
       </header>
       <div className="p-4 flex-1 flex flex-col gap-4">
-        <h1 className="text-xl">View User</h1>
+        <h1 className="text-xl">User Details</h1>
         {isLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <Spinner className="text-primary size-9" />
@@ -53,7 +53,7 @@ export default function ViewUserPage() {
             <p className="text-destructive text-sm">{error.message}</p>
           </div>
         ) : (
-          user && <ViewUser user={user} />
+          user && <UserDetails user={user} />
         )}
       </div>
     </div>

@@ -29,7 +29,7 @@ export const useLogin = () => {
       setLastFailedLogin(data.lastFailedLogin);
 
       if (
-        data.user.role === "User" &&
+        data.user.role === "user" &&
         data.currentOrganizationUnitId &&
         data.currentOrganizationUnitName
       ) {
@@ -38,7 +38,7 @@ export const useLogin = () => {
         router.replace(
           `/drive/organizational-drive/${data.currentOrganizationUnitId}`,
         );
-      } else if (data.user.role === "Admin") {
+      } else if (data.user.role === "admin" || data.user.role === "superuser") {
         router.replace("/admin/user-management");
       }
     },

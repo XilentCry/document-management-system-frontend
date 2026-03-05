@@ -25,28 +25,34 @@ export async function proxy(request: NextRequest) {
       const data = await response.json();
 
       if (isAuthPage) {
-        if (data.user.role === "User") {
+        if (data.user.role === "user") {
           return NextResponse.redirect(
             new URL(
               `/drive/organizational-drive/${data.currentOrganizationUnitId}`,
               request.url,
             ),
           );
-        } else if (data.user.role === "Admin") {
+        } else if (
+          data.user.role === "admin" ||
+          data.user.role === "sueruser"
+        ) {
           return NextResponse.redirect(
             new URL("/admin/user-management", request.url),
           );
         }
       }
 
-      if (data.user.role === "User" && pathname.startsWith("/admin")) {
+      if (data.user.role === "user" && pathname.startsWith("/admin")) {
         return NextResponse.redirect(
           new URL(
             `/drive/organizational-drive/${data.currentOrganizationUnitId}`,
             request.url,
           ),
         );
-      } else if (data.user.role === "Admin" && pathname.startsWith("/drive")) {
+      } else if (
+        data.user.role === "admin" ||
+        (data.user.role === "superuser" && pathname.startsWith("/drive"))
+      ) {
         return NextResponse.redirect(
           new URL("/admin/user-management", request.url),
         );

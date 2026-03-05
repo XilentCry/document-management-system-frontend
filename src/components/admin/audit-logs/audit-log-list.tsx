@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyState } from "@/components/shared/empty-state";
 import {
   Pagination,
   PaginationContent,
@@ -9,6 +10,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useGetAllAuditLogs } from "@/services/audit-logs/queries";
+import { Activity } from "lucide-react";
 import { useState } from "react";
 import { Spinner } from "../../ui/spinner";
 import { AuditLogTable } from "./audit-log-table";
@@ -42,9 +44,11 @@ export function AuditLogList() {
   }
 
   return isSuccess && auditLogs?.data.length === 0 ? (
-    <div className="flex-1 flex items-center justify-center">
-      <p className="text-sm">No audit logs found.</p>
-    </div>
+    <EmptyState
+      icon={Activity}
+      title="No audit logs yet"
+      description="User actions will be recorded and shown here."
+    />
   ) : (
     <div className="flex-1 flex flex-col gap-4">
       <AuditLogTable auditLogs={auditLogs?.data ?? []} />

@@ -176,7 +176,7 @@ export function ItemTable({
                     </DropdownMenuItem>
                     {!item.is_folder && item.owner.id === userId && (
                       <>
-                        {item.classification === "Protected" ? (
+                        {item.classification === "protected" ? (
                           <DropdownMenuItem
                             onClick={() => {
                               setSelectedItem(item);
@@ -187,7 +187,7 @@ export function ItemTable({
                             Share
                           </DropdownMenuItem>
                         ) : (
-                          item.classification === "Public" && (
+                          item.classification === "public" && (
                             <DropdownMenuItem
                               onClick={() => {
                                 if (!item?.current_version?.file_path) {

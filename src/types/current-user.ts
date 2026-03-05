@@ -4,6 +4,6 @@ export type TCurrentUser = {
   middle_name: string | null;
   last_name: string;
   email: string;
-  role: "User" | "Admin";
-  status: "Pending" | "Approved";
+  role: "user" | "admin" | "superuser";
+  status: "pending" | "approved";
 };

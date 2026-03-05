@@ -114,12 +114,12 @@ export function Document({
               </DropdownMenuItem>
               {item.owner.id === userId && (
                 <>
-                  {item.classification === "Protected" ? (
+                  {item.classification === "protected" ? (
                     <DropdownMenuItem onClick={() => setOpenShareDialog(true)}>
                       <UserRoundPlus />
                       Share
                     </DropdownMenuItem>
-                  ) : item.classification === "Public" ? (
+                  ) : item.classification === "public" ? (
                     <DropdownMenuItem
                       onClick={() => {
                         if (!item?.current_version?.file_path) {

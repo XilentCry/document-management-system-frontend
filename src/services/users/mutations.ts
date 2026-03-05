@@ -9,7 +9,7 @@ import { UseFormReset } from "react-hook-form";
 import { STATUSES } from "@/lib/constants";
 
 export const useUpdateStatus = (
-  setStatus: Dispatch<SetStateAction<"Pending" | "Approved">>
+  setStatus: Dispatch<SetStateAction<"pending" | "approved">>,
 ) => {
   const queryClient = useQueryClient();
 
@@ -19,7 +19,7 @@ export const useUpdateStatus = (
     onSuccess: (data, variables) => {
       toast.success(data.message);
       setStatus(
-        variables.statusId === STATUSES.APPROVED ? "Approved" : "Pending"
+        variables.statusId === STATUSES.APPROVED ? "approved" : "pending",
       );
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
@@ -31,7 +31,7 @@ export const useUpdateStatus = (
 
 export const useUpdateUser = (
   setFormErrors: Dispatch<SetStateAction<TFormError | null>>,
-  reset: UseFormReset<TUpdateUserFormSchema>
+  reset: UseFormReset<TUpdateUserFormSchema>,
 ) => {
   const queryClient = useQueryClient();
   const router = useRouter();

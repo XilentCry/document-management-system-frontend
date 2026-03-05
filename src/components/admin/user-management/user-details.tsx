@@ -1,0 +1,174 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+import { STATUSES } from "@/lib/constants";
+import { useUpdateStatus } from "@/services/users/mutations";
+import { TOrganizationUnitBase } from "@/types/organization-unit-base";
+import { TUser } from "@/types/user";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+export function UserDetails({
+  user,
+}: {
+  user: TUser & {
+    organizationUnits: TOrganizationUnitBase[];
+  };
+}) {
+  const [status, setStatus] = useState(user.status);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const router = useRouter();
+
+  const { mutateAsync: updateStatusMutation, isPending } =
+    useUpdateStatus(setStatus);
+
+  const handleApprove = async () => {
+    setIsOpen(false);
+
+    const statusId =
+      user.status === "approved" ? STATUSES.PENDING : STATUSES.APPROVED;
+
+    await updateStatusMutation({ userId: user.id, statusId });
+  };
+
+  return (
+    <div className="flex gap-4">
+      <Card className="flex-1">
+        <CardHeader>
+          <CardTitle>Personal Information</CardTitle>
+          <CardAction className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() =>
+                router.push(`/admin/user-management/edit/${user.id}`)
+              }
+            >
+              Edit
+            </Button>
+            {user.role !== "superuser" && (
+              <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+                <AlertDialogTrigger render={<Button />}>
+                  {isPending ? (
+                    <>
+                      <Spinner />
+                      Processing...
+                    </>
+                  ) : status === "approved" ? (
+                    "Unapprove"
+                  ) : (
+                    "Approve"
+                  )}
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <div className="flex flex-col gap-1">
+                      <AlertDialogTitle>
+                        {status === "approved"
+                          ? "Confirm Unapporval"
+                          : "Confirm Approval"}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {status === "approved"
+                          ? "Are you sure you want to unapprove this user?"
+                          : "Are you sure you want to approve this user?"}
+                      </AlertDialogDescription>
+                    </div>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter className="mt-2">
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleApprove}>
+                      Confirm
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </CardAction>
+        </CardHeader>
+        <CardContent className="flex gap-4">
+          <div className="flex-1 flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="text-muted-foreground">First name</p>
+              <p>{user.first_name}</p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="text-muted-foreground">Last name</p>
+              <p>{user.last_name}</p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="text-muted-foreground">Role</p>
+              <Badge variant="secondary">{user.role}</Badge>
+            </div>
+          </div>
+          <div className="flex-1 flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="text-muted-foreground">Middle name</p>
+              <p>{user.middle_name ?? "N/A"}</p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="text-muted-foreground">Email address</p>
+              <p>{user.email}</p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="text-muted-foreground">Status</p>
+              <Badge
+                className={`${
+                  user.status === "pending"
+                    ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
+                    : user.status === "approved" &&
+                      "bg-green-500/15 dark:bg-green-500/10 text-green-500"
+                }`}
+              >
+                {user.status}
+              </Badge>
+            </div>
+          </div>
+        </CardContent>
+        <CardFooter className="gap-4 border-t">
+          <div className="flex-1">
+            <p className="text-muted-foreground">Created at</p>
+            <p>{user.created_at}</p>
+          </div>
+          <div className="flex-1">
+            <p className="text-muted-foreground">Updated at</p>
+            <p>{user.updated_at}</p>
+          </div>
+        </CardFooter>
+      </Card>
+      {user.role === "user" && (
+        <Card className="flex-1">
+          <CardHeader>
+            <CardTitle>Offices/Units</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-1">
+              {user.organizationUnits.map((organizationUnit) => (
+                <p key={organizationUnit.id}>{organizationUnit.name}</p>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

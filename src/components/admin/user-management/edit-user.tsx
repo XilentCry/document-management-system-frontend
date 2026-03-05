@@ -45,7 +45,7 @@ export function EditUser({
       first_name: user.first_name,
       middle_name: user.middle_name ?? "",
       last_name: user.last_name,
-      ...(user.role === "User" && {
+      ...(user.role === "user" && {
         organization_unit_ids: user.organizationUnits.map(
           (organizationUnit) => organizationUnit.id,
         ),
@@ -109,7 +109,7 @@ export function EditUser({
               <FieldError>{formErrors.last_name}</FieldError>
             )}
           </Field>
-          {user.role === "User" && (
+          {user.role === "user" && (
             <Field>
               <FieldLabel>Office / Unit</FieldLabel>
               <OrganizationUnitsDialog
