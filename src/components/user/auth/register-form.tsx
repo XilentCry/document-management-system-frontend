@@ -81,7 +81,7 @@ export function RegisterForm() {
 
   return (
     <FormProvider {...form}>
-      <form className="px-4 sm:px-0" onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
           <Field>
             <FieldLabel>First Name</FieldLabel>

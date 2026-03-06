@@ -77,7 +77,7 @@ export function EditUser({
 
   return (
     <FormProvider {...methods}>
-      <form className="px-4 sm:px-0" onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
           <Field>
             <FieldLabel>First Name</FieldLabel>

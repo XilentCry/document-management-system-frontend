@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
-  const isAuthPage = pathname === "/" || pathname.startsWith("/register");
+  const isAuthPage = pathname === "/" || pathname.startsWith("/register") || pathname.startsWith("/reset-password");
 
   try {
     const response = await fetch(
@@ -68,6 +68,13 @@ export async function proxy(request: NextRequest) {
       }
     }
 
+    if (
+      pathname === "/reset-password" &&
+      (!searchParams.get("token") || !searchParams.get("email"))
+    ) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
     return NextResponse.next();
   } catch (error) {
     console.log(error);
@@ -76,5 +83,11 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/register", "/admin/:path*", "/drive/:path*"],
+  matcher: [
+    "/",
+    "/register",
+    "/reset-password",
+    "/admin/:path*",
+    "/drive/:path*",
+  ],
 };

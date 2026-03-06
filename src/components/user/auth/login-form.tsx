@@ -51,7 +51,7 @@ export function LoginForm() {
   };
 
   return (
-    <form className="px-4 sm:px-0" onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup>
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -69,7 +69,15 @@ export function LoginForm() {
         </Field>
 
         <Field>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <div className="flex items-center justify-between">
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Link
+              href="/forgot-password"
+              className="text-sm hover:underline underline-offset-4"
+            >
+              Forgot your password?
+            </Link>
+          </div>
           <Input
             id="password"
             type="password"
