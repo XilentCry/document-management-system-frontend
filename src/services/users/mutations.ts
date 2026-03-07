@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateStatus, updateUser } from "./api";
+import { inviteAdmin, updateStatus, updateUser } from "./api";
 import { toast } from "sonner";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
 import { useRouter } from "next/navigation";
@@ -59,6 +59,28 @@ export const useUpdateUser = (
     },
     onError: (error) => {
       toast.error(error.message);
+    },
+  });
+};
+
+export const useInviteAdmin = (
+  setFormErrors: Dispatch<SetStateAction<TFormError | null>>,
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: inviteAdmin,
+    onSuccess: (data) => {
+      setFormErrors(null);
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error: { errors: TFormError } | Error) => {
+      if ("errors" in error) {
+        setFormErrors(error.errors);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
+      }
     },
   });
 };

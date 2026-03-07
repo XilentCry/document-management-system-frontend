@@ -12,9 +12,16 @@ import { useGetAllUsers } from "@/services/users/queries";
 import { useState } from "react";
 import { Spinner } from "../../ui/spinner";
 import { UserTable } from "./user-table";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { InviteAdminDialog } from "./invite-admin-dialog";
+import { useUserStore } from "@/stores/user-store";
 
 export function UserList() {
   const [page, setPage] = useState(1);
+  const [openInviteAdminDialog, setOpenInviteAdminDialog] = useState(false);
+
+  const userRole = useUserStore((state) => state.userRole);
 
   const {
     isLoading,
@@ -41,55 +48,72 @@ export function UserList() {
     );
   }
 
-  return isSuccess && users?.data.length === 0 ? (
-    <div className="flex-1 flex items-center justify-center">
-      <p className="text-sm">No users found.</p>
-    </div>
-  ) : (
-    <div className="flex-1 flex flex-col gap-4">
-      <UserTable users={users?.data ?? []} />
-      <Pagination>
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => setPage((old) => Math.max(old - 1, 1))}
-              disabled={page === 1}
-            />
-          </PaginationItem>
-          {users?.meta.links
-            .filter(
-              (link) =>
-                !link.label.includes("Previous") &&
-                !link.label.includes("Next"),
-            )
-            .map((link) => (
-              <PaginationLink
-                key={link.label}
-                onClick={() => {
-                  if (link.url) {
-                    const pageParam = new URL(link.url).searchParams.get(
-                      "page",
-                    );
-                    setPage(Number(pageParam));
-                  }
-                }}
-                isActive={link.active}
-              >
-                {link.label}
-              </PaginationLink>
-            ))}
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => {
-                if (!isPlaceholderData && users?.links.next) {
-                  setPage((old) => old + 1);
-                }
-              }}
-              disabled={isPlaceholderData || !users?.links.next}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-    </div>
+  return (
+    <>
+      {isSuccess && users?.data.length === 0 ? (
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm">No users found.</p>
+        </div>
+      ) : (
+        <div className="flex-1 flex flex-col gap-4">
+          {userRole === "superuser" && (
+            <div className="flex justify-end">
+              <Button onClick={() => setOpenInviteAdminDialog(true)}>
+                <Plus />
+                Invite Admin
+              </Button>
+            </div>
+          )}
+          <UserTable users={users?.data ?? []} />
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setPage((old) => Math.max(old - 1, 1))}
+                  disabled={page === 1}
+                />
+              </PaginationItem>
+              {users?.meta.links
+                .filter(
+                  (link) =>
+                    !link.label.includes("Previous") &&
+                    !link.label.includes("Next"),
+                )
+                .map((link) => (
+                  <PaginationLink
+                    key={link.label}
+                    onClick={() => {
+                      if (link.url) {
+                        const pageParam = new URL(link.url).searchParams.get(
+                          "page",
+                        );
+                        setPage(Number(pageParam));
+                      }
+                    }}
+                    isActive={link.active}
+                  >
+                    {link.label}
+                  </PaginationLink>
+                ))}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => {
+                    if (!isPlaceholderData && users?.links.next) {
+                      setPage((old) => old + 1);
+                    }
+                  }}
+                  disabled={isPlaceholderData || !users?.links.next}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
+
+      <InviteAdminDialog
+        openInviteAdminDialog={openInviteAdminDialog}
+        setOpenInviteAdminDialog={setOpenInviteAdminDialog}
+      />
+    </>
   );
 }

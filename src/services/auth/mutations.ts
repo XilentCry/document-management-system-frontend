@@ -15,6 +15,7 @@ export const useLogin = () => {
     (state) => state.setCurrentOrganizationUnitName,
   );
   const setUserId = useUserStore((state) => state.setUserId);
+  const setUserRole = useUserStore((state) => state.setUserRole);
   const setLastLogin = useUserStore((state) => state.setLastLogin);
   const setLastFailedLogin = useUserStore((state) => state.setLastFailedLogin);
 
@@ -25,6 +26,7 @@ export const useLogin = () => {
     onSuccess: (data) => {
       toast.success(data.message);
       setUserId(data.user.id);
+      setUserRole(data.user.role);
       setLastLogin(data.lastLogin);
       setLastFailedLogin(data.lastFailedLogin);
 

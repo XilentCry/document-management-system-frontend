@@ -3,6 +3,7 @@ import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
 import { TPaginate } from "@/types/paginate";
+import { TInviteAdminFormSchema } from "@/schemas/users/invite-admin-form-schema";
 
 type TGetUserResponse = TUser & {
   organizationUnits: TOrganizationUnitBase[];
@@ -102,6 +103,36 @@ export async function updateUser(
   if (!response.ok) {
     if (data.errors && Object.keys(data.errors).length > 0) {
       return { errors: data.errors };
+    }
+
+    throw new Error(data.message);
+  }
+
+  return { message: data.message };
+}
+
+export async function inviteAdmin(
+  inviteAdminData: TInviteAdminFormSchema,
+): Promise<{ message: string }> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/admin-invitation`,
+    {
+      method: "POST",
+      headers: {
+        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(inviteAdminData),
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    if (data.errors && Object.keys(data.errors).length > 0) {
+      throw { errors: data.errors };
     }
 
     throw new Error(data.message);

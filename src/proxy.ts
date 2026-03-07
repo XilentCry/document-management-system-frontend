@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
 
-  const isAuthPage = pathname === "/" || pathname.startsWith("/register") || pathname.startsWith("/reset-password");
+  const isAuthPage = pathname === "/" || pathname.startsWith("/register") || pathname.startsWith("/reset-password") || pathname.startsWith("/set-password");
 
   try {
     const response = await fetch(
@@ -34,7 +34,7 @@ export async function proxy(request: NextRequest) {
           );
         } else if (
           data.user.role === "admin" ||
-          data.user.role === "sueruser"
+          data.user.role === "superuser"
         ) {
           return NextResponse.redirect(
             new URL("/admin/user-management", request.url),
@@ -50,8 +50,8 @@ export async function proxy(request: NextRequest) {
           ),
         );
       } else if (
-        data.user.role === "admin" ||
-        (data.user.role === "superuser" && pathname.startsWith("/drive"))
+        (data.user.role === "admin" || data.user.role === "superuser") 
+        && pathname.startsWith("/drive")
       ) {
         return NextResponse.redirect(
           new URL("/admin/user-management", request.url),
@@ -69,7 +69,7 @@ export async function proxy(request: NextRequest) {
     }
 
     if (
-      pathname === "/reset-password" &&
+      (pathname === "/reset-password" || pathname === "/set-password") &&
       (!searchParams.get("token") || !searchParams.get("email"))
     ) {
       return NextResponse.redirect(new URL("/", request.url));
@@ -87,6 +87,7 @@ export const config = {
     "/",
     "/register",
     "/reset-password",
+    "/set-password",
     "/admin/:path*",
     "/drive/:path*",
   ],
