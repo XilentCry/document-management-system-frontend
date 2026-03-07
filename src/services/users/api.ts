@@ -140,3 +140,25 @@ export async function inviteAdmin(
 
   return { message: data.message };
 }
+
+export async function reinviteAdmin(id: number): Promise<{ message: string }> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${id}/admin-reinvitation`,
+    {
+      method: "POST",
+      headers: {
+        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+        Accept: "application/json",
+      },
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return { message: data.message };
+}

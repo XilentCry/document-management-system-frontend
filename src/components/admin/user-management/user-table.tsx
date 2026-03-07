@@ -8,6 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -16,12 +17,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useReinviteAdmin } from "@/services/users/mutations";
 import { TUser } from "@/types/user";
 import { Ellipsis } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function UserTable({ users }: { users: TUser[] }) {
   const router = useRouter();
+
+  console.log(users);
+
+  const { mutateAsync: reinviteAdminMutation, isPending } = useReinviteAdmin();
+
+  const handleReinvite = async (id: number) => {
+    await reinviteAdminMutation(id);
+  };
 
   return (
     <Table>
@@ -84,6 +94,21 @@ export function UserTable({ users }: { users: TUser[] }) {
                     >
                       Edit
                     </DropdownMenuItem>
+                    {user.role === "admin" && (
+                      <DropdownMenuItem
+                        onClick={() => handleReinvite(user.id)}
+                        disabled={isPending}
+                      >
+                        {isPending ? (
+                          <>
+                            <Spinner />
+                            Reinviting...
+                          </>
+                        ) : (
+                          "Reinvite"
+                        )}
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
