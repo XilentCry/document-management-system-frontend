@@ -1,13 +1,16 @@
-import { viewDocument } from "@/services/documents/api";
 import { useRailStore } from "@/stores/rail-store";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import type { TItem } from "@/types/item";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useState } from "react";
 import { Document } from "./document";
+import { DocumentViewer } from "./document-viewer";
 import { Folder } from "./folder";
 
 export function ItemGrid({ data }: { data: TCursorPaginate<TItem>["data"] }) {
+  const [openDocumentViewer, setOpenDocumentViewer] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<TItem | null>(null);
+
   const router = useRouter();
 
   const { openRail } = useRailStore();
@@ -16,22 +19,9 @@ export function ItemGrid({ data }: { data: TCursorPaginate<TItem>["data"] }) {
     router.push(`/drive/folders/${folderId}`);
   };
 
-  const handleDocumentDoubleClick = async (documentId: number) => {
-    try {
-      const url = await viewDocument(documentId);
-      const newWindow = window.open(url);
-
-      if (newWindow) {
-        newWindow.addEventListener("load", () => URL.revokeObjectURL(url));
-      } else {
-        URL.revokeObjectURL(url);
-        toast.error("Please allow popups for this site.");
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
+  const handleDocumentDoubleClick = async (document: TItem) => {
+    setSelectedDocument(document);
+    setOpenDocumentViewer(true);
   };
 
   const folders = data.filter((item) => item.is_folder);
@@ -57,6 +47,14 @@ export function ItemGrid({ data }: { data: TCursorPaginate<TItem>["data"] }) {
           />
         ))}
       </div>
+
+      {openDocumentViewer && selectedDocument && (
+        <DocumentViewer
+          openDocumentViewer={openDocumentViewer}
+          setOpenDocumentViewer={setOpenDocumentViewer}
+          document={selectedDocument}
+        />
+      )}
     </div>
   );
 }

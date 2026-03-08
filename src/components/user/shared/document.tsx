@@ -44,7 +44,7 @@ export function Document({
   onDoubleClick,
 }: {
   item: TItem;
-  onDoubleClick: (documentId: number) => Promise<void>;
+  onDoubleClick: (document: TItem) => Promise<void>;
 }) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
@@ -82,7 +82,7 @@ export function Document({
           setSelectedFolderId(null);
           setSelectedFolderName(null);
         }}
-        onDoubleClick={() => onDoubleClick(item.id)}
+        onDoubleClick={() => onDoubleClick(item)}
       >
         <ItemMedia>
           <FileText className="size-4" />
