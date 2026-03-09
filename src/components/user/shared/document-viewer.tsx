@@ -95,24 +95,36 @@ export function DocumentViewer({
                 variant="ghost"
                 size="icon"
                 onClick={() => setOpenDocumentViewer(false)}
+                className="text-background"
               >
                 <X />
               </Button>
               <div className="flex items-center gap-4">
-                <FileText className="size-4" />
-                <span className="text-sm leading-snug font-medium">
+                <FileText className="size-4 text-background dark:text-background" />
+                <span className="text-sm leading-snug font-medium text-background dark:text-background">
                   {document.name}
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon" onClick={handleDownload}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleDownload}
+                  className="text-background"
+                >
                   <Download />
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    render={<Button variant="ghost" size="icon" />}
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-background"
+                      />
+                    }
                   >
                     <EllipsisVertical />
                   </DropdownMenuTrigger>
