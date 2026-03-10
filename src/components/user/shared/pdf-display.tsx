@@ -47,6 +47,7 @@ export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
               width={A4_WIDTH}
               renderAnnotationLayer
               renderTextLayer
+              className="border"
             />
           </div>
         ))}

@@ -1,33 +1,22 @@
-import { viewDocument } from "@/services/documents/api";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useState } from "react";
 import { ItemTable } from "./item-table";
 
 export function ItemList({ data }: { data: TCursorPaginate<TItem>["data"] }) {
   const router = useRouter();
 
+  const [openDocumentViewer, setOpenDocumentViewer] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<TItem | null>(null);
+
   const handleFolderDoubleClick = (folderId: number) => {
     router.push(`/drive/folders/${folderId}`);
   };
 
-  const handleDocumentDoubleClick = async (documentId: number) => {
-    try {
-      const url = await viewDocument(documentId);
-      const newWindow = window.open(url);
-
-      if (newWindow) {
-        newWindow.addEventListener("load", () => URL.revokeObjectURL(url));
-      } else {
-        URL.revokeObjectURL(url);
-        toast.error("Please allow popups for this site.");
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
+  const handleDocumentDoubleClick = async (document: TItem) => {
+    setSelectedDocument(document);
+    setOpenDocumentViewer(true);
   };
 
   return (
@@ -35,6 +24,9 @@ export function ItemList({ data }: { data: TCursorPaginate<TItem>["data"] }) {
       data={data}
       onFolderDoubleClick={handleFolderDoubleClick}
       onDocumentDoubleClick={handleDocumentDoubleClick}
+      openDocumentViewer={openDocumentViewer}
+      setOpenDocumentViewer={setOpenDocumentViewer}
+      selectedDocument={selectedDocument}
     />
   );
 }

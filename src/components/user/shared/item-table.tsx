@@ -17,7 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useCopyLink } from "@/hooks/use-copy-link";
 import { formatFileSize } from "@/lib/format-file-size";
 import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
@@ -32,30 +31,39 @@ import {
   FileText,
   Folder,
   FolderInput,
-  Link2,
+  History,
   PencilLine,
   UserRoundPlus,
+  Info,
 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { Dispatch, SetStateAction, useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { ShareDocumentDialog } from "./share-document-dialog";
+import { DocumentViewer } from "./document-viewer";
+import { VersionHistoryDialog } from "./version-history-dialog";
 
 export function ItemTable({
   data,
   onFolderDoubleClick,
   onDocumentDoubleClick,
+  openDocumentViewer,
+  setOpenDocumentViewer,
+  selectedDocument,
 }: {
   data: TCursorPaginate<TItem>["data"];
   onFolderDoubleClick: (folderId: number) => void;
-  onDocumentDoubleClick: (documentId: number) => Promise<void>;
+  onDocumentDoubleClick: (document: TItem) => Promise<void>;
+  openDocumentViewer: boolean;
+  setOpenDocumentViewer: Dispatch<SetStateAction<boolean>>;
+  selectedDocument: TItem | null;
 }) {
   const userId = useUserStore((state) => state.userId);
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);
   const [openShareDialog, setOpenShareDialog] = useState(false);
+  const [openVersionHistoryDialog, setOpenVersionHistoryDialog] = useState(false);
 
   const {
     setSelectedDocumentId,
@@ -67,7 +75,6 @@ export function ItemTable({
     setOpenRail,
   } = useRailStore();
 
-  const { copyLink } = useCopyLink();
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
   const handleDownload = (id: number, fileName: string) => {
@@ -108,7 +115,7 @@ export function ItemTable({
                 if (item.is_folder) {
                   onFolderDoubleClick(item.id);
                 } else {
-                  onDocumentDoubleClick(item.id);
+                  onDocumentDoubleClick(item);
                 }
               }}
             >
@@ -187,21 +194,7 @@ export function ItemTable({
                             Share
                           </DropdownMenuItem>
                         ) : (
-                          item.classification === "public" && (
-                            <DropdownMenuItem
-                              onClick={() => {
-                                if (!item?.current_version?.file_path) {
-                                  toast.error("File path is unavailable.");
-                                  return;
-                                }
-
-                                copyLink(item.current_version.file_path);
-                              }}
-                            >
-                              <Link2 />
-                              Copy link
-                            </DropdownMenuItem>
-                          )
+                          item.classification === "public" && null
                         )}
                       </>
                     )}
@@ -239,7 +232,7 @@ export function ItemTable({
                               setOpenRail(true);
                             }}
                           >
-                            <FolderInput />
+                            <Info />
                             Details
                           </DropdownMenuItem>
                           <DropdownMenuItem
@@ -263,6 +256,17 @@ export function ItemTable({
                             <Activity />
                             Activity
                           </DropdownMenuItem>
+                          {!item.is_folder && (
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedItem(item);
+                                setOpenVersionHistoryDialog(true);
+                              }}
+                            >
+                              <History />
+                              Version history
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>
@@ -295,6 +299,22 @@ export function ItemTable({
           item={selectedItem}
           openShareDialog={openShareDialog}
           setOpenShareDialog={setOpenShareDialog}
+        />
+      )}
+
+      {openVersionHistoryDialog && selectedItem && (
+        <VersionHistoryDialog
+          item={selectedItem}
+          openVersionHistoryDialog={openVersionHistoryDialog}
+          setOpenVersionHistoryDialog={setOpenVersionHistoryDialog}
+        />
+      )}
+
+      {openDocumentViewer && selectedDocument && (
+        <DocumentViewer
+          openDocumentViewer={openDocumentViewer}
+          setOpenDocumentViewer={setOpenDocumentViewer}
+          document={selectedDocument}
         />
       )}
     </>

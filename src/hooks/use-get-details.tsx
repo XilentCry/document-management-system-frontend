@@ -65,6 +65,28 @@ export function useGetDetails() {
           </span>
         );
 
+      case "admin_invited":
+        return (
+          <span>
+            Invited admin:{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+            {" ("}
+            <span className="text-primary">{auditLog.properties.email}</span>
+            {")"}
+          </span>
+        );
+
+      case "admin_reinvited":
+        return (
+          <span>
+            Reinvited admin:{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+            {" ("}
+            <span className="text-primary">{auditLog.properties.email}</span>
+            {")"}
+          </span>
+        );
+
       case "user_updated": {
         const formatValue = (value: string | string[] | null) => {
           if (Array.isArray(value)) {

@@ -30,6 +30,7 @@ import {
   FolderInput,
   PencilLine,
   UserRoundPlus,
+  Info,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -153,7 +154,7 @@ export function SharedDocument({
                         setOpenRail(true);
                       }}
                     >
-                      <FolderInput />
+                      <Info />
                       Details
                     </DropdownMenuItem>
                     <DropdownMenuItem

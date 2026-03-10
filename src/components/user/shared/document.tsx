@@ -17,7 +17,6 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-import { useCopyLink } from "@/hooks/use-copy-link";
 import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
 import { useUserStore } from "@/stores/user-store";
@@ -32,12 +31,15 @@ import {
   Link2,
   PencilLine,
   UserRoundPlus,
+  Info,
+  History
 } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
 import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { ShareDocumentDialog } from "./share-document-dialog";
+import { useCopyLink } from "@/hooks/use-copy-link";
+import { VersionHistoryDialog } from "./version-history-dialog";
 
 export function Document({
   item,
@@ -49,6 +51,7 @@ export function Document({
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [openShareDialog, setOpenShareDialog] = useState(false);
+  const [openVersionHistoryDialog, setOpenVersionHistoryDialog] = useState(false);
 
   const userId = useUserStore((state) => state.userId);
 
@@ -62,6 +65,7 @@ export function Document({
   } = useRailStore();
 
   const { copyLink } = useCopyLink();
+
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
   const handleDownload = () => {
@@ -120,18 +124,9 @@ export function Document({
                       Share
                     </DropdownMenuItem>
                   ) : item.classification === "public" ? (
-                    <DropdownMenuItem
-                      onClick={() => {
-                        if (!item?.current_version?.file_path) {
-                          toast.error("File path is unavailable.");
-                          return;
-                        }
-
-                        copyLink(item.current_version.file_path);
-                      }}
-                    >
+                    <DropdownMenuItem onClick={() => copyLink(item.id)}>
                       <Link2 />
-                      Copy link
+                      Copy Link
                     </DropdownMenuItem>
                   ) : null}
                 </>
@@ -157,7 +152,7 @@ export function Document({
                         setOpenRail(true);
                       }}
                     >
-                      <FolderInput />
+                      <Info />
                       Details
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -172,6 +167,10 @@ export function Document({
                     >
                       <Activity />
                       Activity
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setOpenVersionHistoryDialog(true)}>
+                      <History />
+                      Version history
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
@@ -205,6 +204,14 @@ export function Document({
           item={item}
           openShareDialog={openShareDialog}
           setOpenShareDialog={setOpenShareDialog}
+        />
+      )}
+
+      {openVersionHistoryDialog && (
+        <VersionHistoryDialog
+          item={item}
+          openVersionHistoryDialog={openVersionHistoryDialog}
+          setOpenVersionHistoryDialog={setOpenVersionHistoryDialog}
         />
       )}
     </>

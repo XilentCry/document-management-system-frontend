@@ -9,6 +9,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -17,7 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useCopyLink } from "@/hooks/use-copy-link";
 import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
 import { useUserStore } from "@/stores/user-store";
@@ -31,16 +31,15 @@ import {
   FileText,
   Folder,
   FolderInput,
-  Link2,
   PencilLine,
   UserRoundPlus,
+  Info,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { MoveItemDialog } from "../shared/move-item-dialog";
 import { RenameItemDialog } from "../shared/rename-item-dialog";
 import { ShareDocumentDialog } from "../shared/share-document-dialog";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export function SearchResultTable({
   data,
@@ -65,7 +64,6 @@ export function SearchResultTable({
     openRail,
     setOpenRail,
   } = useRailStore();
-  const { copyLink } = useCopyLink();
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
   const handleDownload = (id: number, fileName: string) => {
@@ -188,22 +186,7 @@ export function SearchResultTable({
                                   Share
                                 </DropdownMenuItem>
                               ) : (
-                                item.classification === "public" && (
-                                  <DropdownMenuItem
-                                    onClick={() => {
-                                      if (!item?.current_version?.file_path) {
-                                        toast.error(
-                                          "File path is unavailable.",
-                                        );
-                                        return;
-                                      }
-                                      copyLink(item.current_version.file_path);
-                                    }}
-                                  >
-                                    <Link2 />
-                                    Copy link
-                                  </DropdownMenuItem>
-                                )
+                                item.classification === "public" && null
                               )}
                             </>
                           )}
@@ -281,7 +264,7 @@ export function SearchResultTable({
                                 setOpenRail(true);
                               }}
                             >
-                              <FolderInput />
+                              <Info />
                               Details
                             </DropdownMenuItem>
                             <DropdownMenuItem

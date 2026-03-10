@@ -1,7 +1,35 @@
 import { getCookie } from "@/lib/get-cookie";
 import { TShareDocumentFormSchema } from "@/schemas/documents/share-document-form-schema";
 import { TSingleFile } from "@/schemas/documents/upload-file-form-schema";
+import { TCursorPaginate } from "@/types/cursor-paginate";
+import { TDocumentVersion } from "@/types/document-version";
 import { TItem } from "@/types/item";
+
+export const getDocumentVersions = async ({
+  id,
+  pageParam,
+}: {
+  id: number;
+  pageParam: string | null;
+}): Promise<TCursorPaginate<TDocumentVersion>> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/versions${pageParam ? `?cursor=${pageParam}` : ""}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
 
 export const shareDocument = async (
   id: number,
@@ -65,11 +93,30 @@ export const viewDocument = async (id: number): Promise<string> => {
   );
 
   if (!response.ok) {
-    throw new Error("Failed to view document. Please try again.");
+    const contentType = response.headers.get("Content-Type") ?? "";
+
+    if (contentType.includes("application/json")) {
+      const data = await response.json();
+      throw new Error(data.message);
+    }
   }
 
   const blob = await response.blob();
 
+  return URL.createObjectURL(blob);
+};
+
+export const publicDocument = async (id: string): Promise<string> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/public`,
+  );
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message);
+  }
+
+  const blob = await response.blob();
   return URL.createObjectURL(blob);
 };
 
@@ -132,6 +179,40 @@ export const getDocumentDetails = async (
         Application: "application/json",
       },
       credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data.documentDetails;
+};
+
+export const getPublicDocumentDetails = async (
+  id: string,
+): Promise<
+  Pick<
+    TItem,
+    "id" | "name" | "owner" | "classification" | "created_at" | "updated_at"
+  > & {
+    current_version: {
+      id: number;
+      item_id: number;
+      file_size: number;
+      version_number: number;
+    };
+  }
+> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/details/public`,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Application: "application/json",
+      },
     },
   );
 

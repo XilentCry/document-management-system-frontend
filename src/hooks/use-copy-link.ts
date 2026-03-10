@@ -1,11 +1,10 @@
 import { toast } from "sonner";
 
 export function useCopyLink() {
-  const copyLink = async (filePath: string) => {
+  const copyLink = async (documentId: number) => {
     try {
-      await navigator.clipboard.writeText(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${filePath}`,
-      );
+      const url = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/document/${documentId}/view`;
+      await navigator.clipboard.writeText(url);
       toast.success("Link copied.");
     } catch (error) {
       console.log(error);

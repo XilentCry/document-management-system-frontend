@@ -79,6 +79,22 @@ export type TSharedAuditLog = TBaseAuditLog & {
   };
 };
 
+export type TAdminInvitedAuditLog = TBaseAuditLog & {
+  action: "admin_invited";
+  properties: {
+    name: string;
+    email: string;
+  };
+};
+
+export type TAdminReinvitedAuditLog = TBaseAuditLog & {
+  action: "admin_reinvited";
+  properties: {
+    name: string;
+    email: string;
+  };
+};
+
 export type TAuditLog =
   | TUploadedAuditLog
   | TCreatedAuditLog
@@ -87,4 +103,6 @@ export type TAuditLog =
   | TViewedAuditLog
   | TUserStatusUpdatedAuditLog
   | TUserUpdatedAuditLog
-  | TSharedAuditLog;
+  | TSharedAuditLog
+  | TAdminInvitedAuditLog
+  | TAdminReinvitedAuditLog;

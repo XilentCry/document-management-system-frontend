@@ -25,6 +25,7 @@ import {
   FolderIcon,
   FolderInput,
   PencilLine,
+  Info,
 } from "lucide-react";
 import { useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
@@ -107,7 +108,7 @@ export function Folder({
                         setOpenRail(true);
                       }}
                     >
-                      <FolderInput />
+                      <Info />
                       Details
                     </DropdownMenuItem>
                     <DropdownMenuItem

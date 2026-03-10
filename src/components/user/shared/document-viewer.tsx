@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRailStore } from "@/stores/rail-store";
+
 import { TItem } from "@/types/item";
 import {
   Download,
@@ -15,6 +15,7 @@ import {
   PencilLine,
   UserRoundPlus,
   X,
+  Info,
 } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
@@ -26,6 +27,7 @@ import { viewDocument } from "@/services/documents/api";
 import dynamic from "next/dynamic";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
+import { DocumentViewerRail } from "./document-viewer-rail";
 
 const PdfDisplay = dynamic(
   () => import("./pdf-display").then((mod) => mod.PdfDisplay),
@@ -44,19 +46,11 @@ export function DocumentViewer({
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [openShareDialog, setOpenShareDialog] = useState(false);
+  const [openViewerRail, setOpenViewerRail] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-  const [pdfError, setPdfError] = useState(false);
+  const [pdfError, setPdfError] = useState<string | null>(null);
 
   const userId = useUserStore((state) => state.userId);
-
-  const {
-    setSelectedDocumentId,
-    setSelectedDocumentFileName,
-    setSelectedFolderId,
-    setSelectedFolderName,
-    setRailTab,
-    setOpenRail,
-  } = useRailStore();
 
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
@@ -69,12 +63,12 @@ export function DocumentViewer({
         objectUrl = url;
         setPdfUrl(url);
       })
-      .catch(() => setPdfError(true));
+      .catch((error) => setPdfError(error.message));
 
     return () => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
       setPdfUrl(null);
-      setPdfError(false);
+      setPdfError(null);
     };
   }, [openDocumentViewer, document.id]);
 
@@ -88,43 +82,31 @@ export function DocumentViewer({
   return (
     <>
       {openDocumentViewer && (
-        <div className="data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 bg-black/80 duration-100 supports-backdrop-filter:backdrop-blur-xs fixed inset-0 isolate z-50 flex flex-col">
-          <header className="h-14 flex items-center justify-between px-4">
+        <div className="bg-background data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 duration-100 supports-backdrop-filter:backdrop-blur-xs fixed inset-0 isolate z-50 flex flex-col">
+          <header className="border-b h-14 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setOpenDocumentViewer(false)}
-                className="text-background"
               >
                 <X />
               </Button>
               <div className="flex items-center gap-4">
-                <FileText className="size-4 text-background dark:text-background" />
-                <span className="text-sm leading-snug font-medium text-background dark:text-background">
+                <FileText className="size-4" />
+                <span className="text-sm leading-snug font-medium">
                   {document.name}
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleDownload}
-                  className="text-background"
-                >
+                <Button variant="ghost" size="icon" onClick={handleDownload}>
                   <Download />
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    render={
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-background"
-                      />
-                    }
+                    render={<Button variant="ghost" size="icon" />}
                   >
                     <EllipsisVertical />
                   </DropdownMenuTrigger>
@@ -141,17 +123,8 @@ export function DocumentViewer({
                       <FolderInput />
                       Move
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        setSelectedDocumentId(document.id);
-                        setSelectedDocumentFileName(document.name);
-                        setSelectedFolderId(null);
-                        setSelectedFolderName(null);
-                        setRailTab("details");
-                        setOpenRail(true);
-                      }}
-                    >
-                      <FolderInput />
+                    <DropdownMenuItem onClick={() => setOpenViewerRail(true)}>
+                      <Info />
                       Details
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -169,21 +142,27 @@ export function DocumentViewer({
               )}
             </div>
           </header>
-          <ScrollArea className="flex-1 min-h-0">
-            {pdfError ? (
-              <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
-                <p className="text-destructive text-sm">
-                  Failed to load document. Please try again.
-                </p>
-              </div>
-            ) : pdfUrl ? (
-              <PdfDisplay fileUrl={pdfUrl} />
-            ) : (
-              <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
-                <Spinner className="text-primary size-9" />
-              </div>
+          <div className="flex-1 min-h-0 flex">
+            <ScrollArea className="flex-1 min-h-0">
+              {pdfError ? (
+                <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
+                  <p className="text-destructive text-sm">{pdfError}</p>
+                </div>
+              ) : pdfUrl ? (
+                <PdfDisplay fileUrl={pdfUrl} />
+              ) : (
+                <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
+                  <Spinner className="text-primary size-9" />
+                </div>
+              )}
+            </ScrollArea>
+            {openViewerRail && (
+              <DocumentViewerRail
+                documentId={document.id}
+                setOpenRail={setOpenViewerRail}
+              />
             )}
-          </ScrollArea>
+          </div>
         </div>
       )}
 

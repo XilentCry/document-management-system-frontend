@@ -1,5 +1,41 @@
-import { useQuery } from "@tanstack/react-query";
-import { getDocumentDetails } from "./api";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import {
+  getDocumentDetails,
+  getDocumentVersions,
+  getPublicDocumentDetails,
+} from "./api";
+
+export const useGetDocumentVersions = (id: number) => {
+  const {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["document", id, "versions"],
+    queryFn: ({ pageParam }) => getDocumentVersions({ id, pageParam }),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
+    enabled: !!id,
+  });
+
+  return {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
+};
 
 export const useGetDocumentDetails = (
   id: number | null,
@@ -9,6 +45,15 @@ export const useGetDocumentDetails = (
     queryKey: ["document", id, "details"],
     queryFn: () => getDocumentDetails(id),
     enabled: !!id && isRailTabDetails,
+  });
+
+  return { isLoading, isError, error, data };
+};
+
+export const useGetPublicDocumentDetails = (id: string) => {
+  const { isLoading, isError, error, data } = useQuery({
+    queryKey: ["document", id, "details", "public"],
+    queryFn: () => getPublicDocumentDetails(id),
   });
 
   return { isLoading, isError, error, data };

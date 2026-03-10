@@ -12,7 +12,7 @@ export async function proxy(request: NextRequest) {
         headers: {
           Accept: "application/json",
           Cookie: request.headers.get("cookie") ?? "",
-          Origin: process.env.FRONTEND_URL!,
+          Origin: process.env.NEXT_PUBLIC_FRONTEND_URL!,
         },
       },
     );
