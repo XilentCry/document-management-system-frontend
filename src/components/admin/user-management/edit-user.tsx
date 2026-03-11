@@ -50,7 +50,7 @@ export function EditUser({
           (organizationUnit) => organizationUnit.id,
         ),
       }),
-      email: user.email,
+      email: user.email.replace(/@norsu\.edu\.ph$/i, ""),
     },
   });
 

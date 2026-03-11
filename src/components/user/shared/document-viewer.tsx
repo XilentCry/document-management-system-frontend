@@ -21,6 +21,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { useDownloadDocument } from "@/services/documents/mutations";
+import { useGetDocumentDetails } from "@/services/documents/queries";
 import { ShareDocumentDialog } from "./share-document-dialog";
 import { useUserStore } from "@/stores/user-store";
 import { viewDocument } from "@/services/documents/api";
@@ -52,6 +53,9 @@ export function DocumentViewer({
 
   const userId = useUserStore((state) => state.userId);
 
+  const documentDetailsQuery = useGetDocumentDetails(document.id, openDocumentViewer);
+  const documentName = documentDetailsQuery.data?.name ?? document.name;
+
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
   useEffect(() => {
@@ -75,7 +79,7 @@ export function DocumentViewer({
   const handleDownload = () => {
     downloadDocumentMutation({
       id: document.id,
-      fileName: document.name,
+      fileName: documentName,
     });
   };
 
@@ -95,7 +99,7 @@ export function DocumentViewer({
               <div className="flex items-center gap-4">
                 <FileText className="size-4" />
                 <span className="text-sm leading-snug font-medium">
-                  {document.name}
+                  {documentName}
                 </span>
               </div>
             </div>

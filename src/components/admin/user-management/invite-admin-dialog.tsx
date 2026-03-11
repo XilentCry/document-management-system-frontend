@@ -25,6 +25,7 @@ import {
 } from "@/schemas/users/invite-admin-form-schema";
 import { useInviteAdmin } from "@/services/users/mutations";
 import { getCsrfCookie } from "@/services/auth/api";
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/components/ui/input-group";
 
 export function InviteAdminDialog({
   openInviteAdminDialog,
@@ -54,8 +55,8 @@ export function InviteAdminDialog({
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-        reset();
-        setOpenInviteAdminDialog(false);
+      reset();
+      setOpenInviteAdminDialog(false);
     }
   }, [isSubmitSuccessful, reset]);
 
@@ -67,83 +68,83 @@ export function InviteAdminDialog({
   return (
     <Dialog open={openInviteAdminDialog} onOpenChange={setOpenInviteAdminDialog}>
       <DialogContent className="w-150 max-w-150!">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-        <DialogHeader>
-          <DialogTitle>Invite Admin</DialogTitle>
-          <DialogDescription>
-            Create an admin account and send an invitation email so they can set
-            their password.
-          </DialogDescription>
-        </DialogHeader>
-            <FieldGroup>
-              <Field>
-                <FieldLabel>First Name</FieldLabel>
-                <Input
-                  placeholder="Enter first name"
-                  {...form.register("first_name")}
-                />
-                {errors.first_name && (
-                  <FieldError>{errors.first_name.message}</FieldError>
-                )}
-              </Field>
-              <Field>
-                <FieldLabel>Middle Name</FieldLabel>
-                <Input
-                  placeholder="Enter middle name"
-                  {...form.register("middle_name")}
-                />
-                {errors.middle_name && (
-                  <FieldError>{errors.middle_name.message}</FieldError>
-                )}
-              </Field>
-              <Field>
-                <FieldLabel>Last Name</FieldLabel>
-                <Input
-                  placeholder="Enter last name"
-                  {...form.register("last_name")}
-                />
-                {errors.last_name && (
-                  <FieldError>{errors.last_name.message}</FieldError>
-                )}
-              </Field>
-              <Field>
-                <FieldLabel>Email</FieldLabel>
-                <Input
-                  type="email"
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+          <DialogHeader>
+            <DialogTitle>Invite Admin</DialogTitle>
+            <DialogDescription>
+              Create an admin account and send an invitation email so they can set
+              their password.
+            </DialogDescription>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <FieldLabel>First Name</FieldLabel>
+              <Input
+                placeholder="Enter first name"
+                {...form.register("first_name")}
+              />
+              {errors.first_name && (
+                <FieldError>{errors.first_name.message}</FieldError>
+              )}
+            </Field>
+            <Field>
+              <FieldLabel>Middle Name</FieldLabel>
+              <Input
+                placeholder="Enter middle name"
+                {...form.register("middle_name")}
+              />
+              {errors.middle_name && (
+                <FieldError>{errors.middle_name.message}</FieldError>
+              )}
+            </Field>
+            <Field>
+              <FieldLabel>Last Name</FieldLabel>
+              <Input
+                placeholder="Enter last name"
+                {...form.register("last_name")}
+              />
+              {errors.last_name && (
+                <FieldError>{errors.last_name.message}</FieldError>
+              )}
+            </Field>
+            <Field>
+              <FieldLabel>Email</FieldLabel>
+              <InputGroup>
+                <InputGroupInput
                   placeholder="Enter email"
                   {...form.register("email")}
                 />
-                {errors.email && (
-                  <FieldError>{errors.email.message}</FieldError>
-                )}
-                {formErrors?.email && (
-                  <FieldError>{formErrors.email[0]}</FieldError>
-                )}
-              </Field>
-            </FieldGroup>
-            <DialogFooter>
+                <InputGroupAddon align="inline-end">
+                  <InputGroupText>@norsu.edu.ph</InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
+              {errors.email && <FieldError>{errors.email.message}</FieldError>}
+              {formErrors?.email && <FieldError>{formErrors.email}</FieldError>}
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
             <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  reset();
-                  setOpenInviteAdminDialog(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Spinner className="mr-2" />
-                    Sending invite...
-                  </>
-                ) : (
-                  "Send Invite"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
+              type="button"
+              variant="outline"
+              onClick={() => {
+                reset();
+                setOpenInviteAdminDialog(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Spinner className="mr-2" />
+                  Sending invite...
+                </>
+              ) : (
+                "Send Invite"
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
