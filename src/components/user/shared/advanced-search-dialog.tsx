@@ -75,14 +75,8 @@ export function AdvancedSearchDialog({
     isLoading: isSpecificUsersLoading,
     isError: isSpecificUsersError,
     error: specificUsersError,
-    data: specificUsersData,
-    fetchNextPage: fetchNextSpecificUsersPage,
-    hasNextPage: hasNextSpecificUsersPage,
-    isFetchingNextPage: isFetchingNextSpecificUsersPage,
+    specificUsers = [],
   } = useGetSpecificUsers(currentOrganizationUnitId);
-
-  const specificUsers =
-    specificUsersData?.pages.flatMap((page) => page.data) ?? [];
 
   const {
     handleSubmit,
@@ -271,28 +265,6 @@ export function AdvancedSearchDialog({
                                               </CommandItem>
                                             ))}
                                           </CommandGroup>
-                                          {hasNextSpecificUsersPage && (
-                                            <div className="flex justify-center mt-6">
-                                              <Button
-                                                type="button"
-                                                onClick={() =>
-                                                  fetchNextSpecificUsersPage()
-                                                }
-                                                disabled={
-                                                  isFetchingNextSpecificUsersPage
-                                                }
-                                              >
-                                                {isFetchingNextSpecificUsersPage ? (
-                                                  <>
-                                                    <Spinner />
-                                                    Loading more...
-                                                  </>
-                                                ) : (
-                                                  "Load more users"
-                                                )}
-                                              </Button>
-                                            </div>
-                                          )}
                                         </>
                                       )}
                                     </CommandList>

@@ -19,17 +19,11 @@ export const useGetSpecificUsers = (id: number | null) => {
     isLoading,
     isError,
     error,
-    isFetchNextPageError,
     isSuccess,
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
+    data: specificUsers,
+  } = useQuery({
     queryKey: ["organization-unit", Number(id), "specific-users"],
-    queryFn: ({ pageParam }) => getSpecificUsers({ id, pageParam }),
-    initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
+    queryFn: () => getSpecificUsers(id),
     enabled: !!id,
   });
 
@@ -37,12 +31,8 @@ export const useGetSpecificUsers = (id: number | null) => {
     isLoading,
     isError,
     error,
-    isFetchNextPageError,
     isSuccess,
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
+    specificUsers,
   };
 };
 

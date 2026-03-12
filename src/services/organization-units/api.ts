@@ -19,15 +19,11 @@ type TGetOrganizationUnitFoldersResponse = {
   breadcrumb: TBreadcrumb;
 } & TCursorPaginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
 
-export const getSpecificUsers = async ({
-  id,
-  pageParam,
-}: {
-  id: number | null;
-  pageParam: string | null;
-}): Promise<TCursorPaginate<TBasicUser>> => {
+export const getSpecificUsers = async (
+  id: number | null,
+): Promise<TBasicUser[]> => {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/${id}/specific-users${pageParam ? `?cursor=${pageParam}` : ""}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/${id}/specific-users`,
     {
       headers: {
         Accept: "application/json",
@@ -42,7 +38,7 @@ export const getSpecificUsers = async ({
     throw new Error(data.message);
   }
 
-  return data;
+  return data.specificUsers;
 };
 
 export const searchOrganizationUnitItems = async ({
