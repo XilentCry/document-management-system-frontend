@@ -9,14 +9,50 @@ import {
   getAllOrganizationUnitsTree,
   getOrganizationUnitFolders,
   getOrganizationUnitItems,
+  getSpecificUsers,
   searchOrganizationUnitItems,
 } from "./api";
+import { TFilterOwner } from "@/types/filter-owner";
+
+export const useGetSpecificUsers = (id: number | null) => {
+  const {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["organization-unit", Number(id), "specific-users"],
+    queryFn: ({ pageParam }) => getSpecificUsers({ id, pageParam }),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
+    enabled: !!id,
+  });
+
+  return {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
+};
 
 export const useSearchOrganizationUnitItems = (
   id: number | null,
   searchTerm: string | null,
   filterType: TFilterType | null,
   filterClassification: number | null,
+  filterOwner: TFilterOwner,
+  filterOwnerId: number | null,
 ) => {
   const {
     isLoading,
@@ -36,6 +72,8 @@ export const useSearchOrganizationUnitItems = (
       searchTerm,
       filterType,
       filterClassification,
+      filterOwner,
+      filterOwnerId,
     ],
     queryFn: ({ pageParam }) =>
       searchOrganizationUnitItems({
@@ -44,6 +82,8 @@ export const useSearchOrganizationUnitItems = (
         searchTerm,
         filterType,
         filterClassification,
+        filterOwner,
+        filterOwnerId,
       }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,

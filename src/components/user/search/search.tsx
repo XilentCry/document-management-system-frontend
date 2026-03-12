@@ -21,6 +21,7 @@ import { LayoutGrid, List, Search as SearchIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { SearchResultList } from "./search-result-list";
+import { TFilterOwner } from "@/types/filter-owner";
 
 export function Search() {
   const searchParams = useSearchParams();
@@ -35,6 +36,13 @@ export function Search() {
   const filterClassification = filterClassificationStr
     ? Number(filterClassificationStr)
     : null;
+    const filterOwnerParam = searchParams.get("owner");
+const filterOwner: TFilterOwner =
+  filterOwnerParam === "me" || filterOwnerParam === "not_me" || filterOwnerParam === "user"
+    ? filterOwnerParam
+    : null;
+const filterOwnerIdStr = searchParams.get("owner_id");
+const filterOwnerId = filterOwnerIdStr ? Number(filterOwnerIdStr) : null;
 
   const currentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
@@ -66,6 +74,8 @@ export function Search() {
     searchTerm,
     filterType,
     filterClassification,
+    filterOwner,
+  filterOwnerId,
   );
 
   const organizationUnitItems = data?.pages.flatMap((page) => page.data) ?? [];

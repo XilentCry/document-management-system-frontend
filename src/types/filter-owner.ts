@@ -1,0 +1,1 @@
+export type TFilterOwner = "me" | "not_me" | "user" | null;

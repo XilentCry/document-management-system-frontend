@@ -10,13 +10,14 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { AdvanceSearchDialog } from "@/components/user/shared/advance-search-dialog";
+import { AdvancedSearchDialog } from "@/components/user/shared/advanced-search-dialog";
 import {
   advancedSearchFormSchema,
   TAdvancedSearchFormSchema,
 } from "@/schemas/items/advanced-search-form-schema";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useSearchStore } from "@/stores/search-store";
+import { TFilterOwner } from "@/types/filter-owner";
 import { TFilterType } from "@/types/filter-type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Search, SlidersHorizontal, X } from "lucide-react";
@@ -46,22 +47,31 @@ export function Header() {
       ? filterTypeParam
       : null;
   const filterClassification = searchParams.get("classification");
+  const filterOwnerParam = searchParams.get("owner");
+  const filterOwner: TFilterOwner =
+    filterOwnerParam === "me" ||
+    filterOwnerParam === "not_me" ||
+    filterOwnerParam === "user"
+      ? filterOwnerParam
+      : null;
+  const filterOwnerIdParam = searchParams.get("owner_id");
 
   const handleSearch = () => {
-    const trimmedDraftSearchTerm = draftSearchTerm.trim();
-
-    if (!trimmedDraftSearchTerm) return;
-
-    const url = `/drive/search?q=${encodeURIComponent(trimmedDraftSearchTerm)}${
-      filterType ? `&type=${filterType}` : ""
-    }${
-      filterClassification && filterType !== "folder"
-        ? `&classification=${filterClassification}`
-        : ""
-    }`;
-
-    router.push(url);
-  };
+  const trimmedDraftSearchTerm = draftSearchTerm.trim();
+  if (!trimmedDraftSearchTerm) return;
+  const url = `/drive/search?q=${encodeURIComponent(trimmedDraftSearchTerm)}${
+    filterType ? `&type=${filterType}` : ""
+  }${
+    filterClassification && filterType !== "folder"
+      ? `&classification=${filterClassification}`
+      : ""
+  }${filterOwner ? `&owner=${filterOwner}` : ""}${
+    filterOwner === "user" && filterOwnerIdParam
+      ? `&owner_id=${filterOwnerIdParam}`
+      : ""
+  }`;
+  router.push(url);
+};
 
   const handleOpen = () => {
     reset({
@@ -69,6 +79,10 @@ export function Header() {
       itemName: draftSearchTerm,
       classification: filterClassification
         ? Number(filterClassification)
+        : null,
+      owner: filterOwner,
+      owner_id: filterOwner === "user" && filterOwnerIdParam
+        ? Number(filterOwnerIdParam)
         : null,
     });
     setOpen(true);
@@ -80,6 +94,8 @@ export function Header() {
       type: null,
       itemName: "",
       classification: null,
+      owner: null,
+      owner_id: null,
     },
   });
 
@@ -87,12 +103,14 @@ export function Header() {
 
   const onSubmit: SubmitHandler<TAdvancedSearchFormSchema> = (data) => {
     const url = `/drive/search?q=${encodeURIComponent(data.itemName)}${
-      data.type ? `&type=${data.type}` : ""
-    }${
-      data.classification && data.type !== "folder"
-        ? `&classification=${data.classification}`
-        : ""
-    }`;
+  data.type ? `&type=${data.type}` : ""
+}${
+  data.classification && data.type !== "folder"
+    ? `&classification=${data.classification}`
+    : ""
+}${data.owner ? `&owner=${data.owner}` : ""}${
+  data.owner === "user" && data.owner_id ? `&owner_id=${data.owner_id}` : ""
+}`;
 
     setOpen(false);
     router.push(url);
@@ -142,7 +160,7 @@ export function Header() {
         </div>
       </header>
 
-      <AdvanceSearchDialog
+      <AdvancedSearchDialog
         open={open}
         onOpenChange={setOpen}
         form={form}
