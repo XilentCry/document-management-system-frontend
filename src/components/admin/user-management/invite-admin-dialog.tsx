@@ -14,18 +14,18 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import type { TFormError } from "@/types/form-error";
 import {
   inviteAdminFormSchema,
   type TInviteAdminFormSchema,
 } from "@/schemas/users/invite-admin-form-schema";
-import { useInviteAdmin } from "@/services/users/mutations";
 import { getCsrfCookie } from "@/services/auth/api";
-import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from "@/components/ui/input-group";
+import { useInviteAdmin } from "@/services/users/mutations";
+import type { TFormError } from "@/types/form-error";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export function InviteAdminDialog({
   openInviteAdminDialog,
@@ -58,7 +58,7 @@ export function InviteAdminDialog({
       reset();
       setOpenInviteAdminDialog(false);
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [isSubmitSuccessful, reset, setOpenInviteAdminDialog]);
 
   const onSubmit: SubmitHandler<TInviteAdminFormSchema> = async (data) => {
     await getCsrfCookie();

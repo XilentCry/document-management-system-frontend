@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { useGetDocumentDetails } from "@/services/documents/queries";
-import { TItem } from "@/types/item";
 import { X } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { ItemDetails } from "./item-details";
@@ -18,7 +17,7 @@ export function DocumentViewerRail({
   const documentQuery = useGetDocumentDetails(documentId, true);
 
   return (
-    <div className="border-l w-80 flex flex-col h-full">
+    <div className="bg-background border-l w-80 flex flex-col h-full">
       <div className="h-14 flex items-center justify-between px-4 border-b">
         <h2 className="text-sm font-medium leading-snug">Details</h2>
         <Button variant="ghost" size="icon" onClick={() => setOpenRail(false)}>

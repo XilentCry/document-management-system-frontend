@@ -6,34 +6,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { Spinner } from "@/components/ui/spinner";
+import { viewDocument } from "@/services/documents/api";
+import { useDownloadDocument } from "@/services/documents/mutations";
+import { useGetDocumentDetails } from "@/services/documents/queries";
+import { useUserStore } from "@/stores/user-store";
 import { TItem } from "@/types/item";
 import {
   Download,
   EllipsisVertical,
   FileText,
   FolderInput,
+  Info,
   PencilLine,
   UserRoundPlus,
   X,
-  Info,
 } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { MoveItemDialog } from "./move-item-dialog";
-import { RenameItemDialog } from "./rename-item-dialog";
-import { useDownloadDocument } from "@/services/documents/mutations";
-import { useGetDocumentDetails } from "@/services/documents/queries";
-import { ShareDocumentDialog } from "./share-document-dialog";
-import { useUserStore } from "@/stores/user-store";
-import { viewDocument } from "@/services/documents/api";
-import dynamic from "next/dynamic";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Spinner } from "@/components/ui/spinner";
 import { DocumentViewerRail } from "./document-viewer-rail";
-
-const PdfDisplay = dynamic(
-  () => import("./pdf-display").then((mod) => mod.PdfDisplay),
-  { ssr: false },
-);
+import { MoveItemDialog } from "./move-item-dialog";
+import { PdfDisplay } from "./pdf-display";
+import { RenameItemDialog } from "./rename-item-dialog";
+import { ShareDocumentDialog } from "./share-document-dialog";
 
 export function DocumentViewer({
   openDocumentViewer,
@@ -87,7 +81,7 @@ export function DocumentViewer({
     <>
       {openDocumentViewer && (
         <div className="bg-background data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 duration-100 supports-backdrop-filter:backdrop-blur-xs fixed inset-0 isolate z-50 flex flex-col">
-          <header className="border-b h-14 flex items-center justify-between px-4">
+          <header className="bg-background border-b h-14 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
@@ -147,19 +141,19 @@ export function DocumentViewer({
             </div>
           </header>
           <div className="flex-1 min-h-0 flex">
-            <ScrollArea className="flex-1 min-h-0">
-              {pdfError ? (
-                <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
-                  <p className="text-destructive text-sm">{pdfError}</p>
-                </div>
-              ) : pdfUrl ? (
-                <PdfDisplay fileUrl={pdfUrl} />
-              ) : (
-                <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
-                  <Spinner className="text-primary size-9" />
-                </div>
-              )}
-            </ScrollArea>
+            <div className="flex-1">
+            {pdfError ? (
+              <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
+                <p className="text-destructive text-sm">{pdfError}</p>
+              </div>
+            ) : pdfUrl ? (
+              <PdfDisplay fileUrl={pdfUrl} />
+            ) : (
+              <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
+                <Spinner className="text-primary size-9" />
+              </div>
+            )}
+            </div>
             {openViewerRail && (
               <DocumentViewerRail
                 documentId={document.id}

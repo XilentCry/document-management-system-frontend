@@ -28,10 +28,9 @@ import {
   Download,
   EllipsisVertical,
   FileText,
-  FolderInput,
-  PencilLine,
-  UserRoundPlus,
   Info,
+  PencilLine,
+  UserRoundPlus
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";

@@ -1,57 +1,94 @@
 "use client";
 
 import { Spinner } from "@/components/ui/spinner";
-import { useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
-import "react-pdf/dist/Page/AnnotationLayer.css";
-import "react-pdf/dist/Page/TextLayer.css";
+import { createPluginRegistration } from "@embedpdf/core";
+import { EmbedPDF } from "@embedpdf/core/react";
+import { usePdfiumEngine } from "@embedpdf/engines/react";
+import {
+  DocumentContent,
+  DocumentManagerPluginPackage,
+} from "@embedpdf/plugin-document-manager/react";
+import { RenderLayer, RenderPluginPackage } from "@embedpdf/plugin-render/react";
+import { Scroller, ScrollPluginPackage } from "@embedpdf/plugin-scroll/react";
+import {
+  Viewport,
+  ViewportPluginPackage,
+} from "@embedpdf/plugin-viewport/react";
+import { useEffect, useState } from "react";
+import { ZoomPluginPackage, ZoomMode } from '@embedpdf/plugin-zoom/react';
+import { ZoomToolbar } from "./zoom-toolbar";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-
-const A4_WIDTH = 794;
 const centered = "h-[calc(100vh-3.5rem)] flex items-center justify-center";
 
 export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
-  const [numPages, setNumPages] = useState<number>(0);
+  const [dpr, setDpr] = useState(1);
+  const { engine, isLoading: engineLoading } = usePdfiumEngine();
 
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages);
-  };
+  useEffect(() => {
+    setDpr(Math.max(window.devicePixelRatio || 1, 2));
+  }, []);
+
+  const plugins = [
+    createPluginRegistration(DocumentManagerPluginPackage, {
+      initialDocuments: [{ url: fileUrl }],
+    }),
+    createPluginRegistration(ViewportPluginPackage),
+    createPluginRegistration(ScrollPluginPackage),
+    createPluginRegistration(RenderPluginPackage),
+    createPluginRegistration(ZoomPluginPackage),
+  ];
+
+  if (engineLoading || !engine) {
+    return (
+      <div className={centered}>
+        <Spinner className="text-primary size-9" />
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col items-center">
-      <Document
-        file={fileUrl}
-        onLoadSuccess={onDocumentLoadSuccess}
-        loading={
-          <div className={centered}>
-            <Spinner className="text-primary size-9" />
-          </div>
-        }
-        error={
-          <div className={centered}>
-            <p className="text-destructive text-sm">
-              Failed to load document. Please try again.
-            </p>
-          </div>
-        }
-      >
-        {Array.from({ length: numPages }, (_, i) => (
-          <div
-            key={i}
-            className={i < numPages - 1 ? "mb-4" : "mb-14"}
-            style={{ width: A4_WIDTH }}
-          >
-            <Page
-              pageNumber={i + 1}
-              width={A4_WIDTH}
-              renderAnnotationLayer
-              renderTextLayer
-              className="border"
-            />
-          </div>
-        ))}
-      </Document>
-    </div>
+    <EmbedPDF engine={engine} plugins={plugins}>
+      {({ activeDocumentId }) =>
+        activeDocumentId && (
+          <DocumentContent documentId={activeDocumentId}>
+            {({ isLoaded }) =>
+              isLoaded && (
+                <>
+                <Viewport
+                  documentId={activeDocumentId}
+                  style={{
+                    height: "calc(100vh - 3.5rem)",
+                    width: "100%",
+                  }}
+                >
+                  <Scroller
+                    documentId={activeDocumentId}
+                    renderPage={({ width, height, pageIndex }) => (
+                      <div
+                        key={pageIndex}
+                        className="shadow-xl"
+                        style={{
+                          width,
+                          aspectRatio: `${width} / ${height}`,
+                        }}
+                      >
+                        <RenderLayer
+                          documentId={activeDocumentId}
+                          pageIndex={pageIndex}
+                          dpr={dpr}
+                          style={{ width: '100%', height: '100%' }}
+                        />
+                      </div>
+                    )}
+                  />
+                </Viewport>
+                <ZoomToolbar documentId={activeDocumentId} />
+                </>
+              )
+            }
+          </DocumentContent>
+        )
+      }
+    </EmbedPDF>
   );
 }

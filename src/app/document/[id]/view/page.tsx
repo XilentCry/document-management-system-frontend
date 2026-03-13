@@ -6,18 +6,10 @@ import { Spinner } from "@/components/ui/spinner";
 import { PublicDocumentViewerRail } from "@/components/user/shared/public-document-viewer-rail";
 import { publicDocument } from "@/services/documents/api";
 import { useGetPublicDocumentDetails } from "@/services/documents/queries";
+import { PdfDisplay } from "@/components/user/shared/pdf-display";
 import { FileText, Info } from "lucide-react";
-import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
-const PdfDisplay = dynamic(
-  () =>
-    import("@/components/user/shared/pdf-display").then(
-      (mod) => mod.PdfDisplay,
-    ),
-  { ssr: false },
-);
 
 export default function ViewDocumentPage() {
   const { id } = useParams<{ id: string }>();
@@ -91,7 +83,7 @@ export default function ViewDocumentPage() {
         </header>
 
         <div className="flex-1 min-h-0 flex">
-          <ScrollArea className="flex-1 min-h-0 bg-muted/20">
+          <div className="flex-1">
             {pdfError ? (
               <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
                 <p className="text-destructive text-sm">
@@ -99,15 +91,13 @@ export default function ViewDocumentPage() {
                 </p>
               </div>
             ) : pdfUrl ? (
-              <div className="py-8">
                 <PdfDisplay fileUrl={pdfUrl} />
-              </div>
             ) : (
               <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
                 <Spinner className="text-primary size-9" />
               </div>
             )}
-          </ScrollArea>
+          </div>
 
           {openViewerRail && document && (
             <PublicDocumentViewerRail
