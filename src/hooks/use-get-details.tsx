@@ -29,6 +29,14 @@ export function useGetDetails() {
           </span>
         );
 
+      case "edited":
+        return (
+          <span>
+            Location:{" "}
+            <span className="text-primary">{auditLog.properties.parent}</span>
+          </span>
+        );
+
       case "renamed":
         return (
           <span>

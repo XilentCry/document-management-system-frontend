@@ -13,15 +13,14 @@ type TUpdateUserResponse =
   | { errors: Record<string, string[]> }
   | { message: string };
 
-export async function getAllUsers(page: number): Promise<TPaginate<TUser>> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users?page=${page}`,
-    {
-      headers: {
-        Accept: "application/json",
-      },
-      credentials: "include",
+export async function getAllUsers(page: number, searchTerm?: string): Promise<TPaginate<TUser>> {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users?page=${page}${searchTerm ? `&q=${encodeURIComponent(searchTerm)}` : ""
+    }`, {
+    headers: {
+      Accept: "application/json",
     },
+    credentials: "include",
+  },
   );
 
   const data = await response.json();

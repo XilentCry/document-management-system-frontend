@@ -120,6 +120,34 @@ export const publicDocument = async (id: string): Promise<string> => {
   return URL.createObjectURL(blob);
 };
 
+export const checkConflicts = async (data: {
+  organization_unit_id: number;
+  file_names: string[];
+}): Promise<{
+  conflicts: { id: number; name: string; can_replace: boolean }[];
+}> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/check-conflicts`,
+    {
+      method: "POST",
+      headers: {
+        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data),
+    },
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to check conflicts.");
+  }
+
+  return response.json();
+};
+
 export async function uploadDocument(documentData: TSingleFile) {
   const formData = new FormData();
   formData.append(
@@ -133,6 +161,10 @@ export async function uploadDocument(documentData: TSingleFile) {
 
   if (documentData.folder_id) {
     formData.append("folder_id", documentData.folder_id.toString());
+  }
+
+  if (documentData.replace_item_id) {
+    formData.append("replace_item_id", documentData.replace_item_id.toString());
   }
 
   formData.append("file", documentData.file);

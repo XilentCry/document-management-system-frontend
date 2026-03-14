@@ -2,10 +2,10 @@ import { getCookie } from "@/lib/get-cookie";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 import { TRenameItemFormSchema } from "@/schemas/items/rename-item-form-schema";
 import { TAuditLog } from "@/types/audit-log";
-import { TCurrentUser } from "@/types/current-user";
+import { TBasicUser } from "@/types/basic-user";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 
-export async function getShareableUsers(id: number): Promise<TCurrentUser[]> {
+export async function getShareableUsers(id: number): Promise<TBasicUser[]> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/shareable-users`,
     {

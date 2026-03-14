@@ -60,6 +60,15 @@ export function useGetDescription() {
           </>
         );
 
+      case "edited":
+        return (
+          <>
+            {actor} edited{" "}
+            <span className="text-primary">{auditLog.properties.name}</span> in{" "}
+            <span className="text-primary">{auditLog.properties.parent}</span>
+          </>
+        );
+
       case "renamed":
         return (
           <>

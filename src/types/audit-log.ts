@@ -22,6 +22,11 @@ export type TCreatedAuditLog = TBaseAuditLog & {
   properties: TNamedInParentProps;
 };
 
+export type TEditedAuditLog = TBaseAuditLog & {
+  action: "edited";
+  properties: TNamedInParentProps;
+};
+
 export type TRenamedAuditLog = TBaseAuditLog & {
   action: "renamed";
   properties: {
@@ -98,6 +103,7 @@ export type TAdminReinvitedAuditLog = TBaseAuditLog & {
 export type TAuditLog =
   | TUploadedAuditLog
   | TCreatedAuditLog
+  | TEditedAuditLog
   | TRenamedAuditLog
   | TMovedAuditLog
   | TViewedAuditLog

@@ -1,12 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
+import { PdfDisplay } from "@/components/user/shared/pdf-display";
 import { PublicDocumentViewerRail } from "@/components/user/shared/public-document-viewer-rail";
 import { publicDocument } from "@/services/documents/api";
 import { useGetPublicDocumentDetails } from "@/services/documents/queries";
-import { PdfDisplay } from "@/components/user/shared/pdf-display";
 import { FileText, Info } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -91,7 +90,7 @@ export default function ViewDocumentPage() {
                 </p>
               </div>
             ) : pdfUrl ? (
-                <PdfDisplay fileUrl={pdfUrl} />
+              <PdfDisplay fileUrl={pdfUrl} />
             ) : (
               <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
                 <Spinner className="text-primary size-9" />

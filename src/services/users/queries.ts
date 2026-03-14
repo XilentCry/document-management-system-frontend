@@ -1,16 +1,17 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getAllUsers, getUser } from "./api";
 
-export const useGetAllUsers = (page: number) => {
-  const { isLoading, isError, error, isSuccess, data, isPlaceholderData } =
+export const useGetAllUsers = (page: number, searchTerm?: string) => {
+  const { isLoading, isError, error, isSuccess, data, isPlaceholderData, isFetching } =
     useQuery({
-      queryKey: ["users", page],
-      queryFn: () => getAllUsers(page),
+      queryKey: ["users", page, searchTerm],
+      queryFn: () => getAllUsers(page, searchTerm),
       placeholderData: keepPreviousData,
     });
 
   return {
     isLoading,
+    isFetching,
     isError,
     error,
     data,

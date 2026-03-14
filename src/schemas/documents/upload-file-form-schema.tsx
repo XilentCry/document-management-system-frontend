@@ -15,6 +15,7 @@ export const uploadFileFormSchema = z.object({
           .positive("Invalid classification id.")
           .min(1, "Classification id is required."),
         folder_id: z.number().int().positive("Invalid folder id.").nullable(),
+        replace_item_id: z.number().int().positive().optional(),
         file: z
           .instanceof(File, { message: "Please select a file." })
           .refine((file) => file.size > 0, "File cannot be empty.")
