@@ -100,9 +100,10 @@ export async function getAllOrganizationUnitsTree(): Promise<
 
 export async function getAllOrganizationUnitsFlat(
   page: number,
+  searchTerm?: string
 ): Promise<TPaginate<TOrganizationUnitFlat>> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/flat?page=${page}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/flat?page=${page}${searchTerm ? `&q=${encodeURIComponent(searchTerm)}` : ""}`,
     {
       headers: {
         Accept: "application/json",

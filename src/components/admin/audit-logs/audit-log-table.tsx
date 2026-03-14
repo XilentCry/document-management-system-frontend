@@ -12,7 +12,6 @@ import { useUserStore } from "@/stores/user-store";
 import { TAuditLog } from "@/types/audit-log";
 
 export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
-  const userId = useUserStore((state) => state.userId);
   const { getDetails } = useGetDetails();
 
   return (
@@ -31,11 +30,7 @@ export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
           <TableRow key={auditLog.id}>
             <TableCell>{auditLog.created_at}</TableCell>
             <TableCell>
-              {userId === auditLog.actor.id
-                ? "You"
-                : `${auditLog.actor.first_name} ${
-                    auditLog.actor.middle_name ?? ""
-                  } ${auditLog.actor.last_name}`}
+              {auditLog.actor.first_name} {auditLog.actor.middle_name ?? ""} {auditLog.actor.last_name}
             </TableCell>
             <TableCell>
               <Badge variant="secondary">{auditLog.action}</Badge>
