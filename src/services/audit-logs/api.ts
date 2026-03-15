@@ -3,9 +3,10 @@ import { TPaginate } from "@/types/paginate";
 
 export async function getAllAuditLogs(
   page: number,
+  searchTerm?: string
 ): Promise<TPaginate<TAuditLog>> {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/audit-logs?page=${page}`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/audit-logs?page=${page}${searchTerm ? `&q=${encodeURIComponent(searchTerm)}` : ""}`,
     {
       headers: {
         Accept: "application/json",

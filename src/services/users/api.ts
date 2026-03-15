@@ -13,14 +13,29 @@ type TUpdateUserResponse =
   | { errors: Record<string, string[]> }
   | { message: string };
 
-export async function getAllUsers(page: number, searchTerm?: string): Promise<TPaginate<TUser>> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users?page=${page}${searchTerm ? `&q=${encodeURIComponent(searchTerm)}` : ""
-    }`, {
-    headers: {
-      Accept: "application/json",
+export async function getAllUsers(
+  page: number,
+  searchTerm?: string,
+  roles?: string[],
+  statuses?: string[]
+): Promise<TPaginate<TUser>> {
+  const params = new URLSearchParams([["page", page.toString()]]);
+
+  if (searchTerm) {
+    params.append("q", searchTerm);
+  }
+
+  roles?.forEach((role) => params.append("roles[]", role));
+  statuses?.forEach((status) => params.append("statuses[]", status));
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users?${params.toString()}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
     },
-    credentials: "include",
-  },
   );
 
   const data = await response.json();
@@ -160,4 +175,26 @@ export async function reinviteAdmin(id: number): Promise<{ message: string }> {
   }
 
   return { message: data.message };
+}
+
+export async function getRoles(): Promise<{ roles: { id: number; name: string }[] }> {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/roles`, {
+    headers: { Accept: "application/json" },
+    credentials: "include",
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || "Failed to fetch roles");
+  return data;
+}
+
+export async function getStatuses(): Promise<{ statuses: { id: number; name: string }[] }> {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/statuses`, {
+    headers: { Accept: "application/json" },
+    credentials: "include",
+  });
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || "Failed to fetch statuses");
+  return data;
 }

@@ -23,11 +23,10 @@ import { OrganizationUnitTable } from "./organization-unit-table";
 export function OrganizationUnitList() {
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedSearchTerm = useDebounce(searchTerm);
 
   const {
     isLoading,
-    isFetching,
     isError,
     error,
     isSuccess,
@@ -53,7 +52,7 @@ export function OrganizationUnitList() {
         </InputGroup>
       </div>
 
-      {isLoading || isFetching ? (
+      {isLoading ? (
         <div className="flex-1 flex items-center justify-center">
           <Spinner className="text-primary size-9" />
         </div>

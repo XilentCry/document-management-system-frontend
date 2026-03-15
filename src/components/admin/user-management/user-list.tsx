@@ -1,5 +1,17 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput
+} from "@/components/ui/input-group";
 import {
   Pagination,
   PaginationContent,
@@ -8,41 +20,51 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useGetAllUsers } from "@/services/users/queries";
-import { useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { Spinner } from "../../ui/spinner";
-import { UserTable } from "./user-table";
-import { Button } from "@/components/ui/button";
-import { Plus, Search } from "lucide-react";
-import { InviteAdminDialog } from "./invite-admin-dialog";
+import { useGetAllUsers, useGetRoles, useGetStatuses } from "@/services/users/queries";
 import { useUserStore } from "@/stores/user-store";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-  InputGroupText,
-  InputGroupTextarea,
-} from "@/components/ui/input-group"
+import { ChevronDown, Plus, Search } from "lucide-react";
+import { useCallback, useState } from "react";
+import { Spinner } from "../../ui/spinner";
+import { InviteAdminDialog } from "./invite-admin-dialog";
+import { UserTable } from "./user-table";
 
 export function UserList() {
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const debouncedSearchTerm = useDebounce(searchTerm);
   const [openInviteAdminDialog, setOpenInviteAdminDialog] = useState(false);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+
+  const { data: rolesData } = useGetRoles();
+  const { data: statusesData } = useGetStatuses();
+
+  const debouncedRoles = useDebounce(selectedRoles);
+  const debouncedStatuses = useDebounce(selectedStatuses);
+
+  const toggleFilter = useCallback((
+    setSelected: React.Dispatch<React.SetStateAction<string[]>>,
+    value: string
+  ) => {
+    setSelected((prev) =>
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
+    );
+    setPage(1);
+  }, []);
 
   const userRole = useUserStore((state) => state.userRole);
 
   const {
     isLoading,
-    isFetching,
     isError,
     error,
     isSuccess,
     data: users,
     isPlaceholderData,
-  } = useGetAllUsers(page, debouncedSearchTerm);
+  } = useGetAllUsers(page, debouncedSearchTerm, debouncedRoles, debouncedStatuses);
 
   return (
     <div className="flex-1 flex flex-col gap-4">
@@ -61,6 +83,43 @@ export function UserList() {
               <Search />
             </InputGroupAddon>
           </InputGroup>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button variant="outline" />}>
+              Role
+              <ChevronDown />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {rolesData?.roles.map((role) => (
+                <DropdownMenuCheckboxItem
+                  key={role.id}
+                  checked={selectedRoles.includes(role.name)}
+                  onCheckedChange={() => toggleFilter(setSelectedRoles, role.name)}
+                >
+                  <span className="capitalize">{role.name}</span>
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button variant="outline" />}>
+              Status
+              <ChevronDown />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              {statusesData?.statuses.map((status) => (
+                <DropdownMenuCheckboxItem
+                  key={status.id}
+                  checked={selectedStatuses.includes(status.name)}
+                  onCheckedChange={() => toggleFilter(setSelectedStatuses, status.name)}
+                >
+                  <span className="capitalize">{status.name}</span>
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button onClick={() => setOpenInviteAdminDialog(true)}>
             <Plus />
             Invite Admin
@@ -68,7 +127,7 @@ export function UserList() {
         </div>
       )}
 
-      {isLoading || isFetching ? (
+      {isLoading ? (
         <div className="flex-1 flex items-center justify-center">
           <Spinner className="text-primary size-9" />
         </div>
