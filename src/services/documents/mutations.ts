@@ -6,8 +6,6 @@ import { toast } from "sonner";
 import { TShareDocumentFormSchema } from "@/schemas/documents/share-document-form-schema";
 
 export const useShareDocument = () => {
-  // const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: ({
       id,
@@ -18,10 +16,6 @@ export const useShareDocument = () => {
     }) => shareDocument(id, shareData),
     onSuccess: (data) => {
       toast.success(data.message);
-
-      // queryClient.invalidateQueries({
-      //   queryKey: ["shared-documents"],
-      // });
     },
     onError: (error) => {
       toast.error(error.message);
