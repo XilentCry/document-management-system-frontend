@@ -4,6 +4,7 @@ import { TUser } from "@/types/user";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
 import { TPaginate } from "@/types/paginate";
 import { TInviteAdminFormSchema } from "@/schemas/users/invite-admin-form-schema";
+import { TAuditLog } from "@/types/audit-log";
 
 type TGetUserResponse = TUser & {
   organizationUnits: TOrganizationUnitBase[];
@@ -196,5 +197,28 @@ export async function getStatuses(): Promise<{ statuses: { id: number; name: str
 
   const data = await response.json();
   if (!response.ok) throw new Error(data.message || "Failed to fetch statuses");
+  return data;
+}
+
+export async function getUserAuditLogs(
+  userId: number | string,
+  page: number,
+): Promise<TPaginate<TAuditLog>> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId}/audit-logs?page=${page}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
   return data;
 }

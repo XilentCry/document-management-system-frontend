@@ -8,7 +8,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useGetDetails } from "@/hooks/use-get-details";
-import { useUserStore } from "@/stores/user-store";
 import { TAuditLog } from "@/types/audit-log";
 
 export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {

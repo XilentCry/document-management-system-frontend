@@ -4,6 +4,7 @@ import { TSharePermission } from "./share-permission";
 export type TItem = {
   id: number;
   name: string;
+  type?: "pdf" | "folder";
   is_folder: boolean;
   parent_item_id: number | null;
   owner: TCurrentUser;

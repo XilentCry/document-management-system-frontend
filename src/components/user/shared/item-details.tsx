@@ -1,17 +1,15 @@
 import { formatFileSize } from "@/lib/format-file-size";
 import { useUserStore } from "@/stores/user-store";
+import { TDocumentVersion } from "@/types/document-version";
 import { TItem } from "@/types/item";
 
 export function ItemDetails({
   item,
 }: {
-  item: Pick<TItem, "id" | "name" | "owner" | "created_at" | "updated_at"> & {
+  item: Pick<TItem, "id" | "name" | "type" | "owner" | "created_at" | "updated_at"> & {
     classification?: string;
-    current_version?: {
-      id: number;
+    current_version: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
       item_id: number;
-      file_size: number;
-      version_number: number;
     };
   };
 }) {
@@ -20,17 +18,21 @@ export function ItemDetails({
   return (
     <>
       <h1 className="font-medium text-base">File details</h1>
+      <div>
+        <p className="font-medium">Type</p>
+        <p>{item.type}</p>
+      </div>
       {item.current_version && (
-        <div>
-          <p className="font-medium">File size</p>
-          <p>{formatFileSize(item.current_version.file_size)}</p>
-        </div>
-      )}
-      {item.current_version && (
-        <div>
-          <p className="font-medium">Version number</p>
-          <p>{item.current_version.version_number}</p>
-        </div>
+        <>
+          <div>
+            <p className="font-medium">File size</p>
+            <p>{formatFileSize(item.current_version.file_size)}</p>
+          </div>
+          <div>
+            <p className="font-medium">Version number</p>
+            <p>{item.current_version.version_number}</p>
+          </div>
+        </>
       )}
       {item.classification && (
         <div>

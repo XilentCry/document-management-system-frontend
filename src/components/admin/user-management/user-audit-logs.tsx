@@ -1,0 +1,107 @@
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+import { useState } from "react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { useGetUserAuditLogs } from "@/services/users/queries";
+import { Activity } from "lucide-react";
+import { EmptyState } from "@/components/shared/empty-state";
+import { AuditLogTable } from "@/components/admin/audit-logs/audit-log-table";
+
+export function UserAuditLogs({ userId }: { userId: number }) {
+  const [page, setPage] = useState(1);
+
+  const {
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+    data: userAuditLogs,
+    isPlaceholderData,
+  } = useGetUserAuditLogs(userId, page);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Audit Logs</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="flex-1 flex items-center justify-center p-8">
+            <Spinner className="text-primary size-9" />
+          </div>
+        ) : isError && error ? (
+          <div className="flex-1 flex items-center justify-center p-8">
+            <p className="text-destructive text-sm">{error.message}</p>
+          </div>
+        ) : isSuccess && userAuditLogs?.data.length === 0 ? (
+          <EmptyState
+            icon={Activity}
+            title="No audit logs yet"
+            description="User actions will be recorded and shown here."
+          />
+        ) : (
+          <AuditLogTable auditLogs={userAuditLogs?.data ?? []} />
+        )}
+      </CardContent>
+      {isSuccess && userAuditLogs?.data && userAuditLogs.data.length > 0 && (
+        <CardFooter>
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setPage((old) => Math.max(old - 1, 1))}
+                  disabled={page === 1}
+                />
+              </PaginationItem>
+              {userAuditLogs?.meta.links
+                .filter(
+                  (link) =>
+                    !link.label.includes("Previous") &&
+                    !link.label.includes("Next"),
+                )
+                .map((link) => (
+                  <PaginationLink
+                    key={link.label}
+                    onClick={() => {
+                      if (link.url) {
+                        const pageParam = new URL(link.url).searchParams.get(
+                          "page",
+                        );
+                        setPage(Number(pageParam));
+                      }
+                    }}
+                    isActive={link.active}
+                  >
+                    {link.label}
+                  </PaginationLink>
+                ))}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => {
+                    if (!isPlaceholderData && userAuditLogs?.links.next) {
+                      setPage((old) => old + 1);
+                    }
+                  }}
+                  disabled={isPlaceholderData || !userAuditLogs?.links.next}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </CardFooter>
+      )}
+    </Card>
+  );
+}

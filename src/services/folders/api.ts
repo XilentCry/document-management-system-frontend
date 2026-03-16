@@ -96,7 +96,7 @@ export const getFolderSubfolders = async ({
 export const getFolderDetails = async (
   id: number | null,
 ): Promise<
-  Pick<TItem, "id" | "name" | "owner" | "created_at" | "updated_at">
+  Pick<TItem, "id" | "name" | "type" | "owner" | "created_at" | "updated_at">
 > => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/folders/${id}/details`,

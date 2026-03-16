@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getAllUsers, getUser, getRoles, getStatuses } from "./api";
+import { getAllUsers, getUser, getRoles, getStatuses, getUserAuditLogs } from "./api";
 
 export const useGetAllUsers = (
   page: number,
@@ -48,4 +48,22 @@ export const useGetStatuses = () => {
     queryFn: getStatuses,
     staleTime: 60 * 1000 * 5, // 5 minutes
   });
+};
+
+export const useGetUserAuditLogs = (userId: number | string, page: number) => {
+  const { isLoading, isError, error, isSuccess, data, isPlaceholderData } =
+    useQuery({
+      queryKey: ["user-audit-logs", userId, page],
+      queryFn: () => getUserAuditLogs(userId, page),
+      placeholderData: keepPreviousData,
+    });
+
+  return {
+    isLoading,
+    isError,
+    error,
+    data,
+    isSuccess,
+    isPlaceholderData,
+  };
 };
