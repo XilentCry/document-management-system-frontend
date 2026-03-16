@@ -5,6 +5,7 @@ import { TItem } from "@/types/item";
 import { X } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { ItemDetails } from "./item-details";
+import { TDocumentVersion } from "@/types/document-version";
 
 export function PublicDocumentViewerRail({
   document,
@@ -12,13 +13,11 @@ export function PublicDocumentViewerRail({
 }: {
   document: Pick<
     TItem,
-    "id" | "name" | "owner" | "classification" | "created_at" | "updated_at"
+    "id" | "name" | "type" | "owner" | "created_at" | "updated_at"
   > & {
-    current_version: {
-      id: number;
+    classification: string;
+    current_version: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
       item_id: number;
-      file_size: number;
-      version_number: number;
     };
   };
   setOpenRail: Dispatch<SetStateAction<boolean>>;

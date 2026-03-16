@@ -193,9 +193,12 @@ export const getDocumentDetails = async (
 ): Promise<
   Pick<
     TItem,
-    "id" | "name" | "type" | "owner" | "classification" | "created_at" | "updated_at"
-  > & Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
-    item_id: number;
+    "id" | "name" | "type" | "owner" | "created_at" | "updated_at"
+  > & {
+    classification: string;
+    current_version: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
+      item_id: number;
+    };
   }
 > => {
   const response = await fetch(
@@ -223,13 +226,11 @@ export const getPublicDocumentDetails = async (
 ): Promise<
   Pick<
     TItem,
-    "id" | "name" | "owner" | "classification" | "created_at" | "updated_at"
+    "id" | "name" | "type" | "owner" | "created_at" | "updated_at"
   > & {
-    current_version: {
-      id: number;
+    classification: string;
+    current_version: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
       item_id: number;
-      file_size: number;
-      version_number: number;
     };
   }
 > => {
