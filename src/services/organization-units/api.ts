@@ -77,6 +77,47 @@ export const searchOrganizationUnitItems = async ({
   return data;
 };
 
+export const searchTopOrganizationUnitItems = async ({
+  id,
+  searchTerm,
+  filterType,
+  filterClassification,
+  filterOwner,
+  filterOwnerId,
+}: {
+  id: number | null;
+  searchTerm: string | null;
+  filterType: TFilterType | null;
+  filterClassification: number | null;
+  filterOwner: TFilterOwner | null;
+  filterOwnerId: number | null;
+}): Promise<TItem[]> => {
+  const params = new URLSearchParams();
+  if (searchTerm) params.append("q", searchTerm);
+  if (filterType) params.append("type", filterType);
+  if (filterClassification) params.append("classification", filterClassification.toString());
+  if (filterOwner) params.append("owner", filterOwner);
+  if (filterOwnerId) params.append("owner_id", filterOwnerId.toString());
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/organization-units/${id}/items/search/top?${params.toString()}`,
+    {
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data.data;
+};
+
 export async function getAllOrganizationUnitsTree(): Promise<
   TOrganizationUnitTree[]
 > {

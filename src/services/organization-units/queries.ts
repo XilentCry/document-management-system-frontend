@@ -11,6 +11,7 @@ import {
   getOrganizationUnitItems,
   getSpecificUsers,
   searchOrganizationUnitItems,
+  searchTopOrganizationUnitItems,
 } from "./api";
 import { TFilterOwner } from "@/types/filter-owner";
 
@@ -176,4 +177,39 @@ export const useGetOrganizationUnitFolders = (
     hasNextPage,
     isFetchingNextPage,
   };
+};
+
+export const useSearchTopOrganizationUnitItems = (
+  id: number | null,
+  searchTerm: string | null,
+  filterType: TFilterType | null,
+  filterClassification: number | null,
+  filterOwner: TFilterOwner | null,
+  filterOwnerId: number | null,
+) => {
+  const { isLoading, isError, error, isSuccess, data, isFetching } = useQuery({
+    queryKey: [
+      "organization-unit",
+      id,
+      "items",
+      "search-top",
+      searchTerm,
+      filterType,
+      filterClassification,
+      filterOwner,
+      filterOwnerId,
+    ],
+    queryFn: () =>
+      searchTopOrganizationUnitItems({
+        id,
+        searchTerm,
+        filterType,
+        filterClassification,
+        filterOwner,
+        filterOwnerId,
+      }),
+    enabled: !!id && !!searchTerm,
+  });
+
+  return { isLoading, isError, error, isSuccess, data, isFetching };
 };
