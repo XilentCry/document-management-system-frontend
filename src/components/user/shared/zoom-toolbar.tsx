@@ -19,7 +19,7 @@ export const ZoomToolbar = ({ documentId }: ZoomToolbarProps) => {
       <Button variant="outline">{Math.round(zoomState.currentZoomLevel * 100)}%</Button>
       <Button variant="outline" onClick={zoomProvides.zoomOut}><Minus /></Button>
       <Button variant="outline" onClick={zoomProvides.zoomIn}><Plus /></Button>
-      <Button variant="outline" onClick={() => zoomProvides.requestZoom(1.33)}>Reset</Button>
+      <Button variant="outline" onClick={() => zoomProvides.requestZoom(1.0)}>Reset</Button>
     </ButtonGroup>
   );
 };
