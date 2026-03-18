@@ -20,7 +20,10 @@ import { ZoomToolbar } from "./zoom-toolbar";
 const centered = "h-[calc(100vh-3.5rem)] flex items-center justify-center";
 
 export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
-  const dpr = Math.max(window.devicePixelRatio || 1, 2);
+  const dpr = Math.max(
+    typeof window !== "undefined" ? window.devicePixelRatio : 1,
+    2,
+  );
   const { engine, isLoading: engineLoading } = usePdfiumEngine();
 
   const plugins = [
@@ -64,7 +67,9 @@ export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
                           className="shadow-xl"
                           style={{
                             width,
-                            aspectRatio: `${width} / ${height}`,
+                            height,
+                            contain: "content",
+                            willChange: "transform",
                           }}
                         >
                           <RenderLayer

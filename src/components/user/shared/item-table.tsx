@@ -35,6 +35,7 @@ import {
   PencilLine,
   UserRoundPlus,
   Info,
+  Link2,
 } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
@@ -42,6 +43,7 @@ import { RenameItemDialog } from "./rename-item-dialog";
 import { ShareDocumentDialog } from "./share-document-dialog";
 import { DocumentViewer } from "./document-viewer";
 import { VersionHistoryDialog } from "./version-history-dialog";
+import { useCopyLink } from "@/hooks/use-copy-link";
 
 export function ItemTable({
   data,
@@ -76,6 +78,7 @@ export function ItemTable({
   } = useRailStore();
 
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
+  const { copyLink } = useCopyLink();
 
   const handleDownload = (id: number, fileName: string) => {
     downloadDocumentMutation({ id, fileName });
@@ -193,9 +196,14 @@ export function ItemTable({
                             <UserRoundPlus />
                             Share
                           </DropdownMenuItem>
-                        ) : (
-                          item.classification === "public" && null
-                        )}
+                        ) : item.classification === "public" ? (
+                          <DropdownMenuItem
+                            onClick={() => copyLink(item.id)}
+                          >
+                            <Link2 />
+                            Copy Link
+                          </DropdownMenuItem>
+                        ) : null}
                       </>
                     )}
                     <DropdownMenuItem
