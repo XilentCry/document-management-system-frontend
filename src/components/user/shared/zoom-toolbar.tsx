@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
-import { useZoom, ZoomMode } from "@embedpdf/plugin-zoom/react";
+import { useZoom } from "@embedpdf/plugin-zoom/react";
 import { Minus, Plus } from "lucide-react";
 
 interface ZoomToolbarProps {

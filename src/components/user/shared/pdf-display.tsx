@@ -14,10 +14,26 @@ import {
   Viewport,
   ViewportPluginPackage,
 } from "@embedpdf/plugin-viewport/react";
-import { ZoomMode, ZoomPluginPackage } from '@embedpdf/plugin-zoom/react';
+import { useZoom, ZoomPluginPackage } from '@embedpdf/plugin-zoom/react';
+import { useEffect, useRef } from "react";
 import { ZoomToolbar } from "./zoom-toolbar";
 
 const centered = "h-[calc(100vh-3.5rem)] flex items-center justify-center";
+const DEFAULT_ZOOM = 1.33;
+
+function InitialZoom({ documentId }: { documentId: string }) {
+  const { provides } = useZoom(documentId);
+  const initialized = useRef(false);
+
+  useEffect(() => {
+    if (provides && !initialized.current) {
+      initialized.current = true;
+      provides.requestZoom(DEFAULT_ZOOM);
+    }
+  }, [provides]);
+
+  return null;
+}
 
 export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
   const dpr = Math.max(
@@ -33,9 +49,7 @@ export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
     createPluginRegistration(ViewportPluginPackage),
     createPluginRegistration(ScrollPluginPackage),
     createPluginRegistration(RenderPluginPackage),
-    createPluginRegistration(ZoomPluginPackage, {
-      defaultZoomLevel: 1.33,
-    }),
+    createPluginRegistration(ZoomPluginPackage),
   ];
 
   if (engineLoading || !engine) {
@@ -84,6 +98,7 @@ export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
                       )}
                     />
                   </Viewport>
+                  <InitialZoom documentId={activeDocumentId} />
                   <ZoomToolbar documentId={activeDocumentId} />
                 </>
               )
@@ -94,3 +109,4 @@ export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
     </EmbedPDF>
   );
 }
+
