@@ -25,15 +25,16 @@ import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
 import {
   Activity,
+  Building,
   CircleAlert,
   Download,
   EllipsisVertical,
   FileText,
   Folder,
   FolderInput,
+  Info,
   PencilLine,
   UserRoundPlus,
-  Info,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -139,7 +140,7 @@ export function SearchResultTable({
                 {!openRail && (
                   <TableCell>{item.classification ?? <>&mdash;</>}</TableCell>
                 )}
-                {!openRail && <TableCell>{item.location}</TableCell>}
+                {!openRail && <TableCell>{item.parent_item_id ? <Folder /> : <Building />}{item.location}</TableCell>}
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger
@@ -205,39 +206,39 @@ export function SearchResultTable({
                           {item.share_permissions.some(
                             (p) => p.name === "can_download",
                           ) && (
-                            <DropdownMenuItem
-                              onClick={() => handleDownload(item.id, item.name)}
-                            >
-                              <Download />
-                              Download
-                            </DropdownMenuItem>
-                          )}
+                              <DropdownMenuItem
+                                onClick={() => handleDownload(item.id, item.name)}
+                              >
+                                <Download />
+                                Download
+                              </DropdownMenuItem>
+                            )}
                           {item.share_permissions.some(
                             (p) => p.name === "can_rename",
                           ) && (
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedItem(item);
-                                setOpenRenameItemDialog(true);
-                              }}
-                            >
-                              <PencilLine />
-                              Rename
-                            </DropdownMenuItem>
-                          )}
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedItem(item);
+                                  setOpenRenameItemDialog(true);
+                                }}
+                              >
+                                <PencilLine />
+                                Rename
+                              </DropdownMenuItem>
+                            )}
                           {item.share_permissions.some(
                             (p) => p.name === "can_share",
                           ) && (
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedItem(item);
-                                setOpenShareDialog(true);
-                              }}
-                            >
-                              <UserRoundPlus />
-                              Share
-                            </DropdownMenuItem>
-                          )}
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedItem(item);
+                                  setOpenShareDialog(true);
+                                }}
+                              >
+                                <UserRoundPlus />
+                                Share
+                              </DropdownMenuItem>
+                            )}
                         </>
                       )}
                       <DropdownMenuSub>

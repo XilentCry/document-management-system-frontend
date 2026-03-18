@@ -21,7 +21,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useUserStore } from "@/stores/user-store";
-import { FileUp, Folder, FolderPlus, Plus, UsersRound } from "lucide-react";
+import { Building, FileUp, FolderPlus, Plus, UsersRound } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -93,7 +93,7 @@ export function UserSidebar() {
                     }
                     onClick={() => setOpenUserOrganizationUnitsDialog(true)}
                   >
-                    <Folder />
+                    <Building />
                     Organizational Drive
                   </SidebarMenuButton>
                 </SidebarMenuItem>
