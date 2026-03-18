@@ -34,7 +34,7 @@ export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
     createPluginRegistration(ScrollPluginPackage),
     createPluginRegistration(RenderPluginPackage),
     createPluginRegistration(ZoomPluginPackage, {
-      defaultZoomLevel: ZoomMode.FitWidth,
+      defaultZoomLevel: 1.33,
     }),
   ];
 
