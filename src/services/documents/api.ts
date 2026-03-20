@@ -1,4 +1,4 @@
-import { getCookie } from "@/lib/get-cookie";
+import apiClient from "@/lib/api-client";
 import { TShareDocumentFormSchema } from "@/schemas/documents/share-document-form-schema";
 import { TSingleFile } from "@/schemas/documents/upload-file-form-schema";
 import { TCursorPaginate } from "@/types/cursor-paginate";
@@ -12,22 +12,9 @@ export const getDocumentVersions = async ({
   id: number;
   pageParam: string | null;
 }): Promise<TCursorPaginate<TDocumentVersion>> => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/versions${pageParam ? `?cursor=${pageParam}` : ""}`,
-    {
-      headers: {
-        Accept: "application/json",
-      },
-      credentials: "include",
-    },
+  const { data } = await apiClient.get(
+    `/api/documents/${id}/versions${pageParam ? `?cursor=${pageParam}` : ""}`,
   );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
   return data;
 };
 
@@ -35,43 +22,19 @@ export const shareDocument = async (
   id: number,
   shareData: TShareDocumentFormSchema,
 ) => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/share`,
-    {
-      method: "POST",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(shareData),
-    },
+  const { data } = await apiClient.post(
+    `/api/documents/${id}/share`,
+    shareData,
   );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
   return data;
 };
 
 export const downloadDocument = async (id: number, fileName: string) => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/download`,
-    {
-      credentials: "include",
-    },
-  );
+  const { data } = await apiClient.get(`/api/documents/${id}/download`, {
+    responseType: "blob",
+  });
 
-  if (!response.ok) {
-    throw new Error("Failed to download document. Please try again.");
-  }
-
-  const blob = await response.blob();
-  const url = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(data);
   const link = document.createElement("a");
   link.href = url;
   link.download = fileName;
@@ -82,70 +45,34 @@ export const downloadDocument = async (id: number, fileName: string) => {
 };
 
 export const viewDocument = async (id: number): Promise<string> => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/view`,
-    {
-      headers: {
-        Accept: "application/pdf",
-      },
-      credentials: "include",
-    },
-  );
+  const { data } = await apiClient.get(`/api/documents/${id}/view`, {
+    responseType: "blob",
+    headers: { Accept: "application/pdf" },
+  });
 
-  if (!response.ok) {
-    const contentType = response.headers.get("Content-Type") ?? "";
-
-    if (contentType.includes("application/json")) {
-      const data = await response.json();
-      throw new Error(data.message);
-    }
-  }
-
-  const blob = await response.blob();
-
-  return URL.createObjectURL(blob);
+  return URL.createObjectURL(data);
 };
 
 export const publicDocument = async (id: string): Promise<string> => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/public`,
-  );
+  const { data } = await apiClient.get(`/api/documents/${id}/public`, {
+    responseType: "blob",
+    withCredentials: false,
+  });
 
-  if (!response.ok) {
-    const data = await response.json();
-    throw new Error(data.message);
-  }
-
-  const blob = await response.blob();
-  return URL.createObjectURL(blob);
+  return URL.createObjectURL(data);
 };
 
-export const checkConflicts = async (data: {
+export const checkConflicts = async (conflictData: {
   organization_unit_id: number;
   file_names: string[];
 }): Promise<{
   conflicts: { id: number; name: string; can_replace: boolean }[];
 }> => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/check-conflicts`,
-    {
-      method: "POST",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(data),
-    },
+  const { data } = await apiClient.post(
+    "/api/documents/check-conflicts",
+    conflictData,
   );
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to check conflicts.");
-  }
-
-  return response.json();
+  return data;
 };
 
 export async function uploadDocument(documentData: TSingleFile) {
@@ -169,23 +96,7 @@ export async function uploadDocument(documentData: TSingleFile) {
 
   formData.append("file", documentData.file);
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents`,
-    {
-      method: "POST",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: formData,
-    },
-  );
-
-  if (!response.ok) {
-    const data = await response.json();
-    throw new Error(data.message);
-  }
+  await apiClient.post("/api/documents", formData);
 }
 
 export const getDocumentDetails = async (
@@ -201,23 +112,7 @@ export const getDocumentDetails = async (
     };
   }
 > => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/details`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Application: "application/json",
-      },
-      credentials: "include",
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
+  const { data } = await apiClient.get(`/api/documents/${id}/details`);
   return data.documentDetails;
 };
 
@@ -234,21 +129,9 @@ export const getPublicDocumentDetails = async (
     };
   }
 > => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/details/public`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Application: "application/json",
-      },
-    },
+  const { data } = await apiClient.get(
+    `/api/documents/${id}/details/public`,
+    { withCredentials: false },
   );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
   return data.documentDetails;
 };

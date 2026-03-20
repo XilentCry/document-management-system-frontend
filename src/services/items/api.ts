@@ -1,4 +1,4 @@
-import { getCookie } from "@/lib/get-cookie";
+import apiClient from "@/lib/api-client";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 import { TRenameItemFormSchema } from "@/schemas/items/rename-item-form-schema";
 import { TAuditLog } from "@/types/audit-log";
@@ -6,22 +6,9 @@ import { TBasicUser } from "@/types/basic-user";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 
 export async function getShareableUsers(id: number): Promise<TBasicUser[]> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/documents/${id}/shareable-users`,
-    {
-      headers: {
-        Accept: "application/json",
-      },
-      credentials: "include",
-    },
+  const { data } = await apiClient.get(
+    `/api/documents/${id}/shareable-users`,
   );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
   return data.users;
 }
 
@@ -32,23 +19,9 @@ export async function getItemActivities({
   id: number | null;
   pageParam: string | null;
 }): Promise<TCursorPaginate<TAuditLog>> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/items/${id}/activities${pageParam ? `?cursor=${pageParam}` : ""}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-    },
+  const { data } = await apiClient.get(
+    `/api/items/${id}/activities${pageParam ? `?cursor=${pageParam}` : ""}`,
   );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
   return data;
 }
 
@@ -56,26 +29,7 @@ export async function renameItem(
   id: number,
   renameData: TRenameItemFormSchema,
 ): Promise<{ message: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/items/${id}/rename`,
-    {
-      method: "PATCH",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(renameData),
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
+  const { data } = await apiClient.patch(`/api/items/${id}/rename`, renameData);
   return data;
 }
 
@@ -83,25 +37,6 @@ export async function moveItem(
   id: number,
   moveData: TMoveItemFormSchema,
 ): Promise<{ message: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/items/${id}/move`,
-    {
-      method: "PATCH",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(moveData),
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
+  const { data } = await apiClient.patch(`/api/items/${id}/move`, moveData);
   return data;
 }

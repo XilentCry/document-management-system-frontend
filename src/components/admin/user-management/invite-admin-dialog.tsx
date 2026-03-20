@@ -136,7 +136,7 @@ export function InviteAdminDialog({
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
-                  <Spinner className="mr-2" />
+                  <Spinner />
                   Sending invite...
                 </>
               ) : (

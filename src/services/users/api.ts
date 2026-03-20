@@ -1,4 +1,4 @@
-import { getCookie } from "@/lib/get-cookie";
+import apiClient from "@/lib/api-client";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
@@ -29,22 +29,7 @@ export async function getAllUsers(
   roles?.forEach((role) => params.append("roles[]", role));
   statuses?.forEach((status) => params.append("statuses[]", status));
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users?${params.toString()}`,
-    {
-      headers: {
-        Accept: "application/json",
-      },
-      credentials: "include",
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
+  const { data } = await apiClient.get(`/api/users?${params.toString()}`);
   return data;
 }
 
@@ -52,46 +37,14 @@ export async function updateStatus(
   userId: number,
   statusId: number,
 ): Promise<{ message: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId}/status`,
-    {
-      method: "PATCH",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ status_id: statusId }),
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
+  const { data } = await apiClient.patch(`/api/users/${userId}/status`, {
+    status_id: statusId,
+  });
   return { message: data.message };
 }
 
 export async function getUser(id: string): Promise<TGetUserResponse> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${id}`,
-    {
-      headers: {
-        Accept: "application/json",
-      },
-      credentials: "include",
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch user. Please try again.");
-  }
-
+  const { data } = await apiClient.get(`/api/users/${id}`);
   return data.user;
 }
 
@@ -99,104 +52,50 @@ export async function updateUser(
   userData: TUpdateUserFormSchema,
   userId: number,
 ): Promise<TUpdateUserResponse> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId}`,
-    {
-      method: "PATCH",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(userData),
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    if (data.errors && Object.keys(data.errors).length > 0) {
-      return { errors: data.errors };
+  try {
+    const { data } = await apiClient.patch(`/api/users/${userId}`, userData);
+    return { message: data.message };
+  } catch (error: any) {
+    const responseData = error.response?.data;
+    if (responseData?.errors && Object.keys(responseData.errors).length > 0) {
+      return { errors: responseData.errors };
     }
-
-    throw new Error(data.message);
+    throw new Error(responseData?.message || "Failed to update user.");
   }
-
-  return { message: data.message };
 }
 
 export async function inviteAdmin(
   inviteAdminData: TInviteAdminFormSchema,
 ): Promise<{ message: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/admin-invitation`,
-    {
-      method: "POST",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(inviteAdminData),
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    if (data.errors && Object.keys(data.errors).length > 0) {
-      throw { errors: data.errors };
+  try {
+    const { data } = await apiClient.post(
+      "/api/users/admin-invitation",
+      inviteAdminData,
+    );
+    return { message: data.message };
+  } catch (error: any) {
+    const responseData = error.response?.data;
+    if (responseData?.errors && Object.keys(responseData.errors).length > 0) {
+      throw { errors: responseData.errors };
     }
-
-    throw new Error(data.message);
+    throw new Error(responseData?.message || "Failed to invite admin.");
   }
-
-  return { message: data.message };
 }
 
 export async function reinviteAdmin(id: number): Promise<{ message: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${id}/admin-reinvitation`,
-    {
-      method: "POST",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        Accept: "application/json",
-      },
-      credentials: "include",
-    },
+  const { data } = await apiClient.post(
+    `/api/users/${id}/admin-reinvitation`,
   );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
   return { message: data.message };
 }
 
 export async function getRoles(): Promise<{ roles: { id: number; name: string }[] }> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/roles`, {
-    headers: { Accept: "application/json" },
-    credentials: "include",
-  });
-
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.message || "Failed to fetch roles");
+  const { data } = await apiClient.get("/api/users/roles");
   return data;
 }
 
 export async function getStatuses(): Promise<{ statuses: { id: number; name: string }[] }> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/statuses`, {
-    headers: { Accept: "application/json" },
-    credentials: "include",
-  });
-
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.message || "Failed to fetch statuses");
+  const { data } = await apiClient.get("/api/users/statuses");
   return data;
 }
 
@@ -204,21 +103,8 @@ export async function getUserAuditLogs(
   userId: number | string,
   page: number,
 ): Promise<TPaginate<TAuditLog>> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/${userId}/audit-logs?page=${page}`,
-    {
-      headers: {
-        Accept: "application/json",
-      },
-      credentials: "include",
-    },
+  const { data } = await apiClient.get(
+    `/api/users/${userId}/audit-logs?page=${page}`,
   );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message);
-  }
-
   return data;
 }

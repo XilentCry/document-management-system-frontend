@@ -32,7 +32,7 @@ export function OrganizationUnitTreeNode({
         ) : (
           <div className="w-6" />
         )}
-        {node.id !== 1 && (
+        {node.id !== 1 && node.id !== 3 && (
           <Checkbox
             checked={selectedIds.includes(node.id)}
             onCheckedChange={() => onToggle(node.id)}

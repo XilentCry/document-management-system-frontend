@@ -1,4 +1,4 @@
-import { getCookie } from "@/lib/get-cookie";
+import apiClient from "@/lib/api-client";
 import { TLoginFormSchema } from "@/schemas/auth/login-form-schema";
 import { TRegisterFormSchema } from "@/schemas/auth/register-form-schema";
 import { TCurrentUser } from "@/types/current-user";
@@ -13,116 +13,55 @@ export type TLoginResponse = {
 };
 
 export async function getCsrfCookie() {
-  await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sanctum/csrf-cookie`, {
-    credentials: "include",
-  });
+  await apiClient.get("/sanctum/csrf-cookie");
 }
 
 export async function login(
   loginData: TLoginFormSchema,
 ): Promise<TLoginResponse> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`,
-    {
-      method: "POST",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(loginData),
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    const error = new Error(data.message) as Error & {
+  try {
+    const { data } = await apiClient.post("/auth/login", loginData);
+    return data;
+  } catch (error: any) {
+    const err = new Error(error.response?.data?.message || "Login failed.") as Error & {
       code?: string;
     };
-    error.code = data.code;
-    throw error;
+    err.code = error.response?.data?.code;
+    throw err;
   }
-
-  return data;
 }
 
 export async function register(
   registerData: TRegisterFormSchema,
 ): Promise<{ message: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
-    {
-      method: "POST",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(registerData),
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    if (data.errors && Object.keys(data.errors).length > 0) {
-      throw { errors: data.errors };
+  try {
+    const { data } = await apiClient.post("/auth/register", registerData);
+    return { message: data.message };
+  } catch (error: any) {
+    const responseData = error.response?.data;
+    if (responseData?.errors && Object.keys(responseData.errors).length > 0) {
+      throw { errors: responseData.errors };
     }
-
-    throw new Error(data.message);
+    throw new Error(responseData?.message || "Registration failed.");
   }
-
-  return { message: data.message };
 }
 
 export async function logout(): Promise<{ message: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`,
-    {
-      method: "POST",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        Accept: "application/json",
-      },
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to logout.");
-  }
-
-  const data = response.json();
-
+  const { data } = await apiClient.post("/auth/logout");
   return data;
 }
 
 export async function resendVerificationEmail(): Promise<{ message: string }> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/email/verification-notification`,
-    {
-      method: "POST",
-      headers: {
-        "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      credentials: "include",
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    const error = new Error(data.message) as Error & {
-      code?: string;
-    };
-    error.code = data.code;
-    throw error;
+  try {
+    const { data } = await apiClient.post(
+      "/auth/email/verification-notification",
+    );
+    return data;
+  } catch (error: any) {
+    const err = new Error(
+      error.response?.data?.message || "Failed to resend verification email.",
+    ) as Error & { code?: string };
+    err.code = error.response?.data?.code;
+    throw err;
   }
-
-  return data;
 }
