@@ -12,7 +12,7 @@ export function ResetPassword() {
   const decodedEmail = email ? decodeURIComponent(email) : undefined;
 
   return (
-    <div className="flex min-h-svh justify-center py-24">
+    <div className="flex min-h-svh items-center justify-center">
       <div className="w-full max-w-sm space-y-7">
         <div className="flex flex-col items-center gap-2 text-center">
           <Image src="/logo.png" alt="NORSU" width={80} height={80} />

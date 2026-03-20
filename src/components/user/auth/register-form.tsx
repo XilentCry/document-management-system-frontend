@@ -83,45 +83,66 @@ export function RegisterForm() {
     <FormProvider {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
-          <Field>
-            <FieldLabel>First Name</FieldLabel>
-            <Input
-              placeholder="Enter first name"
-              {...form.register("first_name")}
-            />
-            {errors.first_name && (
-              <FieldError>{errors.first_name.message}</FieldError>
-            )}
-            {formErrors?.first_name && (
-              <FieldError>{formErrors.first_name}</FieldError>
-            )}
-          </Field>
-          <Field>
-            <FieldLabel>Middle Name</FieldLabel>
-            <Input
-              placeholder="Enter middle name"
-              {...form.register("middle_name")}
-            />
-            {errors.middle_name && (
-              <FieldError>{errors.middle_name.message}</FieldError>
-            )}
-            {formErrors?.middle_name && (
-              <FieldError>{formErrors.middle_name}</FieldError>
-            )}
-          </Field>
-          <Field>
-            <FieldLabel>Last Name</FieldLabel>
-            <Input
-              placeholder="Enter last name"
-              {...form.register("last_name")}
-            />
-            {errors.last_name && (
-              <FieldError>{errors.last_name.message}</FieldError>
-            )}
-            {formErrors?.last_name && (
-              <FieldError>{formErrors.last_name}</FieldError>
-            )}
-          </Field>
+          <div className="grid grid-cols-2 gap-4">
+            <Field>
+              <FieldLabel>First Name</FieldLabel>
+              <Input
+                placeholder="Enter first name"
+                {...form.register("first_name")}
+              />
+              {errors.first_name && (
+                <FieldError>{errors.first_name.message}</FieldError>
+              )}
+              {formErrors?.first_name && (
+                <FieldError>{formErrors.first_name}</FieldError>
+              )}
+            </Field>
+            <Field>
+              <FieldLabel>Middle Name</FieldLabel>
+              <Input
+                placeholder="Enter middle name"
+                {...form.register("middle_name")}
+              />
+              {errors.middle_name && (
+                <FieldError>{errors.middle_name.message}</FieldError>
+              )}
+              {formErrors?.middle_name && (
+                <FieldError>{formErrors.middle_name}</FieldError>
+              )}
+            </Field>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Field>
+              <FieldLabel>Last Name</FieldLabel>
+              <Input
+                placeholder="Enter last name"
+                {...form.register("last_name")}
+              />
+              {errors.last_name && (
+                <FieldError>{errors.last_name.message}</FieldError>
+              )}
+              {formErrors?.last_name && (
+                <FieldError>{formErrors.last_name}</FieldError>
+              )}
+            </Field>
+            <Field>
+              <FieldLabel>Email</FieldLabel>
+              <InputGroup>
+                <InputGroupInput
+                  placeholder="Enter email"
+                  {...form.register("email")}
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupText>@norsu.edu.ph</InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
+              <FieldDescription>
+                Use your official NORSU email address.
+              </FieldDescription>
+              {errors.email && <FieldError>{errors.email.message}</FieldError>}
+              {formErrors?.email && <FieldError>{formErrors.email}</FieldError>}
+            </Field>
+          </div>
           <Field>
             <FieldLabel>Office / Unit</FieldLabel>
             <OrganizationUnitsDialog
@@ -137,79 +158,63 @@ export function RegisterForm() {
               <FieldError>{errors.organization_unit_ids.message}</FieldError>
             )}
           </Field>
-          <Field>
-            <FieldLabel>Email</FieldLabel>
-            <InputGroup>
-              <InputGroupInput
-                placeholder="Enter email"
-                {...form.register("email")}
+          <div className="grid grid-cols-2 gap-4">
+            <Field>
+              <FieldLabel>Password</FieldLabel>
+              <Input
+                type="password"
+                placeholder="Enter password"
+                {...form.register("password")}
               />
-              <InputGroupAddon align="inline-end">
-                <InputGroupText>@norsu.edu.ph</InputGroupText>
-              </InputGroupAddon>
-            </InputGroup>
-            <FieldDescription>
-              Use your official NORSU email address.
-            </FieldDescription>
-            {errors.email && <FieldError>{errors.email.message}</FieldError>}
-            {formErrors?.email && <FieldError>{formErrors.email}</FieldError>}
-          </Field>
-          <Field>
-            <FieldLabel>Password</FieldLabel>
-            <Input
-              type="password"
-              placeholder="Enter password"
-              {...form.register("password")}
-            />
-            <>
-              {[
-                { label: "At least 8 characters", regex: /.{8,}/ },
-                { label: "One uppercase letter", regex: /[A-Z]/ },
-                { label: "One lowercase letter", regex: /[a-z]/ },
-                { label: "One number", regex: /[0-9]/ },
-                { label: "One symbol (e.g. !@#$%)", regex: /[^a-zA-Z0-9]/ },
-              ].map(({ label, regex }) => {
-                const passed = regex.test(watchedPassword);
-                const showError = isSubmitted && !passed;
+              <>
+                {[
+                  { label: "At least 8 characters", regex: /.{8,}/ },
+                  { label: "One uppercase letter", regex: /[A-Z]/ },
+                  { label: "One lowercase letter", regex: /[a-z]/ },
+                  { label: "One number", regex: /[0-9]/ },
+                  { label: "One symbol (e.g. !@#$%)", regex: /[^a-zA-Z0-9]/ },
+                ].map(({ label, regex }) => {
+                  const passed = regex.test(watchedPassword);
+                  const showError = isSubmitted && !passed;
 
-                return (
-                  <div
-                    key={label}
-                    className={`flex items-center gap-2 ${
-                      passed
+                  return (
+                    <div
+                      key={label}
+                      className={`flex items-center gap-2 ${passed
                         ? "text-green-500"
                         : showError
                           ? "text-destructive"
                           : "text-muted-foreground"
-                    }`}
-                  >
-                    {passed ? (
-                      <CheckCircle2 className="size-4" />
-                    ) : showError ? (
-                      <CircleX className="size-4 text-destructive" />
-                    ) : (
-                      <Circle className="size-4" />
-                    )}
-                    <FieldDescription>{label}</FieldDescription>
-                  </div>
-                );
-              })}
-            </>
-            {formErrors?.password && (
-              <FieldError>{formErrors.password}</FieldError>
-            )}
-          </Field>
-          <Field>
-            <FieldLabel>Confirm Password</FieldLabel>
-            <Input
-              type="password"
-              placeholder="Confirm your password"
-              {...form.register("password_confirmation")}
-            />
-            {errors.password_confirmation && (
-              <FieldError>{errors.password_confirmation.message}</FieldError>
-            )}
-          </Field>
+                        }`}
+                    >
+                      {passed ? (
+                        <CheckCircle2 className="size-4" />
+                      ) : showError ? (
+                        <CircleX className="size-4 text-destructive" />
+                      ) : (
+                        <Circle className="size-4" />
+                      )}
+                      <FieldDescription>{label}</FieldDescription>
+                    </div>
+                  );
+                })}
+              </>
+              {formErrors?.password && (
+                <FieldError>{formErrors.password}</FieldError>
+              )}
+            </Field>
+            <Field>
+              <FieldLabel>Confirm Password</FieldLabel>
+              <Input
+                type="password"
+                placeholder="Confirm your password"
+                {...form.register("password_confirmation")}
+              />
+              {errors.password_confirmation && (
+                <FieldError>{errors.password_confirmation.message}</FieldError>
+              )}
+            </Field>
+          </div>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
