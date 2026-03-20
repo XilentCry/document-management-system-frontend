@@ -40,10 +40,8 @@ export async function login(
   if (!response.ok) {
     const error = new Error(data.message) as Error & {
       code?: string;
-      email_sent?: boolean;
     };
     error.code = data.code;
-    error.email_sent = data.email_sent;
     throw error;
   }
 
@@ -52,7 +50,7 @@ export async function login(
 
 export async function register(
   registerData: TRegisterFormSchema,
-): Promise<{ message: string; email_sent?: boolean }> {
+): Promise<{ message: string }> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`,
     {
@@ -77,7 +75,7 @@ export async function register(
     throw new Error(data.message);
   }
 
-  return { message: data.message, email_sent: data.email_sent };
+  return { message: data.message };
 }
 
 export async function logout(): Promise<{ message: string }> {

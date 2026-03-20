@@ -128,7 +128,7 @@ export async function updateUser(
 
 export async function inviteAdmin(
   inviteAdminData: TInviteAdminFormSchema,
-): Promise<{ message: string; email_sent?: boolean }> {
+): Promise<{ message: string }> {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/admin-invitation`,
     {
@@ -153,7 +153,7 @@ export async function inviteAdmin(
     throw new Error(data.message);
   }
 
-  return { message: data.message, email_sent: data.email_sent };
+  return { message: data.message };
 }
 
 export async function reinviteAdmin(id: number): Promise<{ message: string }> {

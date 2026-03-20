@@ -44,12 +44,9 @@ export const useLogin = () => {
         router.replace("/admin/user-management");
       }
     },
-    onError: (error: Error & { code?: string; email_sent?: boolean }) => {
+    onError: (error: Error & { code?: string }) => {
       switch (error.code) {
         case "EMAIL_NOT_VERIFIED":
-          if (error.email_sent === false) {
-            toast.warning(error.message);
-          }
           router.push("/email/verify");
           break;
         case "ACCOUNT_PENDING":
@@ -71,12 +68,7 @@ export const useRegister = (
     mutationFn: register,
     onSuccess: (data) => {
       setFormErrors(null);
-
-      if (data.email_sent === false) {
-        toast.warning(data.message, { duration: 10000 });
-      } else {
-        toast.success(data.message);
-      }
+      toast.success(data.message);
 
       router.push("/email/verify");
     },

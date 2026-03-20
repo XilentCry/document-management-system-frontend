@@ -72,11 +72,7 @@ export const useInviteAdmin = (
     mutationFn: inviteAdmin,
     onSuccess: (data) => {
       setFormErrors(null);
-      if (data.email_sent === false) {
-        toast.warning(data.message);
-      } else {
-        toast.success(data.message);
-      }
+      toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error: { errors: TFormError } | Error) => {
