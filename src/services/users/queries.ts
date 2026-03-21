@@ -12,6 +12,7 @@ export const useGetAllUsers = (
       queryKey: ["users", page, searchTerm, roles, statuses],
       queryFn: () => getAllUsers(page, searchTerm, roles, statuses),
       placeholderData: keepPreviousData,
+      staleTime: 0,
     });
 
   return {
@@ -56,6 +57,7 @@ export const useGetUserAuditLogs = (userId: number | string, page: number) => {
       queryKey: ["user-audit-logs", userId, page],
       queryFn: () => getUserAuditLogs(userId, page),
       placeholderData: keepPreviousData,
+      staleTime: 0,
     });
 
   return {

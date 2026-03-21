@@ -26,6 +26,7 @@ export const useGetSpecificUsers = (id: number | null, enabled: boolean = true) 
     queryKey: ["organization-unit", Number(id), "specific-users"],
     queryFn: () => getSpecificUsers(id),
     enabled: !!id && enabled,
+    staleTime: 0,
   });
 
   return {

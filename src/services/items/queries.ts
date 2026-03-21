@@ -6,6 +6,7 @@ export const useGetShareableUsers = (id: number, enabled: boolean = true) => {
     queryKey: ["documents", id, "shareable-users"],
     queryFn: () => getShareableUsers(id),
     enabled,
+    staleTime: 0,
   });
 
   return { isLoading, isError, error, data };
