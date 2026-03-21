@@ -15,7 +15,7 @@ import {
 } from "./api";
 import { TFilterOwner } from "@/types/filter-owner";
 
-export const useGetSpecificUsers = (id: number | null) => {
+export const useGetSpecificUsers = (id: number | null, enabled: boolean = true) => {
   const {
     isLoading,
     isError,
@@ -25,7 +25,7 @@ export const useGetSpecificUsers = (id: number | null) => {
   } = useQuery({
     queryKey: ["organization-unit", Number(id), "specific-users"],
     queryFn: () => getSpecificUsers(id),
-    enabled: !!id,
+    enabled: !!id && enabled,
   });
 
   return {
@@ -148,6 +148,7 @@ export const useGetOrganizationUnitItems = (id: string) => {
 export const useGetOrganizationUnitFolders = (
   organizationUnitId: number | null,
   folderId: number | null,
+  enabled: boolean = true
 ) => {
   const {
     isLoading,
@@ -164,7 +165,7 @@ export const useGetOrganizationUnitFolders = (
       getOrganizationUnitFolders({ id: organizationUnitId, pageParam }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
-    enabled: !!organizationUnitId && !folderId,
+    enabled: !!organizationUnitId && !folderId && enabled,
   });
 
   return {

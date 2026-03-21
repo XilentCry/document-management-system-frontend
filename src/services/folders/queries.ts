@@ -32,7 +32,7 @@ export const useGetFolderItems = (id: string) => {
   };
 };
 
-export const useGetFolderSubfolders = (id: number | null) => {
+export const useGetFolderSubfolders = (id: number | null, enabled: boolean = true) => {
   const {
     isLoading,
     isError,
@@ -47,7 +47,7 @@ export const useGetFolderSubfolders = (id: number | null) => {
     queryFn: ({ pageParam }) => getFolderSubfolders({ id, pageParam }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
-    enabled: !!id,
+    enabled: !!id && enabled,
   });
 
   return {

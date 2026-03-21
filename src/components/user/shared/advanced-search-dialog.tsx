@@ -69,14 +69,14 @@ export function AdvancedSearchDialog({
     isError: isClassificationsError,
     error: classificationsError,
     data: classifications = [],
-  } = useGetAllClassifications();
+  } = useGetAllClassifications(open);
 
   const {
     isLoading: isSpecificUsersLoading,
     isError: isSpecificUsersError,
     error: specificUsersError,
     specificUsers = [],
-  } = useGetSpecificUsers(currentOrganizationUnitId);
+  } = useGetSpecificUsers(currentOrganizationUnitId, open);
 
   const {
     handleSubmit,
@@ -230,7 +230,7 @@ export function AdvancedSearchDialog({
                                     <CommandList>
                                       {isSpecificUsersLoading ? (
                                         <div className="flex items-center justify-center py-4">
-                                          <Spinner className="text-primary" />
+                                          <Spinner className="text-primary size-9" />
                                         </div>
                                       ) : isSpecificUsersError &&
                                         specificUsersError ? (
@@ -306,8 +306,8 @@ export function AdvancedSearchDialog({
                                 <p>
                                   {field.value != null
                                     ? classifications.find(
-                                        (c) => c.id === field.value,
-                                      )?.name
+                                      (c) => c.id === field.value,
+                                    )?.name
                                     : "Any"}
                                 </p>
                               </SelectValue>
@@ -315,7 +315,7 @@ export function AdvancedSearchDialog({
                             <SelectContent>
                               {isClassificationsLoading ? (
                                 <div className="flex items-center justify-center py-4">
-                                  <Spinner className="text-primary" />
+                                  <Spinner className="text-primary size-9" />
                                 </div>
                               ) : isClassificationsError &&
                                 classificationsError ? (

@@ -32,10 +32,11 @@ export const useGetAllSharedWithMe = () => {
   };
 };
 
-export const useGetUserOrganizationUnits = () => {
+export const useGetUserOrganizationUnits = (enabled: boolean = true) => {
   const { isLoading, isError, error, data } = useQuery({
     queryKey: ["user", "organization-units"],
     queryFn: getUserOrganizationUnits,
+    enabled,
   });
 
   return { isLoading, isError, error, data };

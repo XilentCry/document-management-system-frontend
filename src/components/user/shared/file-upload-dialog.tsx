@@ -72,7 +72,7 @@ export function FileUploadDialog({
     isError: isClassificationsError,
     error: classificationsError,
     data: classifications = [],
-  } = useGetAllClassifications();
+  } = useGetAllClassifications(openFileUploadDialog);
 
   const { control, handleSubmit } = useForm<TUploadFileFormSchema>({
     resolver: zodResolver(uploadFileFormSchema),

@@ -65,14 +65,14 @@ export function ShareDocumentDialog({
     isError: isShareableUsersError,
     error: ShareableUsersError,
     data: shareableUsers = [],
-  } = useGetShareableUsers(item.id);
+  } = useGetShareableUsers(item.id, openShareDialog);
 
   const {
     isLoading: isLoadingShareRoles,
     isError: isShareRolesError,
     error: shareRolesError,
     data: shareRoles = [],
-  } = useGetAllShareRoles();
+  } = useGetAllShareRoles(openShareDialog);
 
   const isLoading = isLoadingShareableUsers || isLoadingShareRoles;
   const isError = isShareableUsersError || isShareRolesError;

@@ -164,29 +164,23 @@ export function DocumentViewer({
         </div>
       )}
 
-      {openRenameItemDialog && (
-        <RenameItemDialog
-          item={document}
-          openRenameItemDialog={openRenameItemDialog}
-          setOpenRenameItemDialog={setOpenRenameItemDialog}
-        />
-      )}
+      <RenameItemDialog
+        item={document}
+        openRenameItemDialog={openRenameItemDialog}
+        setOpenRenameItemDialog={setOpenRenameItemDialog}
+      />
 
-      {openMoveItemDialog && (
-        <MoveItemDialog
-          item={document}
-          openMoveItemDialog={openMoveItemDialog}
-          setOpenMoveItemDialog={setOpenMoveItemDialog}
-        />
-      )}
+      <MoveItemDialog
+        item={document}
+        openMoveItemDialog={openMoveItemDialog}
+        setOpenMoveItemDialog={setOpenMoveItemDialog}
+      />
 
-      {openShareDialog && (
-        <ShareDocumentDialog
-          item={document}
-          openShareDialog={openShareDialog}
-          setOpenShareDialog={setOpenShareDialog}
-        />
-      )}
+      <ShareDocumentDialog
+        item={document}
+        openShareDialog={openShareDialog}
+        setOpenShareDialog={setOpenShareDialog}
+      />
     </>
   );
 }

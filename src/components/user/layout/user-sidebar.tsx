@@ -132,28 +132,22 @@ export function UserSidebar() {
         </SidebarFooter>
       </Sidebar>
 
-      {openUserOrganizationUnitsDialog && (
-        <UserOrganizationUnitsDialog
-          openUserOrganizationUnitsDialog={openUserOrganizationUnitsDialog}
-          setOpenUserOrganizationUnitsDialog={
-            setOpenUserOrganizationUnitsDialog
-          }
-        />
-      )}
+      <UserOrganizationUnitsDialog
+        openUserOrganizationUnitsDialog={openUserOrganizationUnitsDialog}
+        setOpenUserOrganizationUnitsDialog={
+          setOpenUserOrganizationUnitsDialog
+        }
+      />
 
-      {openNewFolderDialog && (
-        <NewFolderDialog
-          openNewFolderDialog={openNewFolderDialog}
-          setOpenNewFolderDialog={setOpenNewFolderDialog}
-        />
-      )}
+      <NewFolderDialog
+        openNewFolderDialog={openNewFolderDialog}
+        setOpenNewFolderDialog={setOpenNewFolderDialog}
+      />
 
-      {openFileUploadDialog && (
-        <FileUploadDialog
-          openFileUploadDialog={openFileUploadDialog}
-          setOpenFileUploadDialog={setOpenFileUploadDialog}
-        />
-      )}
+      <FileUploadDialog
+        openFileUploadDialog={openFileUploadDialog}
+        setOpenFileUploadDialog={setOpenFileUploadDialog}
+      />
     </>
   );
 }

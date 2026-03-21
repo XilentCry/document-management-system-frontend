@@ -63,6 +63,7 @@ export function MoveItemDialog({
   } = useGetOrganizationUnitFolders(
     currentOrganizationUnitId,
     currentParentFolderId,
+    openMoveItemDialog
   );
 
   const {
@@ -73,7 +74,7 @@ export function MoveItemDialog({
     fetchNextPage: fetchNextFolderSubfolders,
     hasNextPage: hasNextFolderSubfolders,
     isFetchingNextPage: isFetchingNextFolderSubfolders,
-  } = useGetFolderSubfolders(currentParentFolderId);
+  } = useGetFolderSubfolders(currentParentFolderId, openMoveItemDialog);
 
   const isLoading = currentParentFolderId
     ? isFolderSubfoldersLoading

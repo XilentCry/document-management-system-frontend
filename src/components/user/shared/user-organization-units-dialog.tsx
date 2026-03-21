@@ -23,7 +23,7 @@ export function UserOrganizationUnitsDialog({
     isError,
     error,
     data: userOrganizationUnits,
-  } = useGetUserOrganizationUnits();
+  } = useGetUserOrganizationUnits(openUserOrganizationUnitsDialog);
 
   return (
     <Dialog

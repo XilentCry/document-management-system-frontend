@@ -39,7 +39,7 @@ export function VersionHistoryDialog({
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-    } = useGetDocumentVersions(item.id);
+    } = useGetDocumentVersions(item.id, openVersionHistoryDialog);
 
     const versions = data?.pages?.flatMap((page) => page.data) ?? [];
 

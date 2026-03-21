@@ -5,7 +5,7 @@ import {
   getPublicDocumentDetails,
 } from "./api";
 
-export const useGetDocumentVersions = (id: number) => {
+export const useGetDocumentVersions = (id: number, enabled: boolean = true) => {
   const {
     isLoading,
     isError,
@@ -21,7 +21,7 @@ export const useGetDocumentVersions = (id: number) => {
     queryFn: ({ pageParam }) => getDocumentVersions({ id, pageParam }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
-    enabled: !!id,
+    enabled: !!id && enabled,
   });
 
   return {

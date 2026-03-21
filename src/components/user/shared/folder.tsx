@@ -132,21 +132,17 @@ export function Folder({
         </ItemActions>
       </Item>
 
-      {openRenameItemDialog && (
-        <RenameItemDialog
-          item={item}
-          openRenameItemDialog={openRenameItemDialog}
-          setOpenRenameItemDialog={setOpenRenameItemDialog}
-        />
-      )}
+      <RenameItemDialog
+        item={item}
+        openRenameItemDialog={openRenameItemDialog}
+        setOpenRenameItemDialog={setOpenRenameItemDialog}
+      />
 
-      {openMoveItemDialog && (
-        <MoveItemDialog
-          item={item}
-          openMoveItemDialog={openMoveItemDialog}
-          setOpenMoveItemDialog={setOpenMoveItemDialog}
-        />
-      )}
+      <MoveItemDialog
+        item={item}
+        openMoveItemDialog={openMoveItemDialog}
+        setOpenMoveItemDialog={setOpenMoveItemDialog}
+      />
     </>
   );
 }

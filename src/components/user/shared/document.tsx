@@ -183,37 +183,29 @@ export function Document({
         </ItemFooter>
       </Item>
 
-      {openRenameItemDialog && (
-        <RenameItemDialog
-          item={item}
-          openRenameItemDialog={openRenameItemDialog}
-          setOpenRenameItemDialog={setOpenRenameItemDialog}
-        />
-      )}
+      <RenameItemDialog
+        item={item}
+        openRenameItemDialog={openRenameItemDialog}
+        setOpenRenameItemDialog={setOpenRenameItemDialog}
+      />
 
-      {openMoveItemDialog && (
-        <MoveItemDialog
-          item={item}
-          openMoveItemDialog={openMoveItemDialog}
-          setOpenMoveItemDialog={setOpenMoveItemDialog}
-        />
-      )}
+      <MoveItemDialog
+        item={item}
+        openMoveItemDialog={openMoveItemDialog}
+        setOpenMoveItemDialog={setOpenMoveItemDialog}
+      />
 
-      {openShareDialog && (
-        <ShareDocumentDialog
-          item={item}
-          openShareDialog={openShareDialog}
-          setOpenShareDialog={setOpenShareDialog}
-        />
-      )}
+      <ShareDocumentDialog
+        item={item}
+        openShareDialog={openShareDialog}
+        setOpenShareDialog={setOpenShareDialog}
+      />
 
-      {openVersionHistoryDialog && (
-        <VersionHistoryDialog
-          item={item}
-          openVersionHistoryDialog={openVersionHistoryDialog}
-          setOpenVersionHistoryDialog={setOpenVersionHistoryDialog}
-        />
-      )}
+      <VersionHistoryDialog
+        item={item}
+        openVersionHistoryDialog={openVersionHistoryDialog}
+        setOpenVersionHistoryDialog={setOpenVersionHistoryDialog}
+      />
     </>
   );
 }

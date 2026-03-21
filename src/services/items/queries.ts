@@ -1,10 +1,11 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getItemActivities, getShareableUsers } from "./api";
 
-export const useGetShareableUsers = (id: number) => {
+export const useGetShareableUsers = (id: number, enabled: boolean = true) => {
   const { isLoading, isError, error, data } = useQuery({
     queryKey: ["documents", id, "shareable-users"],
     queryFn: () => getShareableUsers(id),
+    enabled,
   });
 
   return { isLoading, isError, error, data };
