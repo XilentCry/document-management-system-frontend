@@ -13,11 +13,11 @@ export default function AdminLayout({
   return (
     <SidebarProvider>
       <UserSidebar />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         <Suspense>
           <Header />
         </Suspense>
-        <div className="flex-1 flex">
+        <div className="flex-1 flex min-w-0">
           {children}
           <Rail />
         </div>

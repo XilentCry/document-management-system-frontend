@@ -140,7 +140,18 @@ export function SearchResultTable({
                 {!openRail && (
                   <TableCell>{item.classification ?? <>&mdash;</>}</TableCell>
                 )}
-                {!openRail && <TableCell className="flex items-center gap-2">{item.parent_item_id ? <Folder className="size-4" /> : <Building className="size-4" />}{item.location}</TableCell>}
+                {!openRail && (
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {item.parent_item_id ? (
+                        <Folder className="shrink-0 size-4" />
+                      ) : (
+                        <Building className="shrink-0 size-4" />
+                      )}
+                      {item.location}
+                    </div>
+                  </TableCell>
+                )}
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger

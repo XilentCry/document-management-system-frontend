@@ -97,7 +97,7 @@ const filterOwnerId = filterOwnerIdStr ? Number(filterOwnerIdStr) : null;
   }
 
   return (
-    <div className="flex-1 flex flex-col p-4 pt-0">
+    <div className="flex-1 flex flex-col p-4 pt-0 min-w-0">
       <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
         <Breadcrumb>
           <BreadcrumbList className="text-xl">
