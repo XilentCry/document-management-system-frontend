@@ -32,7 +32,6 @@ import { useState } from "react";
 export function UploadProgress() {
   const [isMinimized, setIsMinimized] = useState(false);
   const uploadingFiles = useUploadStore((state) => state.uploadingFiles);
-  const cancelAll = useUploadStore((state) => state.cancelAll);
   const clearCompleted = useUploadStore((state) => state.clearCompleted);
 
   if (uploadingFiles.length === 0) return null;
@@ -49,34 +48,25 @@ export function UploadProgress() {
         case "failed":
           acc.failedCount += 1;
           break;
-        case "cancelled":
-          acc.cancelledCount += 1;
-          break;
       }
       return acc;
     },
-    { uploadingCount: 0, completedCount: 0, failedCount: 0, cancelledCount: 0 },
+    { uploadingCount: 0, completedCount: 0, failedCount: 0 },
   );
 
-  const { uploadingCount, completedCount, failedCount, cancelledCount } =
-    counts;
+  const { uploadingCount, completedCount, failedCount } = counts;
 
   const title = () => {
     if (uploadingCount > 0) {
       return `Uploading ${uploadingCount} items`;
     }
-    if (completedCount > 0 && failedCount === 0 && cancelledCount === 0) {
+    if (completedCount > 0 && failedCount === 0) {
       return `${completedCount} upload${
         completedCount > 1 ? "s" : ""
       } complete`;
     }
     if (failedCount > 0) {
       return `${failedCount} upload${failedCount > 1 ? "s" : ""} failed`;
-    }
-    if (cancelledCount > 0) {
-      return `${cancelledCount} upload${
-        cancelledCount > 1 ? "s" : ""
-      } cancelled`;
     }
     return "Uploads";
   };
@@ -86,11 +76,7 @@ export function UploadProgress() {
       <CardHeader>
         <CardTitle>{title()}</CardTitle>
         <CardAction>
-          {uploadingCount > 0 && (
-            <Button variant="ghost" onClick={cancelAll}>
-              Cancel
-            </Button>
-          )}
+
           <Button
             variant="ghost"
             size="icon"
@@ -118,9 +104,6 @@ export function UploadProgress() {
                     {file.file.name}
                   </ItemTitle>
                   <ItemDescription className="text-xs">
-                    {file.status === "cancelled" && (
-                      <span>Upload cancelled</span>
-                    )}
                     {file.status === "failed" && (
                       <span className="text-destructive">{file.error}</span>
                     )}

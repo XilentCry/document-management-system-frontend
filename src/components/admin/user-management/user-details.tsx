@@ -110,29 +110,29 @@ export function UserDetails({
           <CardContent className="flex gap-4">
             <div className="flex-1 flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <p className="text-muted-foreground">First name</p>
+                <p className="font-medium">First name</p>
                 <p>{user.first_name}</p>
               </div>
               <div className="flex flex-col gap-1">
-                <p className="text-muted-foreground">Last name</p>
+                <p className="font-medium">Last name</p>
                 <p>{user.last_name}</p>
               </div>
               <div className="flex flex-col gap-1">
-                <p className="text-muted-foreground">Role</p>
+                <p className="font-medium">Role</p>
                 <Badge variant="secondary">{user.role}</Badge>
               </div>
             </div>
             <div className="flex-1 flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <p className="text-muted-foreground">Middle name</p>
+                <p className="font-medium">Middle name</p>
                 <p>{user.middle_name ?? "N/A"}</p>
               </div>
               <div className="flex flex-col gap-1">
-                <p className="text-muted-foreground">Email address</p>
+                <p className="font-medium">Email address</p>
                 <p>{user.email}</p>
               </div>
               <div className="flex flex-col gap-1">
-                <p className="text-muted-foreground">Status</p>
+                <p className="font-medium">Status</p>
                 <Badge
                   className={`${user.status === "pending"
                     ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
@@ -147,11 +147,11 @@ export function UserDetails({
           </CardContent>
           <CardFooter className="gap-4 border-t">
             <div className="flex-1">
-              <p className="text-muted-foreground">Created at</p>
+              <p className="font-medium">Created at</p>
               <p>{user.created_at}</p>
             </div>
             <div className="flex-1">
-              <p className="text-muted-foreground">Updated at</p>
+              <p className="font-medium">Updated at</p>
               <p>{user.updated_at}</p>
             </div>
           </CardFooter>
