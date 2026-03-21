@@ -79,6 +79,7 @@ export const useSearchOrganizationUnitItems = (
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
     enabled: !!id && !!searchTerm,
+    staleTime: 0,
   });
 
   return {
@@ -98,6 +99,7 @@ export const useGetAllOrganizationUnitsTree = () => {
   const { isLoading, isError, error, data } = useQuery({
     queryKey: ["organization-units"],
     queryFn: getAllOrganizationUnitsTree,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   return { isLoading, isError, error, data };
@@ -109,6 +111,7 @@ export const useGetAllOrganizationUnitsFlat = (page: number, searchTerm?: string
       queryKey: ["organization-units", page, searchTerm],
       queryFn: () => getAllOrganizationUnitsFlat(page, searchTerm),
       placeholderData: keepPreviousData,
+      staleTime: 1000 * 60 * 5, // 5 minutes
     });
 
   return { isLoading, isFetching, isError, error, isSuccess, data, isPlaceholderData };
@@ -210,6 +213,7 @@ export const useSearchTopOrganizationUnitItems = (
         filterOwnerId,
       }),
     enabled: !!id && !!searchTerm,
+    staleTime: 0,
   });
 
   return { isLoading, isError, error, isSuccess, data, isFetching };

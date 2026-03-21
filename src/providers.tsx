@@ -7,7 +7,16 @@ import { Toaster } from "./components/ui/sonner";
 import { ThemeProvider } from "./components/shared/theme-provider";
 
 export default function Providers({ children }: { children: ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 1000 * 60, // 1 minute
+          },
+        },
+      }),
+  );
 
   return (
     <QueryClientProvider client={queryClient}>

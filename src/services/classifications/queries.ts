@@ -6,6 +6,7 @@ export const useGetAllClassifications = (enabled: boolean = true) => {
     queryKey: ["classifications"],
     queryFn: getAllClassifications,
     enabled,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   return { isLoading, isError, error, data };

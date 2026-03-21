@@ -7,6 +7,7 @@ export const useGetAllAuditLogs = (page: number, searchTerm?: string) => {
       queryKey: ["audit-logs", page, searchTerm],
       queryFn: () => getAllAuditLogs(page, searchTerm),
       placeholderData: keepPreviousData,
+      staleTime: 0,
     });
 
   return {
