@@ -157,6 +157,7 @@ export function DocumentViewer({
             {openViewerRail && (
               <DocumentViewerRail
                 documentId={document.id}
+                openRail={openViewerRail}
                 setOpenRail={setOpenViewerRail}
               />
             )}

@@ -39,10 +39,12 @@ export function Rail() {
   const documentQuery = useGetDocumentDetails(
     isDocumentSelected ? selectedDocumentId : null,
     railTab === "details",
+    openRail,
   );
   const folderQuery = useGetFolderDetails(
     isFolderSelected ? selectedFolderId : null,
     railTab === "details",
+    openRail,
   );
 
   const isLoading = isDocumentSelected
@@ -76,7 +78,7 @@ export function Rail() {
     fetchNextPage: fetchNextItemActivityPage,
     hasNextPage: hasNextItemActivityPage,
     isFetchingNextPage: isFetchingNextItemActivityPage,
-  } = useGetItemActivities(activitySubjectId, railTab === "activity");
+  } = useGetItemActivities(activitySubjectId, openRail && railTab === "activity");
 
   const itemActivities =
     itemActivityData?.pages?.flatMap((page) => page.data) ?? [];

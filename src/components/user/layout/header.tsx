@@ -258,7 +258,7 @@ export function Header() {
                       <Item
                         key={item.id}
                         size="xs"
-                        className="hover:bg-muted rounded-none cursor-pointer"
+                        className="hover:bg-muted/50 rounded-none cursor-pointer"
                         onClick={() => {
                           setSearchOpen(false);
                           if (item.is_folder) {

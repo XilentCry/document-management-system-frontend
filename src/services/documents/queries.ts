@@ -40,11 +40,12 @@ export const useGetDocumentVersions = (id: number, enabled: boolean = true) => {
 export const useGetDocumentDetails = (
   id: number | null,
   isRailTabDetails: boolean,
+  enabled: boolean = true,
 ) => {
   const { isLoading, isError, error, data } = useQuery({
     queryKey: ["document", id, "details"],
     queryFn: () => getDocumentDetails(id),
-    enabled: !!id && isRailTabDetails,
+    enabled: !!id && isRailTabDetails && enabled,
   });
 
   return { isLoading, isError, error, data };

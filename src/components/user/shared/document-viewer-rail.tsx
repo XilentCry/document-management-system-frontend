@@ -9,12 +9,14 @@ import { ItemDetailsSkeleton } from "./item-details-skeleton";
 
 export function DocumentViewerRail({
   documentId,
+  openRail,
   setOpenRail,
 }: {
   documentId: number;
+  openRail: boolean;
   setOpenRail: Dispatch<SetStateAction<boolean>>;
 }) {
-  const documentQuery = useGetDocumentDetails(documentId, true);
+  const documentQuery = useGetDocumentDetails(documentId, true, openRail);
 
   return (
     <div className="bg-background border-l w-80 flex flex-col h-full">

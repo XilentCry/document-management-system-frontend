@@ -65,11 +65,12 @@ export const useGetFolderSubfolders = (id: number | null, enabled: boolean = tru
 export const useGetFolderDetails = (
   id: number | null,
   isRailTabDetails: boolean,
+  enabled: boolean = true,
 ) => {
   const { isLoading, isError, error, data } = useQuery({
     queryKey: ["folder", id, "details"],
     queryFn: () => getFolderDetails(id),
-    enabled: !!id && isRailTabDetails,
+    enabled: !!id && isRailTabDetails && enabled,
   });
 
   return { isLoading, isError, error, data };
