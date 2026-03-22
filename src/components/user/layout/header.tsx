@@ -32,7 +32,7 @@ import { TFilterType } from "@/types/filter-type";
 import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  CornerUpLeft,
+  CornerDownLeft,
   File,
   FileText,
   Folder,
@@ -105,7 +105,7 @@ export function Header() {
       : null;
   const filterOwnerIdParam = searchParams.get("owner_id");
 
-  const { data: topItems, isFetching: isFetchingTopItems } =
+  const { data: topItems, isLoading: isLoadingTopItems, isError: isErrorTopItems, error: errorTopItems } =
     useSearchTopOrganizationUnitItems(
       currentOrganizationUnitId,
       debouncedSearchTerm,
@@ -246,47 +246,55 @@ export function Header() {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-(--anchor-width) min-h-60.75" autoFocus={false}>
-              {isFetchingTopItems ? (
+              {isLoadingTopItems ? (
                 <div className="flex-1 flex items-center justify-center">
                   <Spinner className="text-primary size-9" />
                 </div>
+              ) : isErrorTopItems && errorTopItems ? (
+                <div className="flex-1 flex items-center justify-center">
+                  <p className="text-sm text-destructive">
+                    {errorTopItems.message}
+                  </p>
+                </div>
               ) : topItems && topItems.length > 0 ? (
-                <div className="flex flex-col py-2">
-                  {topItems.map((item) => (
-                    <Item
-                      key={item.id}
-                      size="xs"
-                      className="hover:bg-muted rounded-none cursor-pointer"
-                      onClick={() => {
-                        setSearchOpen(false);
-                        if (item.is_folder) {
-                          router.push(`/drive/folders/${item.id}`);
-                        } else {
-                          setSelectedDocument(item);
-                        }
-                      }}
-                    >
-                      <ItemMedia variant="icon">
-                        {item.is_folder ? (
-                          <Folder className="size-4" />
-                        ) : (
-                          <FileText className="size-4" />
-                        )}
-                      </ItemMedia>
-                      <ItemContent className="min-w-0">
-                        <ItemTitle className="block w-auto truncate">
-                          {item.name}
-                        </ItemTitle>
-                        <ItemDescription>
-                          {item.owner.first_name} {item.owner.middle_name ?? ""}{" "}
-                          {item.owner.last_name}
-                        </ItemDescription>
-                      </ItemContent>
-                      <ItemActions>
-                        <span className="text-muted-foreground">{item.updated_at}</span>
-                      </ItemActions>
-                    </Item>
-                  ))}
+                <div className="flex-1 flex flex-col">
+                  <div className="flex-1">
+                    {topItems.map((item) => (
+                      <Item
+                        key={item.id}
+                        size="xs"
+                        className="hover:bg-muted rounded-none cursor-pointer"
+                        onClick={() => {
+                          setSearchOpen(false);
+                          if (item.is_folder) {
+                            router.push(`/drive/folders/${item.id}`);
+                          } else {
+                            setSelectedDocument(item);
+                          }
+                        }}
+                      >
+                        <ItemMedia variant="icon">
+                          {item.is_folder ? (
+                            <Folder className="size-4" />
+                          ) : (
+                            <FileText className="size-4" />
+                          )}
+                        </ItemMedia>
+                        <ItemContent className="min-w-0">
+                          <ItemTitle className="block w-auto truncate">
+                            {item.name}
+                          </ItemTitle>
+                          <ItemDescription>
+                            {item.owner.first_name} {item.owner.middle_name ?? ""}{" "}
+                            {item.owner.last_name}
+                          </ItemDescription>
+                        </ItemContent>
+                        <ItemActions>
+                          <span className="text-muted-foreground">{item.updated_at}</span>
+                        </ItemActions>
+                      </Item>
+                    ))}
+                  </div>
                   <div className="flex justify-between w-full">
                     <Button
                       variant="ghost"
@@ -307,7 +315,7 @@ export function Header() {
                       className="text-primary hover:text-primary"
                       onClick={handleSearch}
                     >
-                      <CornerUpLeft />
+                      <CornerDownLeft />
                       All results
                     </Button>
                   </div>

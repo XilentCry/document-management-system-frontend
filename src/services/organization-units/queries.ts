@@ -192,7 +192,7 @@ export const useSearchTopOrganizationUnitItems = (
   filterOwner: TFilterOwner | null,
   filterOwnerId: number | null,
 ) => {
-  const { isLoading, isError, error, isSuccess, data, isFetching } = useQuery({
+  const { isLoading, isError, error, isSuccess, data } = useQuery({
     queryKey: [
       "organization-unit",
       id,
@@ -217,5 +217,5 @@ export const useSearchTopOrganizationUnitItems = (
     staleTime: 0,
   });
 
-  return { isLoading, isError, error, isSuccess, data, isFetching };
+  return { isLoading, isError, error, isSuccess, data };
 };
