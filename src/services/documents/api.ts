@@ -53,7 +53,7 @@ export const viewDocument = async (id: number): Promise<string> => {
   return URL.createObjectURL(data);
 };
 
-export const publicDocument = async (id: string): Promise<string> => {
+export const viewPublicDocument = async (id: string): Promise<string> => {
   const { data } = await apiClient.get(`/api/documents/${id}/public`, {
     responseType: "blob",
     withCredentials: false,

@@ -27,6 +27,7 @@ export function OrganizationUnitList() {
 
   const {
     isLoading,
+    isFetching,
     isError,
     error,
     isSuccess,
@@ -52,7 +53,7 @@ export function OrganizationUnitList() {
         </InputGroup>
       </div>
 
-      {isLoading ? (
+      {isLoading || isFetching ? (
         <div className="flex-1 flex items-center justify-center">
           <Spinner className="text-primary size-9" />
         </div>

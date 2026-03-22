@@ -43,7 +43,7 @@ export function UserSidebar() {
 
   return (
     <>
-      <Sidebar collapsible="none" className="sticky top-0">
+      <Sidebar collapsible="none" className="sticky top-0 border-r">
         <SidebarHeader className="h-14 flex flex-row items-center border-b">
           <SidebarMenu>
             <SidebarMenuItem>
@@ -116,13 +116,13 @@ export function UserSidebar() {
               <div>
                 <p className="font-medium">Last login</p>
                 {lastLogin && (
-                  <span className="text-muted-foreground">{lastLogin}</span>
+                  <span>{lastLogin}</span>
                 )}
               </div>
               <div>
                 <p className="font-medium">Last failed login</p>
                 {lastFailedLogin && (
-                  <span className="text-muted-foreground">
+                  <span>
                     {lastFailedLogin}
                   </span>
                 )}

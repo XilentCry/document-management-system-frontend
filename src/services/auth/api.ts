@@ -1,7 +1,14 @@
 import apiClient from "@/lib/api-client";
+import { isAxiosError } from "axios";
 import { TLoginFormSchema } from "@/schemas/auth/login-form-schema";
 import { TRegisterFormSchema } from "@/schemas/auth/register-form-schema";
 import { TCurrentUser } from "@/types/current-user";
+
+type TErrorResponse = {
+  message?: string;
+  code?: string;
+  errors?: Record<string, string[]>;
+};
 
 export type TLoginResponse = {
   message: string;
@@ -22,12 +29,15 @@ export async function login(
   try {
     const { data } = await apiClient.post("/auth/login", loginData);
     return data;
-  } catch (error: any) {
-    const err = new Error(error.response?.data?.message || "Login failed.") as Error & {
-      code?: string;
-    };
-    err.code = error.response?.data?.code;
-    throw err;
+  } catch (error: unknown) {
+    if (isAxiosError<TErrorResponse>(error)) {
+      const err = new Error(error.response?.data?.message) as Error & {
+        code?: string;
+      };
+      err.code = error.response?.data?.code;
+      throw err;
+    }
+    throw error;
   }
 }
 
@@ -37,12 +47,15 @@ export async function register(
   try {
     const { data } = await apiClient.post("/auth/register", registerData);
     return { message: data.message };
-  } catch (error: any) {
-    const responseData = error.response?.data;
-    if (responseData?.errors && Object.keys(responseData.errors).length > 0) {
-      throw { errors: responseData.errors };
+  } catch (error: unknown) {
+    if (isAxiosError<TErrorResponse>(error)) {
+      const responseData = error.response?.data;
+      if (responseData?.errors && Object.keys(responseData.errors).length > 0) {
+        throw { errors: responseData.errors };
+      }
+      throw new Error(responseData?.message);
     }
-    throw new Error(responseData?.message || "Registration failed.");
+    throw error;
   }
 }
 
@@ -57,11 +70,14 @@ export async function resendVerificationEmail(): Promise<{ message: string }> {
       "/auth/email/verification-notification",
     );
     return data;
-  } catch (error: any) {
-    const err = new Error(
-      error.response?.data?.message || "Failed to resend verification email.",
-    ) as Error & { code?: string };
-    err.code = error.response?.data?.code;
-    throw err;
+  } catch (error: unknown) {
+    if (isAxiosError<TErrorResponse>(error)) {
+      const err = new Error(
+        error.response?.data?.message,
+      ) as Error & { code?: string };
+      err.code = error.response?.data?.code;
+      throw err;
+    }
+    throw error;
   }
 }

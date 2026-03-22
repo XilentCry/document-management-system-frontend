@@ -1,10 +1,15 @@
 import apiClient from "@/lib/api-client";
+import { isAxiosError } from "axios";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
 import { TPaginate } from "@/types/paginate";
 import { TInviteAdminFormSchema } from "@/schemas/users/invite-admin-form-schema";
 import { TAuditLog } from "@/types/audit-log";
+type TErrorResponse = {
+  message?: string;
+  errors?: Record<string, string[]>;
+};
 
 type TGetUserResponse = TUser & {
   organizationUnits: TOrganizationUnitBase[];
@@ -55,12 +60,15 @@ export async function updateUser(
   try {
     const { data } = await apiClient.patch(`/api/users/${userId}`, userData);
     return { message: data.message };
-  } catch (error: any) {
-    const responseData = error.response?.data;
-    if (responseData?.errors && Object.keys(responseData.errors).length > 0) {
-      return { errors: responseData.errors };
+  } catch (error: unknown) {
+    if (isAxiosError<TErrorResponse>(error)) {
+      const responseData = error.response?.data;
+      if (responseData?.errors && Object.keys(responseData.errors).length > 0) {
+        return { errors: responseData.errors };
+      }
+      throw new Error(responseData?.message);
     }
-    throw new Error(responseData?.message || "Failed to update user.");
+    throw error;
   }
 }
 
@@ -73,12 +81,15 @@ export async function inviteAdmin(
       inviteAdminData,
     );
     return { message: data.message };
-  } catch (error: any) {
-    const responseData = error.response?.data;
-    if (responseData?.errors && Object.keys(responseData.errors).length > 0) {
-      throw { errors: responseData.errors };
+  } catch (error: unknown) {
+    if (isAxiosError<TErrorResponse>(error)) {
+      const responseData = error.response?.data;
+      if (responseData?.errors && Object.keys(responseData.errors).length > 0) {
+        throw { errors: responseData.errors };
+      }
+      throw new Error(responseData?.message);
     }
-    throw new Error(responseData?.message || "Failed to invite admin.");
+    throw error;
   }
 }
 

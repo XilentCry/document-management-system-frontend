@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { PdfDisplay } from "@/components/user/shared/pdf-display";
 import { PublicDocumentViewerRail } from "@/components/user/shared/public-document-viewer-rail";
-import { publicDocument } from "@/services/documents/api";
+import { viewPublicDocument } from "@/services/documents/api";
 import { useGetPublicDocumentDetails } from "@/services/documents/queries";
 import { FileText, Info } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -26,7 +26,7 @@ export default function ViewDocumentPage() {
 
   useEffect(() => {
     let objectUrl: string;
-    publicDocument(id)
+    viewPublicDocument(id)
       .then((url) => {
         objectUrl = url;
         setPdfUrl(url);

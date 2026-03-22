@@ -1,5 +1,6 @@
 "use client";
 
+import { EmptyState } from "@/components/shared/empty-state";
 import { LogoutButton } from "@/components/shared/logout-button";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { Button } from "@/components/ui/button";
@@ -11,15 +12,22 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+import {
   Popover,
   PopoverContent,
-  PopoverDescription,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverTrigger,
+  PopoverTrigger
 } from "@/components/ui/popover";
+import { Spinner } from "@/components/ui/spinner";
 import { AdvancedSearchDialog } from "@/components/user/shared/advanced-search-dialog";
 import { DocumentViewer } from "@/components/user/shared/document-viewer";
+import { useDebounce } from "@/hooks/use-debounce";
 import {
   advancedSearchFormSchema,
   TAdvancedSearchFormSchema,
@@ -33,28 +41,15 @@ import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CornerDownLeft,
-  File,
   FileText,
   Folder,
-  Loader2,
   Search,
   SlidersHorizontal,
-  X,
+  X
 } from "lucide-react";
-import { useDebounce } from "@/hooks/use-debounce";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Spinner } from "@/components/ui/spinner";
-import { EmptyState } from "@/components/shared/empty-state";
-import {
-  Item,
-  ItemMedia,
-  ItemContent,
-  ItemTitle,
-  ItemDescription,
-  ItemActions,
-} from "@/components/ui/item";
 
 export function Header() {
   "use no memo";
