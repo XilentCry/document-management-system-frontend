@@ -14,8 +14,9 @@ import {
   Viewport,
   ViewportPluginPackage,
 } from "@embedpdf/plugin-viewport/react";
-import { ZoomPluginPackage } from '@embedpdf/plugin-zoom/react';
-import { ZoomToolbar } from "./zoom-toolbar";
+
+
+
 
 const centered = "h-[calc(100vh-3.5rem)] flex items-center justify-center";
 
@@ -28,12 +29,12 @@ export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
 
   const plugins = [
     createPluginRegistration(DocumentManagerPluginPackage, {
-      initialDocuments: [{ url: fileUrl }],
+      initialDocuments: [{ url: fileUrl, scale: 1.33 }],
     }),
     createPluginRegistration(ViewportPluginPackage),
     createPluginRegistration(ScrollPluginPackage),
     createPluginRegistration(RenderPluginPackage),
-    createPluginRegistration(ZoomPluginPackage),
+
   ];
 
   if (engineLoading || !engine) {
@@ -51,8 +52,7 @@ export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
           <DocumentContent documentId={activeDocumentId}>
             {({ isLoaded }) =>
               isLoaded && (
-                <>
-                  <Viewport
+                <Viewport
                     documentId={activeDocumentId}
                     style={{
                       height: "calc(100vh - 3.5rem)",
@@ -82,8 +82,6 @@ export function PdfDisplay({ fileUrl }: { fileUrl: string }) {
                       )}
                     />
                   </Viewport>
-                  <ZoomToolbar documentId={activeDocumentId} />
-                </>
               )
             }
           </DocumentContent>

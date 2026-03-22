@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,10 @@ import { ScrollArea } from "../../ui/scroll-area";
 import { useGetUserOrganizationUnits } from "@/services/user/queries";
 import { Spinner } from "../../ui/spinner";
 import { UserOrganizationUnitTreeNode } from "./user-organization-unit-tree-node";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { Search } from "lucide-react";
+import { countTotalUnits } from "@/lib/count-total-units";
+import { filterTree } from "@/lib/filter-tree";
 
 export function UserOrganizationUnitsDialog({
   openUserOrganizationUnitsDialog,
@@ -25,6 +29,14 @@ export function UserOrganizationUnitsDialog({
     data: userOrganizationUnits,
   } = useGetUserOrganizationUnits(openUserOrganizationUnitsDialog);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const totalUnits = countTotalUnits(userOrganizationUnits);
+
+  const showSearchBar = totalUnits > 5;
+
+  const filteredUnits = !userOrganizationUnits ? [] : filterTree(userOrganizationUnits, searchQuery);
+
   return (
     <Dialog
       open={openUserOrganizationUnitsDialog}
@@ -35,6 +47,20 @@ export function UserOrganizationUnitsDialog({
           <DialogTitle>Organizational Structure</DialogTitle>
           <DialogDescription>Select your office or unit</DialogDescription>
         </DialogHeader>
+
+        {showSearchBar && !isLoading && !isError && (
+          <InputGroup>
+            <InputGroupInput
+              placeholder="Search offices or units..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+          </InputGroup>
+        )}
+
         <ScrollArea className="h-96 min-w-0">
           {isLoading ? (
             <div className="h-full flex items-center justify-center">
@@ -44,13 +70,17 @@ export function UserOrganizationUnitsDialog({
             <div className="h-full flex items-center justify-center">
               <p className="text-destructive text-sm">{error.message}</p>
             </div>
-          ) : (
-            userOrganizationUnits?.map((organizationUnit) => (
+          ) : filteredUnits.length > 0 ? (
+            filteredUnits.map((organizationUnit) => (
               <UserOrganizationUnitTreeNode
                 key={organizationUnit.id}
                 node={organizationUnit}
               />
             ))
+          ) : (
+            <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
+              No matching offices/units found.
+            </div>
           )}
         </ScrollArea>
       </DialogContent>
