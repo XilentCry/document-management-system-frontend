@@ -28,7 +28,6 @@ export function AuditLogList() {
 
   const {
     isLoading,
-    isFetching,
     isError,
     error,
     isSuccess,
@@ -54,7 +53,7 @@ export function AuditLogList() {
         </InputGroup>
       </div>
 
-      {isLoading || isFetching ? (
+      {isLoading ? (
         <div className="flex-1 flex items-center justify-center">
           <Spinner className="text-primary size-9" />
         </div>

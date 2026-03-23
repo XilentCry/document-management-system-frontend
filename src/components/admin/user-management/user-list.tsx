@@ -59,7 +59,6 @@ export function UserList() {
 
   const {
     isLoading,
-    isFetching,
     isError,
     error,
     isSuccess,
@@ -128,7 +127,7 @@ export function UserList() {
         </div>
       )}
 
-      {isLoading || isFetching ? (
+      {isLoading ? (
         <div className="flex-1 flex items-center justify-center">
           <Spinner className="text-primary size-9" />
         </div>

@@ -125,6 +125,46 @@ export function useGetDetails() {
           </div>
         );
       }
+
+      case "organization_unit_created":
+        if (!auditLog.properties.parent) return null;
+        return (
+          <span>
+            Parent:{" "}
+            <span className="text-primary">{auditLog.properties.parent}</span>
+          </span>
+        );
+
+      case "organization_unit_updated": {
+        const formatValue = (value: string | null) => {
+          return value ?? "None";
+        };
+
+        const changedFields = auditLog.properties.changed_fields ?? {};
+
+        return (
+          <div>
+            <span>Changed fields: </span>
+            {Object.entries(changedFields).map(
+              ([field, change], index, array) => {
+                const oldValue = formatValue(change.old);
+                const newValue = formatValue(change.new);
+                const isLast = index === array.length - 1;
+
+                const fieldName = field === "parent_organization_unit" ? "parent" : field;
+
+                return (
+                  <span key={field}>
+                    {fieldName}: <span className="text-primary">{oldValue}</span> to{" "}
+                    <span className="text-primary">{newValue}</span>
+                    {!isLast && ", "}
+                  </span>
+                );
+              },
+            )}
+          </div>
+        );
+      }
     }
   };
 

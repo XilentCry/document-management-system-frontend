@@ -11,7 +11,7 @@ import {
 import { useGetAllOrganizationUnitsFlat } from "@/services/organization-units/queries";
 import { useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import {
   InputGroup,
   InputGroupAddon,
@@ -19,15 +19,17 @@ import {
 } from "@/components/ui/input-group";
 import { Spinner } from "../../ui/spinner";
 import { OrganizationUnitTable } from "./organization-unit-table";
+import { Button } from "@/components/ui/button";
+import { NewOrganizationUnitDialog } from "./new-organization-unit-dialog";
 
 export function OrganizationUnitList() {
   const [page, setPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm);
+  const [openNewOrganizationUnitDialog, setOpenNewOrganizationUnitDialog] = useState(false);
 
   const {
     isLoading,
-    isFetching,
     isError,
     error,
     isSuccess,
@@ -51,9 +53,10 @@ export function OrganizationUnitList() {
             <Search />
           </InputGroupAddon>
         </InputGroup>
+        <Button onClick={() => setOpenNewOrganizationUnitDialog(true)}><Plus />New Organization Unit</Button>
       </div>
 
-      {isLoading || isFetching ? (
+      {isLoading ? (
         <div className="flex-1 flex items-center justify-center">
           <Spinner className="text-primary size-9" />
         </div>
@@ -114,6 +117,11 @@ export function OrganizationUnitList() {
           </Pagination>
         </>
       )}
+
+      <NewOrganizationUnitDialog
+        openNewOrganizationUnitDialog={openNewOrganizationUnitDialog}
+        setOpenNewOrganizationUnitDialog={setOpenNewOrganizationUnitDialog}
+      />
     </div>
   );
 }

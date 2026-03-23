@@ -19,7 +19,7 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="none" className="sticky top-0">
+    <Sidebar collapsible="none" className="sticky top-0 border-r">
       <SidebarHeader className="h-14 flex flex-row items-center border-b">
         <SidebarMenu>
           <SidebarMenuItem>

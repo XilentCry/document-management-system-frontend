@@ -7,7 +7,7 @@ export const useGetAllUsers = (
   roles?: string[],
   statuses?: string[]
 ) => {
-  const { isLoading, isError, error, isSuccess, data, isPlaceholderData, isFetching } =
+  const { isLoading, isError, error, isSuccess, data, isPlaceholderData } =
     useQuery({
       queryKey: ["users", page, searchTerm, roles, statuses],
       queryFn: () => getAllUsers(page, searchTerm, roles, statuses),
@@ -17,7 +17,6 @@ export const useGetAllUsers = (
 
   return {
     isLoading,
-    isFetching,
     isError,
     error,
     data,

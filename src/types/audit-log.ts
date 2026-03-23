@@ -100,6 +100,25 @@ export type TAdminReinvitedAuditLog = TBaseAuditLog & {
   };
 };
 
+export type TOrganizationUnitCreatedAuditLog = TBaseAuditLog & {
+  action: "organization_unit_created";
+  properties: {
+    name: string;
+    parent: string | null;
+  };
+};
+
+export type TOrganizationUnitUpdatedAuditLog = TBaseAuditLog & {
+  action: "organization_unit_updated";
+  properties: {
+    name: string;
+    changed_fields: {
+      name?: ChangedField<string>;
+      parent_organization_unit?: ChangedField<string | null>;
+    };
+  };
+};
+
 export type TAuditLog =
   | TUploadedAuditLog
   | TCreatedAuditLog
@@ -111,4 +130,6 @@ export type TAuditLog =
   | TUserUpdatedAuditLog
   | TSharedAuditLog
   | TAdminInvitedAuditLog
-  | TAdminReinvitedAuditLog;
+  | TAdminReinvitedAuditLog
+  | TOrganizationUnitCreatedAuditLog
+  | TOrganizationUnitUpdatedAuditLog;

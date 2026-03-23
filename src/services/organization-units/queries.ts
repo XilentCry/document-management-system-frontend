@@ -107,7 +107,7 @@ export const useGetAllOrganizationUnitsTree = () => {
 };
 
 export const useGetAllOrganizationUnitsFlat = (page: number, searchTerm?: string) => {
-  const { isLoading, isFetching, isError, error, isSuccess, data, isPlaceholderData } =
+  const { isLoading, isError, error, isSuccess, data, isPlaceholderData } =
     useQuery({
       queryKey: ["organization-units", page, searchTerm],
       queryFn: () => getAllOrganizationUnitsFlat(page, searchTerm),
@@ -115,7 +115,7 @@ export const useGetAllOrganizationUnitsFlat = (page: number, searchTerm?: string
       staleTime: 1000 * 60 * 5, // 5 minutes
     });
 
-  return { isLoading, isFetching, isError, error, isSuccess, data, isPlaceholderData };
+  return { isLoading, isError, error, isSuccess, data, isPlaceholderData };
 };
 
 export const useGetOrganizationUnitItems = (id: string) => {

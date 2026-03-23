@@ -8,26 +8,17 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { SubmitHandler, useForm } from "react-hook-form";
-import { editOrganizationUnitFormSchema, TEditOrganizationUnitFormSchema } from "@/schemas/organization-units/edit-organization-unit-schema";
+import { newOrganizationUnitFormSchema, TNewOrganizationUnitFormSchema } from "@/schemas/organization-units/new-organization-unit-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEditOrganizationUnit } from "@/services/organization-units/mutations";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { useCreateOrganizationUnit } from "@/services/organization-units/mutations";
+import { Field, FieldError, FieldGroup, FieldLabel } from "../../ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { SelectParentOrganizationUnitDialog } from "./select-parent-organization-unit-dialog";
-import { TOrganizationUnitFlat } from "@/types/organization-unit-flat";
 
 
-export function EditOrganizationUnitDialog({
-  organizationUnit,
-  openEditOrganizationUnitDialog,
-  setOpenEditOrganizationUnitDialog,
-}: {
-  organizationUnit: TOrganizationUnitFlat;
-  openEditOrganizationUnitDialog: boolean;
-  setOpenEditOrganizationUnitDialog: Dispatch<SetStateAction<boolean>>;
-}) {
+export function NewOrganizationUnitDialog({ openNewOrganizationUnitDialog, setOpenNewOrganizationUnitDialog }: { openNewOrganizationUnitDialog: boolean; setOpenNewOrganizationUnitDialog: Dispatch<SetStateAction<boolean>> }) {
   const {
     register,
     handleSubmit,
@@ -35,17 +26,15 @@ export function EditOrganizationUnitDialog({
     reset,
     setValue,
     watch,
-  } = useForm<TEditOrganizationUnitFormSchema>({
-    resolver: zodResolver(editOrganizationUnitFormSchema),
+  } = useForm<TNewOrganizationUnitFormSchema>({
+    resolver: zodResolver(newOrganizationUnitFormSchema),
     defaultValues: {
-      name: organizationUnit.name,
-      parent_organization_unit_id: organizationUnit.parent?.id ?? undefined,
+      name: "",
+      parent_organization_unit_id: undefined,
     },
   });
 
-  const [selectedParentName, setSelectedParentName] = useState<string | null>(
-    organizationUnit.parent?.name ?? null
-  );
+  const [selectedParentName, setSelectedParentName] = useState<string | null>(null);
 
   const parentOrganizationUnitId = watch("parent_organization_unit_id");
 
@@ -55,31 +44,29 @@ export function EditOrganizationUnitDialog({
   };
 
   const handleReset = () => {
-    reset({
-      name: organizationUnit.name,
-      parent_organization_unit_id: organizationUnit.parent?.id ?? undefined,
-    });
-    setSelectedParentName(organizationUnit.parent?.name ?? null);
+    reset();
+    setSelectedParentName(null);
   };
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      setOpenEditOrganizationUnitDialog(false);
+      handleReset();
+      setOpenNewOrganizationUnitDialog(false);
     }
-  }, [isSubmitSuccessful, setOpenEditOrganizationUnitDialog]);
+  }, [isSubmitSuccessful, reset, setOpenNewOrganizationUnitDialog]);
 
-  const { mutateAsync: editOrganizationUnitMutation } = useEditOrganizationUnit();
+  const { mutateAsync: createOrganizationUnitMutation } = useCreateOrganizationUnit();
 
-  const onSubmit: SubmitHandler<TEditOrganizationUnitFormSchema> = async (data) => {
-    await editOrganizationUnitMutation({ id: organizationUnit.id, data });
+  const onSubmit: SubmitHandler<TNewOrganizationUnitFormSchema> = async (data) => {
+    await createOrganizationUnitMutation(data);
   };
 
   return (
-    <Dialog open={openEditOrganizationUnitDialog} onOpenChange={setOpenEditOrganizationUnitDialog}>
+    <Dialog open={openNewOrganizationUnitDialog} onOpenChange={setOpenNewOrganizationUnitDialog}>
       <DialogContent className="w-150 max-w-150!">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <DialogHeader>
-            <DialogTitle>Edit Organization Unit</DialogTitle>
+            <DialogTitle>New Organization Unit</DialogTitle>
           </DialogHeader>
           <FieldGroup>
             <Field>
@@ -94,9 +81,9 @@ export function EditOrganizationUnitDialog({
             <Field>
               <FieldLabel>Parent Organization Unit</FieldLabel>
               <SelectParentOrganizationUnitDialog
-                selectedId={parentOrganizationUnitId ?? undefined}
+                selectedId={parentOrganizationUnitId}
                 selectedParentName={selectedParentName}
-                onSelect={(id: number, name: string) => handleSelectParent(id, name)}
+                onSelect={handleSelectParent}
               />
               {errors.parent_organization_unit_id && (
                 <FieldError>{errors.parent_organization_unit_id.message}</FieldError>
@@ -109,9 +96,7 @@ export function EditOrganizationUnitDialog({
                 <Button
                   variant="secondary"
                   type="button"
-                  onClick={() => {
-                    handleReset();
-                  }}
+                  onClick={() => handleReset()}
                 />
               }
             >
@@ -121,15 +106,16 @@ export function EditOrganizationUnitDialog({
               {isSubmitting ? (
                 <>
                   <Spinner />
-                  Saving...
+                  Creating...
                 </>
               ) : (
-                "Save"
+                "Create"
               )}
             </Button>
           </DialogFooter>
         </form>
       </DialogContent>
+
     </Dialog>
   )
 }

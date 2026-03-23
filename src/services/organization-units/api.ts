@@ -1,4 +1,6 @@
 import apiClient from "@/lib/api-client";
+import { TEditOrganizationUnitFormSchema } from "@/schemas/organization-units/edit-organization-unit-schema";
+import { TNewOrganizationUnitFormSchema } from "@/schemas/organization-units/new-organization-unit-schema";
 import { TBasicUser } from "@/types/basic-user";
 import { TBreadcrumb } from "@/types/breadcrumb";
 import { TCursorPaginate } from "@/types/cursor-paginate";
@@ -133,3 +135,25 @@ export const getOrganizationUnitFolders = async ({
   );
   return data;
 };
+
+export async function createOrganizationUnit(
+  organizationUnitData: TNewOrganizationUnitFormSchema,
+): Promise<{ message: string }> {
+  const { data } = await apiClient.post("/api/organization-units", organizationUnitData);
+  return data;
+}
+
+export async function editOrganizationUnit({
+  id,
+  data: organizationUnitData,
+}: {
+  id: number;
+  data: TEditOrganizationUnitFormSchema;
+}): Promise<{ message: string }> {
+  const { data } = await apiClient.patch(
+    `/api/organization-units/${id}`,
+    organizationUnitData,
+  );
+  return data;
+}
+

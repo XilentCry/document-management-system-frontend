@@ -2,7 +2,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getAllAuditLogs } from "./api";
 
 export const useGetAllAuditLogs = (page: number, searchTerm?: string) => {
-  const { isLoading, isError, error, isSuccess, data, isPlaceholderData, isFetching } =
+  const { isLoading, isError, error, isSuccess, data, isPlaceholderData } =
     useQuery({
       queryKey: ["audit-logs", page, searchTerm],
       queryFn: () => getAllAuditLogs(page, searchTerm),
@@ -16,7 +16,6 @@ export const useGetAllAuditLogs = (page: number, searchTerm?: string) => {
     error,
     data,
     isSuccess,
-    isPlaceholderData,
-    isFetching,
+    isPlaceholderData
   };
 };

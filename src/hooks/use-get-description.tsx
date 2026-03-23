@@ -8,9 +8,8 @@ export function useGetDescription() {
     const actor =
       userId === auditLog.actor.id
         ? "You"
-        : `${auditLog.actor.first_name} ${
-            auditLog.actor.middle_name ?? ""
-          } ${auditLog.actor.last_name}`;
+        : `${auditLog.actor.first_name} ${auditLog.actor.middle_name ?? ""
+        } ${auditLog.actor.last_name}`;
 
     switch (auditLog.action) {
       case "shared":
