@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ROOT_ORGANIZATION_UNIT_ID } from "@/lib/constants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,26 +55,28 @@ export function OrganizationUnitTable({
                 <TableCell>{organizationUnit.created_at}</TableCell>
                 <TableCell>{organizationUnit.updated_at}</TableCell>
                 <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      render={<Button variant="ghost" size="icon-sm" />}
-                    >
-                      <Ellipsis />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuGroup>
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedOrganizationUnit(organizationUnit);
-                            setOpenEditOrganizationUnitDialog(true);
-                          }}
-                        >
-                          Edit
-                        </DropdownMenuItem>
-                      </DropdownMenuGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  {organizationUnit.id !== ROOT_ORGANIZATION_UNIT_ID && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        render={<Button variant="ghost" size="icon-sm" />}
+                      >
+                        <Ellipsis />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuGroup>
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setSelectedOrganizationUnit(organizationUnit);
+                              setOpenEditOrganizationUnitDialog(true);
+                            }}
+                          >
+                            Edit
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
