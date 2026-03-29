@@ -43,6 +43,8 @@ const filterOwner: TFilterOwner =
     : null;
 const filterOwnerIdStr = searchParams.get("owner_id");
 const filterOwnerId = filterOwnerIdStr ? Number(filterOwnerIdStr) : null;
+const filterSharedToStr = searchParams.get("shared_to");
+const filterSharedTo = filterSharedToStr ? Number(filterSharedToStr) : null;
 
   const currentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
@@ -75,7 +77,8 @@ const filterOwnerId = filterOwnerIdStr ? Number(filterOwnerIdStr) : null;
     filterType,
     filterClassification,
     filterOwner,
-  filterOwnerId,
+    filterOwnerId,
+    filterSharedTo,
   );
 
   const organizationUnitItems = data?.pages.flatMap((page) => page.data) ?? [];

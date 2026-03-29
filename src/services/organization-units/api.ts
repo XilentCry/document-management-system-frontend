@@ -43,6 +43,7 @@ export const searchOrganizationUnitItems = async ({
   filterClassification,
   filterOwner,
   filterOwnerId,
+  filterSharedTo,
 }: {
   id: number | null;
   pageParam: string | null;
@@ -51,6 +52,7 @@ export const searchOrganizationUnitItems = async ({
   filterClassification: number | null;
   filterOwner: TFilterOwner;
   filterOwnerId: number | null;
+  filterSharedTo: number | null;
 }): Promise<TCursorPaginate<TItem>> => {
   const params = new URLSearchParams();
   if (pageParam) params.append("cursor", pageParam);
@@ -59,6 +61,7 @@ export const searchOrganizationUnitItems = async ({
   if (filterClassification) params.append("classification", filterClassification.toString());
   if (filterOwner) params.append("owner", filterOwner);
   if (filterOwnerId) params.append("owner_id", filterOwnerId.toString());
+  if (filterSharedTo) params.append("shared_to", filterSharedTo.toString());
 
   const { data } = await apiClient.get(
     `/api/organization-units/${id}/items/search?${params.toString()}`,
@@ -73,6 +76,7 @@ export const searchTopOrganizationUnitItems = async ({
   filterClassification,
   filterOwner,
   filterOwnerId,
+  filterSharedTo,
 }: {
   id: number | null;
   searchTerm: string | null;
@@ -80,6 +84,7 @@ export const searchTopOrganizationUnitItems = async ({
   filterClassification: number | null;
   filterOwner: TFilterOwner | null;
   filterOwnerId: number | null;
+  filterSharedTo: number | null;
 }): Promise<TItem[]> => {
   const params = new URLSearchParams();
   if (searchTerm) params.append("q", searchTerm);
@@ -87,6 +92,7 @@ export const searchTopOrganizationUnitItems = async ({
   if (filterClassification) params.append("classification", filterClassification.toString());
   if (filterOwner) params.append("owner", filterOwner);
   if (filterOwnerId) params.append("owner_id", filterOwnerId.toString());
+  if (filterSharedTo) params.append("shared_to", filterSharedTo.toString());
 
   const { data } = await apiClient.get(
     `/api/organization-units/${id}/items/search/top?${params.toString()}`,

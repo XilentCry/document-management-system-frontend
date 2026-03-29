@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getAllUsers, getUser, getRoles, getStatuses, getUserAuditLogs } from "./api";
+import { getAllUsers, getUser, getRoles, getStatuses, getUserAuditLogs, searchSharedToUsers } from "./api";
 
 export const useGetAllUsers = (
   page: number,
@@ -66,5 +66,26 @@ export const useGetUserAuditLogs = (userId: number | string, page: number) => {
     data,
     isSuccess,
     isPlaceholderData,
+  };
+};
+
+export const useSearchSharedToUsers = (
+  searchTerm: string,
+  enabled: boolean = true,
+) => {
+  const { isLoading, isFetching, isError, error, isSuccess, data } = useQuery({
+    queryKey: ["shared-to-users", searchTerm],
+    queryFn: () => searchSharedToUsers(searchTerm),
+    enabled: enabled && searchTerm.trim().length > 0,
+    staleTime: 0,
+  });
+
+  return {
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    isSuccess,
+    sharedToUsers: data?.sharedToUsers ?? [],
   };
 };

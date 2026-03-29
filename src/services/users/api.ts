@@ -2,6 +2,7 @@ import apiClient from "@/lib/api-client";
 import { isAxiosError } from "axios";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
+import { TBasicUser } from "@/types/basic-user";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
 import { TPaginate } from "@/types/paginate";
 import { TInviteAdminFormSchema } from "@/schemas/users/invite-admin-form-schema";
@@ -117,5 +118,15 @@ export async function getUserAuditLogs(
   const { data } = await apiClient.get(
     `/api/users/${userId}/audit-logs?page=${page}`,
   );
+  return data;
+}
+
+export async function searchSharedToUsers(searchTerm: string): Promise<{ sharedToUsers: TBasicUser[] }> {
+  const params = new URLSearchParams();
+  if (searchTerm) {
+    params.append("q", searchTerm);
+  }
+
+  const { data } = await apiClient.get(`/api/users/shared-to?${params.toString()}`);
   return data;
 }

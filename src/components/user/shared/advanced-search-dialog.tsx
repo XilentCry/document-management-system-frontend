@@ -39,6 +39,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { TAdvancedSearchFormSchema } from "@/schemas/items/advanced-search-form-schema";
 import { useGetAllClassifications } from "@/services/classifications/queries";
 import { useSearchSpecificUsers } from "@/services/organization-units/queries";
+import { useSearchSharedToUsers } from "@/services/users/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { TBasicUser } from "@/types/basic-user";
 import { FileText, Folder, User, X } from "lucide-react";
@@ -71,6 +72,12 @@ export function AdvancedSearchDialog({
   const debouncedSpecificUserSearchTerm = useDebounce(specificUserSearchTerm);
   const userAnchor = useComboboxAnchor();
 
+  const [sharedToUserSearchTerm, setSharedToUserSearchTerm] = useState("");
+  const [selectedSharedToUser, setSelectedSharedToUser] = useState<TBasicUser | null>(null);
+  const [isSharedToDropdownOpen, setIsSharedToDropdownOpen] = useState(false);
+  const debouncedSharedToSearchTerm = useDebounce(sharedToUserSearchTerm);
+  const sharedToAnchor = useComboboxAnchor();
+
   const {
     isLoading: isClassificationsLoading,
     isError: isClassificationsError,
@@ -87,6 +94,17 @@ export function AdvancedSearchDialog({
   } = useSearchSpecificUsers(
     currentOrganizationUnitId,
     debouncedSpecificUserSearchTerm,
+    open,
+  );
+
+  const {
+    isLoading: isSharedToUsersLoading,
+    isFetching: isSharedToUsersFetching,
+    isError: isSharedToUsersError,
+    error: sharedToUsersError,
+    sharedToUsers: sharedToUsers = [],
+  } = useSearchSharedToUsers(
+    debouncedSharedToSearchTerm,
     open,
   );
 
@@ -274,7 +292,7 @@ export function AdvancedSearchDialog({
                                   </div>
                                 ) : specificUsers.length === 0 ? (
                                   specificUserSearchTerm === debouncedSpecificUserSearchTerm ? (
-                                    <div className="flex items-center justify-center p-4 text-muted-foreground">
+                                    <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
                                       No users found.
                                     </div>
                                   ) : null
@@ -408,9 +426,104 @@ export function AdvancedSearchDialog({
             </Field>
             <Field>
               <div className="flex items-center gap-4">
-                <FieldLabel htmlFor="sharedTo" className="w-30">
+                <FieldLabel className="w-30">
                   Shared to
                 </FieldLabel>
+                <div className="flex-1 flex flex-col gap-1 w-full relative">
+                  <div className="flex-1">
+                    <Controller
+                      name="shared_to"
+                      control={control}
+                      render={({ field }) => (
+                        <Combobox
+                          filter={null}
+                          items={sharedToUsers}
+                          multiple
+                          value={selectedSharedToUser ? [selectedSharedToUser] : []}
+                          onValueChange={(users) => {
+                            const user = users.length > 0 ? users[users.length - 1] : null;
+                            setSelectedSharedToUser(user);
+                            field.onChange(user ? user.id : null);
+                            if (user) setSharedToUserSearchTerm("");
+                          }}
+                          inputValue={sharedToUserSearchTerm}
+                          onInputValueChange={(val) => {
+                            setSharedToUserSearchTerm(val);
+                            if (val.trim().length > 0 && !selectedSharedToUser) {
+                              setIsSharedToDropdownOpen(true);
+                            } else {
+                              setIsSharedToDropdownOpen(false);
+                            }
+                          }}
+                          itemToStringValue={(user) =>
+                            `${user.first_name} ${user.last_name} ${user.email}`
+                          }
+                          open={isSharedToDropdownOpen}
+                          onOpenChange={(isOpen) => {
+                            if (isOpen && (sharedToUserSearchTerm.trim().length === 0 || selectedSharedToUser)) return;
+                            setIsSharedToDropdownOpen(isOpen);
+                          }}
+                        >
+                          <ComboboxChips ref={sharedToAnchor} className="w-full">
+                            <ComboboxValue>
+                              {selectedSharedToUser && (
+                                <ComboboxChip key={selectedSharedToUser.id}>
+                                  {selectedSharedToUser.first_name}{" "}
+                                  {selectedSharedToUser.middle_name ?? ""}{" "}
+                                  {selectedSharedToUser.last_name}
+                                </ComboboxChip>
+                              )}
+                            </ComboboxValue>
+                            <ComboboxChipsInput
+                              readOnly={!!selectedSharedToUser}
+                              placeholder={
+                                selectedSharedToUser ? "" : "Search user..."
+                              }
+                            />
+                          </ComboboxChips>
+                          <ComboboxContent anchor={sharedToAnchor} className="w-(--anchor-width)">
+                            {sharedToUserSearchTerm.trim().length === 0 ? null : isSharedToUsersLoading || isSharedToUsersFetching ? (
+                              <div className="flex items-center justify-center p-4">
+                                <Spinner className="text-primary size-5" />
+                              </div>
+                            ) : isSharedToUsersError && sharedToUsersError ? (
+                              <div className="flex items-center justify-center p-4">
+                                <p className="text-destructive text-sm">{sharedToUsersError.message}</p>
+                              </div>
+                            ) : sharedToUsers.length === 0 ? (
+                              sharedToUserSearchTerm === debouncedSharedToSearchTerm ? (
+                                <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+                                  No users found.
+                                </div>
+                              ) : null
+                            ) : (
+                              <ComboboxList>
+                                {sharedToUsers.map((user) => (
+                                  <ComboboxItem
+                                    key={user.id}
+                                    value={user}
+                                  >
+                                    <div className="min-w-0">
+                                      <p className="truncate font-medium">
+                                        {user.first_name} {user.middle_name ?? ""} {user.last_name}
+                                      </p>
+                                      <p className="truncate text-muted-foreground text-xs">
+                                        {user.email}
+                                      </p>
+                                    </div>
+                                  </ComboboxItem>
+                                ))}
+                              </ComboboxList>
+                            )}
+                          </ComboboxContent>
+                        </Combobox>
+                      )}
+                    />
+                  </div>
+                  {errors.shared_to && (
+                    <FieldError>{errors.shared_to.message}</FieldError>
+                  )}
+                </div>
               </div>
             </Field>
           </FieldGroup>
@@ -425,9 +538,12 @@ export function AdvancedSearchDialog({
                   classification: null,
                   owner: null,
                   owner_id: null,
+                  shared_to: null,
                 });
                 setSpecificUserSearchTerm("");
                 setSelectedUser(null);
+                setSharedToUserSearchTerm("");
+                setSelectedSharedToUser(null);
               }}
             >
               Reset

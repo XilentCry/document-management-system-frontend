@@ -184,7 +184,7 @@ export function ShareDocumentDialog({
                           </div>
                         ) : shareableUsers.length === 0 ? (
                           searchTerm === debouncedSearchTerm ? (
-                            <div className="flex items-center justify-center p-4 text-muted-foreground">
+                            <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
                               No users found.
                             </div>
                           ) : null

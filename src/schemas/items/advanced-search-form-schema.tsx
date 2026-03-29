@@ -11,6 +11,7 @@ export const advancedSearchFormSchema = z
       .positive("Invalid classification id.")
       .nullable(),
     itemName: z.string().trim().nonempty("Item name is required."),
+    shared_to: z.number().int().positive("Invalid user id.").nullable().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.owner === "user" && !data.owner_id) {

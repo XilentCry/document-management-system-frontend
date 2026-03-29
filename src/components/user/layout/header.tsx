@@ -99,6 +99,7 @@ export function Header() {
       ? filterOwnerParam
       : null;
   const filterOwnerIdParam = searchParams.get("owner_id");
+  const filterSharedToParam = searchParams.get("shared_to");
 
   const { data: topItems, isLoading: isLoadingTopItems, isError: isErrorTopItems, error: errorTopItems } =
     useSearchTopOrganizationUnitItems(
@@ -108,6 +109,7 @@ export function Header() {
       filterClassification ? Number(filterClassification) : null,
       filterOwner,
       filterOwnerIdParam ? Number(filterOwnerIdParam) : null,
+      filterSharedToParam ? Number(filterSharedToParam) : null,
     );
 
   const handleSearch = () => {
@@ -124,7 +126,7 @@ export function Header() {
       }${filterOwner ? `&owner=${filterOwner}` : ""}${filterOwner === "user" && filterOwnerIdParam
         ? `&owner_id=${filterOwnerIdParam}`
         : ""
-      }`;
+      }${filterSharedToParam ? `&shared_to=${filterSharedToParam}` : ""}`;
     router.push(url);
   };
 
@@ -140,6 +142,7 @@ export function Header() {
         filterOwner === "user" && filterOwnerIdParam
           ? Number(filterOwnerIdParam)
           : null,
+      shared_to: filterSharedToParam ? Number(filterSharedToParam) : null,
     });
     setOpen(true);
   };
@@ -152,6 +155,7 @@ export function Header() {
       classification: null,
       owner: null,
       owner_id: null,
+      shared_to: null,
     },
   });
 
@@ -163,7 +167,7 @@ export function Header() {
         ? `&classification=${data.classification}`
         : ""
       }${data.owner ? `&owner=${data.owner}` : ""}${data.owner === "user" && data.owner_id ? `&owner_id=${data.owner_id}` : ""
-      }`;
+      }${data.shared_to ? `&shared_to=${data.shared_to}` : ""}`;
 
     setOpen(false);
     router.push(url);

@@ -51,6 +51,7 @@ export const useSearchOrganizationUnitItems = (
   filterClassification: number | null,
   filterOwner: TFilterOwner,
   filterOwnerId: number | null,
+  filterSharedTo: number | null,
 ) => {
   const {
     isLoading,
@@ -72,6 +73,7 @@ export const useSearchOrganizationUnitItems = (
       filterClassification,
       filterOwner,
       filterOwnerId,
+      filterSharedTo,
     ],
     queryFn: ({ pageParam }) =>
       searchOrganizationUnitItems({
@@ -82,6 +84,7 @@ export const useSearchOrganizationUnitItems = (
         filterClassification,
         filterOwner,
         filterOwnerId,
+        filterSharedTo,
       }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
@@ -197,6 +200,7 @@ export const useSearchTopOrganizationUnitItems = (
   filterClassification: number | null,
   filterOwner: TFilterOwner | null,
   filterOwnerId: number | null,
+  filterSharedTo: number | null,
 ) => {
   const { isLoading, isError, error, isSuccess, data } = useQuery({
     queryKey: [
@@ -209,6 +213,7 @@ export const useSearchTopOrganizationUnitItems = (
       filterClassification,
       filterOwner,
       filterOwnerId,
+      filterSharedTo,
     ],
     queryFn: () =>
       searchTopOrganizationUnitItems({
@@ -218,8 +223,9 @@ export const useSearchTopOrganizationUnitItems = (
         filterClassification,
         filterOwner,
         filterOwnerId,
+        filterSharedTo,
       }),
-    enabled: !!id && (!!searchTerm || !!filterType || !!filterClassification || !!filterOwner),
+    enabled: !!id && (!!searchTerm || !!filterType || !!filterClassification || !!filterOwner || !!filterSharedTo),
     staleTime: 0,
   });
 
