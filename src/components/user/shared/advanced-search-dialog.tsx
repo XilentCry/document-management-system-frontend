@@ -2,14 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
   Dialog,
   DialogContent,
   DialogFooter,
@@ -24,10 +16,16 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+  useComboboxAnchor,
+} from "@/components/ui/combobox";
 import {
   Select,
   SelectContent,
@@ -37,11 +35,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { useDebounce } from "@/hooks/use-debounce";
 import { TAdvancedSearchFormSchema } from "@/schemas/items/advanced-search-form-schema";
 import { useGetAllClassifications } from "@/services/classifications/queries";
-import { useGetSpecificUsers } from "@/services/organization-units/queries";
+import { useSearchSpecificUsers } from "@/services/organization-units/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
-import { ChevronsUpDown, FileText, Folder } from "lucide-react";
+import { TBasicUser } from "@/types/basic-user";
+import { FileText, Folder, User, X } from "lucide-react";
+import { useRef, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { Controller, SubmitHandler, useWatch } from "react-hook-form";
 
@@ -64,6 +65,12 @@ export function AdvancedSearchDialog({
     (state) => state.currentOrganizationUnitId,
   );
 
+  const [specificUserSearchTerm, setSpecificUserSearchTerm] = useState("");
+  const [selectedUser, setSelectedUser] = useState<TBasicUser | null>(null);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const debouncedSpecificUserSearchTerm = useDebounce(specificUserSearchTerm);
+  const userAnchor = useComboboxAnchor();
+
   const {
     isLoading: isClassificationsLoading,
     isError: isClassificationsError,
@@ -73,10 +80,15 @@ export function AdvancedSearchDialog({
 
   const {
     isLoading: isSpecificUsersLoading,
+    isFetching: isSpecificUsersFetching,
     isError: isSpecificUsersError,
     error: specificUsersError,
     specificUsers = [],
-  } = useGetSpecificUsers(currentOrganizationUnitId, open);
+  } = useSearchSpecificUsers(
+    currentOrganizationUnitId,
+    debouncedSpecificUserSearchTerm,
+    open,
+  );
 
   const {
     handleSubmit,
@@ -161,6 +173,8 @@ export function AdvancedSearchDialog({
 
                               if (value !== "user") {
                                 form.setValue("owner_id", null);
+                                setSpecificUserSearchTerm("");
+                                setSelectedUser(null);
                               }
                             }}
                           >
@@ -198,86 +212,99 @@ export function AdvancedSearchDialog({
                   </div>
                   <div className="flex-1 flex flex-col gap-1">
                     {searchOwner === "user" && (
-                      <>
+                      <div className="flex flex-col gap-1 w-full relative">
                         <Controller
                           name="owner_id"
                           control={control}
-                          render={({ field }) => {
-                            const selectedUser = specificUsers.find(
-                              (u) => u.id === field.value,
-                            );
-
-                            return (
-                              <Popover>
-                                <PopoverTrigger
-                                  render={
-                                    <Button
-                                      variant="outline"
-                                      className="justify-between"
-                                    />
+                          render={({ field }) => (
+                            <Combobox
+                              filter={null}
+                              items={specificUsers}
+                              multiple
+                              value={selectedUser ? [selectedUser] : []}
+                              onValueChange={(users) => {
+                                const user = users.length > 0 ? users[users.length - 1] : null;
+                                setSelectedUser(user);
+                                field.onChange(user ? user.id : null);
+                                if (user) setSpecificUserSearchTerm("");
+                              }}
+                              inputValue={specificUserSearchTerm}
+                              onInputValueChange={(val) => {
+                                setSpecificUserSearchTerm(val);
+                                if (val.trim().length > 0 && !selectedUser) {
+                                  setIsUserDropdownOpen(true);
+                                } else {
+                                  setIsUserDropdownOpen(false);
+                                }
+                              }}
+                              itemToStringValue={(user) =>
+                                `${user.first_name} ${user.last_name} ${user.email}`
+                              }
+                              open={isUserDropdownOpen}
+                              onOpenChange={(isOpen) => {
+                                if (isOpen && (specificUserSearchTerm.trim().length === 0 || selectedUser)) return;
+                                setIsUserDropdownOpen(isOpen);
+                              }}
+                            >
+                              <ComboboxChips ref={userAnchor} className="w-full">
+                                <ComboboxValue>
+                                  {selectedUser && (
+                                    <ComboboxChip key={selectedUser.id}>
+                                      {selectedUser.first_name}{" "}
+                                      {selectedUser.middle_name ?? ""}{" "}
+                                      {selectedUser.last_name}
+                                    </ComboboxChip>
+                                  )}
+                                </ComboboxValue>
+                                <ComboboxChipsInput
+                                  readOnly={!!selectedUser}
+                                  placeholder={
+                                    selectedUser ? "" : "Search user..."
                                   }
-                                >
-                                  <span className="truncate">
-                                    {selectedUser
-                                      ? `${selectedUser.first_name} ${selectedUser.middle_name ?? ""} ${selectedUser.last_name}`
-                                      : "Select user..."}
-                                  </span>
-                                  <ChevronsUpDown />
-                                </PopoverTrigger>
-                                <PopoverContent className="w-(--anchor-width)">
-                                  <Command>
-                                    <CommandInput placeholder="Search user..." />
-                                    <CommandList>
-                                      {isSpecificUsersLoading ? (
-                                        <div className="flex items-center justify-center py-4">
-                                          <Spinner className="text-primary size-9" />
-                                        </div>
-                                      ) : isSpecificUsersError &&
-                                        specificUsersError ? (
-                                        <div className="py-4 flex items-center justify-center">
-                                          <p className="text-destructive text-sm">
-                                            {specificUsersError.message}
+                                />
+                              </ComboboxChips>
+                              <ComboboxContent anchor={userAnchor} className="w-(--anchor-width)">
+                                {specificUserSearchTerm.trim().length === 0 ? null : isSpecificUsersLoading || isSpecificUsersFetching ? (
+                                  <div className="flex items-center justify-center p-4">
+                                    <Spinner className="text-primary size-5" />
+                                  </div>
+                                ) : isSpecificUsersError && specificUsersError ? (
+                                  <div className="flex items-center justify-center p-4">
+                                    <p className="text-destructive text-sm">{specificUsersError.message}</p>
+                                  </div>
+                                ) : specificUsers.length === 0 ? (
+                                  specificUserSearchTerm === debouncedSpecificUserSearchTerm ? (
+                                    <div className="flex items-center justify-center p-4 text-muted-foreground">
+                                      No users found.
+                                    </div>
+                                  ) : null
+                                ) : (
+                                  <ComboboxList>
+                                    {specificUsers.map((user) => (
+                                      <ComboboxItem
+                                        key={user.id}
+                                        value={user}
+                                      >
+                                        <div className="min-w-0">
+                                          <p className="truncate font-medium">
+                                            {user.first_name} {user.middle_name ?? ""} {user.last_name}
+                                          </p>
+                                          <p className="truncate text-muted-foreground text-xs">
+                                            {user.email}
                                           </p>
                                         </div>
-                                      ) : (
-                                        <>
-                                          <CommandEmpty>
-                                            No users found.
-                                          </CommandEmpty>
-                                          <CommandGroup>
-                                            {specificUsers.map((user) => (
-                                              <CommandItem
-                                                key={user.id}
-                                                onSelect={() =>
-                                                  field.onChange(user.id)
-                                                }
-                                              >
-                                                <div className="min-w-0">
-                                                  <p className="truncate">
-                                                    {user.first_name}{" "}
-                                                    {user.middle_name ?? ""}{" "}
-                                                    {user.last_name}
-                                                  </p>
-                                                  <p className="truncate text-muted-foreground">
-                                                    {user.email}
-                                                  </p>
-                                                </div>
-                                              </CommandItem>
-                                            ))}
-                                          </CommandGroup>
-                                        </>
-                                      )}
-                                    </CommandList>
-                                  </Command>
-                                </PopoverContent>
-                              </Popover>
-                            );
-                          }}
+                                      </ComboboxItem>
+                                    ))}
+                                  </ComboboxList>
+                                )}
+                              </ComboboxContent>
+                            </Combobox>
+                          )}
                         />
                         {errors.owner_id && (
                           <FieldError>{errors.owner_id.message}</FieldError>
                         )}
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -315,7 +342,7 @@ export function AdvancedSearchDialog({
                             <SelectContent>
                               {isClassificationsLoading ? (
                                 <div className="flex items-center justify-center py-4">
-                                  <Spinner className="text-primary size-9" />
+                                  <Spinner className="text-primary size-5" />
                                 </div>
                               ) : isClassificationsError &&
                                 classificationsError ? (
@@ -379,20 +406,29 @@ export function AdvancedSearchDialog({
                 </div>
               </div>
             </Field>
+            <Field>
+              <div className="flex items-center gap-4">
+                <FieldLabel htmlFor="sharedTo" className="w-30">
+                  Shared to
+                </FieldLabel>
+              </div>
+            </Field>
           </FieldGroup>
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
-              onClick={() =>
+              onClick={() => {
                 reset({
                   type: null,
                   itemName: "",
                   classification: null,
                   owner: null,
                   owner_id: null,
-                })
-              }
+                });
+                setSpecificUserSearchTerm("");
+                setSelectedUser(null);
+              }}
             >
               Reset
             </Button>

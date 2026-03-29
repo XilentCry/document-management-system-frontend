@@ -1,15 +1,19 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getItemActivities, getShareableUsers } from "./api";
 
-export const useGetShareableUsers = (id: number, enabled: boolean = true) => {
-  const { isLoading, isError, error, data } = useQuery({
-    queryKey: ["documents", id, "shareable-users"],
-    queryFn: () => getShareableUsers(id),
-    enabled,
+export const useGetShareableUsers = (
+  id: number,
+  searchTerm: string,
+  enabled: boolean = true,
+) => {
+  const { isLoading, isFetching, isError, error, data } = useQuery({
+    queryKey: ["documents", id, "shareable-users", searchTerm],
+    queryFn: () => getShareableUsers(id, searchTerm),
+    enabled: enabled && searchTerm.trim().length > 0,
     staleTime: 0,
   });
 
-  return { isLoading, isError, error, data };
+  return { isLoading, isFetching, isError, error, data };
 };
 
 export const useGetItemActivities = (

@@ -1,14 +1,15 @@
-import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+  useComboboxAnchor,
+} from "@/components/ui/combobox";
 import {
   Dialog,
   DialogClose,
@@ -18,19 +19,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@/components/ui/item";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -38,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { useDebounce } from "@/hooks/use-debounce";
 import {
   shareDocumentFormSchema,
   TShareDocumentFormSchema,
@@ -45,11 +34,12 @@ import {
 import { useShareDocument } from "@/services/documents/mutations";
 import { useGetShareableUsers } from "@/services/items/queries";
 import { useGetAllShareRoles } from "@/services/share-roles/queries";
+import { TBasicUser } from "@/types/basic-user";
 import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronsUpDown, UsersRound, X } from "lucide-react";
+
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 
 export function ShareDocumentDialog({
   item,
@@ -60,12 +50,19 @@ export function ShareDocumentDialog({
   openShareDialog: boolean;
   setOpenShareDialog: Dispatch<SetStateAction<boolean>>;
 }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const anchor = useComboboxAnchor()
+
   const {
     isLoading: isLoadingShareableUsers,
+    isFetching: isFetchingShareableUsers,
     isError: isShareableUsersError,
-    error: ShareableUsersError,
+    error: shareableUsersError,
     data: shareableUsers = [],
-  } = useGetShareableUsers(item.id, openShareDialog);
+  } = useGetShareableUsers(item.id, debouncedSearchTerm, openShareDialog);
 
   const {
     isLoading: isLoadingShareRoles,
@@ -74,29 +71,11 @@ export function ShareDocumentDialog({
     data: shareRoles = [],
   } = useGetAllShareRoles(openShareDialog);
 
-  const isLoading = isLoadingShareableUsers || isLoadingShareRoles;
-  const isError = isShareableUsersError || isShareRolesError;
-  const error = ShareableUsersError || shareRolesError;
-
-  const [selectedUsers, setSelectedUsers] = useState<
-    { userId: number; shareRoleId: number }[]
-  >([]);
-
-  const selectedShareableUserIds = selectedUsers.map(
-    (selectedUser) => selectedUser.userId,
-  );
-
-  const selectedUsersLabel =
-    selectedUsers.length === 0
-      ? "Select user(s)"
-      : `${selectedUsers.length} user(s) selected`;
-
-  const selectedShareableUsers = shareableUsers.filter((shareableUser) =>
-    selectedShareableUserIds.includes(shareableUser.id),
-  );
+  const [selectedUsers, setSelectedUsers] = useState<TBasicUser[]>([]);
 
   const {
     handleSubmit,
+    control,
     formState: { isSubmitting, isSubmitSuccessful },
     reset,
     setValue,
@@ -107,51 +86,22 @@ export function ShareDocumentDialog({
     },
   });
 
-  const syncFormValue = (
-    updatedSelectedUsers: { userId: number; shareRoleId: number }[],
-  ) => {
-    setValue(
-      "share_with",
-      updatedSelectedUsers.map((updatedSelectedUser) => ({
-        user_id: updatedSelectedUser.userId,
-        share_role_id: updatedSelectedUser.shareRoleId,
-      })),
-      { shouldValidate: true },
-    );
-  };
-
-  const toggleShareableUser = (userId: number) => {
-    setSelectedUsers((prev) => {
-      const updatedSelectedUsers = prev.some(
-        (selectedUser) => selectedUser.userId === userId,
-      )
-        ? prev.filter((selectedUser) => selectedUser.userId !== userId)
-        : [...prev, { userId, shareRoleId: 1 }];
-
-      syncFormValue(updatedSelectedUsers);
-      return updatedSelectedUsers;
-    });
-  };
-
-  const updateUserRole = (userId: number, shareRoleId: number) => {
-    setSelectedUsers((prev) => {
-      const updatedSelectedUsers = prev.map((selectedUser) =>
-        selectedUser.userId === userId
-          ? { ...selectedUser, shareRoleId }
-          : selectedUser,
-      );
-
-      syncFormValue(updatedSelectedUsers);
-      return updatedSelectedUsers;
-    });
-  };
+  const shareRoleId = useWatch({ control, name: "share_role_id" });
 
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
+      setSelectedUsers([]);
+      setSearchTerm("");
       setOpenShareDialog(false);
     }
   }, [isSubmitSuccessful, reset, setOpenShareDialog]);
+
+  useEffect(() => {
+    if (shareRoles.length > 0 && shareRoleId === undefined) {
+      setValue("share_role_id", shareRoles[0].id, { shouldValidate: true });
+    }
+  }, [shareRoles, shareRoleId, setValue]);
 
   const { mutateAsync: shareItemMutation } = useShareDocument();
 
@@ -172,143 +122,143 @@ export function ShareDocumentDialog({
           <DialogHeader>
             <DialogTitle>Share &quot;{item.name}&quot;</DialogTitle>
           </DialogHeader>
-          <div className="max-h-96 h-68 flex flex-col gap-6">
-            {isError && error ? (
-              <div className="h-full flex items-center justify-center">
-                <p className="text-destructive text-sm">{error.message}</p>
-              </div>
-            ) : isLoading ? (
-              <div className="h-full flex items-center justify-center">
-                <Spinner className="text-primary size-9" />
-              </div>
-            ) : (
-              <>
-                <Popover>
-                  <PopoverTrigger
-                    render={
-                      <Button variant="outline" className="justify-between" />
-                    }
-                  >
-                    {selectedUsersLabel}
-                    <ChevronsUpDown className="size-4" />
-                  </PopoverTrigger>
-                  <PopoverContent className="w-(--anchor-width)">
-                    <Command>
-                      <CommandInput placeholder="Search user..." />
-                      <CommandList>
-                        <CommandEmpty>
-                          All users already have access.
-                        </CommandEmpty>
-                        <CommandGroup>
-                          {shareableUsers.map((shareableUser) => (
-                            <CommandItem
-                              key={shareableUser.id}
-                              onSelect={() =>
-                                toggleShareableUser(shareableUser.id)
-                              }
-                            >
-                              <Checkbox
-                                checked={selectedShareableUserIds.includes(
-                                  shareableUser.id,
-                                )}
-                                onCheckedChange={() =>
-                                  toggleShareableUser(shareableUser.id)
-                                }
-                              />
-                              <div className="min-w-0">
-                                <p className="truncate">
-                                  {shareableUser.first_name}{" "}
-                                  {shareableUser.middle_name ?? ""}{" "}
-                                  {shareableUser.last_name}
-                                </p>
-                                <p className="truncate text-muted-foreground">
-                                  {shareableUser.email}
-                                </p>
-                              </div>
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <ScrollArea className="flex-1 min-h-0">
-                  {selectedShareableUsers.length === 0 ? (
-                    <EmptyState
-                      icon={UsersRound}
-                      title="No users selected"
-                      description="Selected users appear here."
-                    />
-                  ) : (
-                    <div className="space-y-2">
-                      {selectedShareableUsers.map((shareableUser) => {
-                        const selectedUser = selectedUsers.find(
-                          (selectedUser) =>
-                            selectedUser.userId === shareableUser.id,
-                        );
+          <div className="max-h-96 flex flex-col gap-6">
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <Controller
+                  name="share_with"
+                  control={control}
+                  render={({ field }) => (
+                    <Combobox
+                      filter={null}
+                      items={shareableUsers}
+                      multiple
+                      value={selectedUsers}
+                      onValueChange={(users) => {
+                        setSelectedUsers(users);
+                        field.onChange(users.map(u => u.id));
+                      }}
+                      inputValue={searchTerm}
+                      onInputValueChange={(val) => {
+                        setSearchTerm(val);
+                        if (val.trim().length > 0) {
+                          setIsDropdownOpen(true);
+                        } else {
+                          setIsDropdownOpen(false);
+                        }
+                      }}
+                      itemToStringValue={(user) =>
+                        `${user.first_name} ${user.last_name} ${user.email}`
+                      }
+                      open={isDropdownOpen}
+                      onOpenChange={(isOpen) => {
+                        if (isOpen && searchTerm.trim().length === 0) return;
+                        setIsDropdownOpen(isOpen);
+                      }}
+                    >
 
-                        return (
-                          <Item key={shareableUser.id} size="xs">
-                            <ItemContent className="min-w-0">
-                              <ItemTitle className="block w-auto truncate">
-                                {shareableUser.first_name}{" "}
-                                {shareableUser.middle_name ?? ""}{" "}
-                                {shareableUser.last_name}
-                              </ItemTitle>
-                              <ItemDescription className="truncate">
-                                {shareableUser.email}
-                              </ItemDescription>
-                            </ItemContent>
-                            <ItemActions>
-                              <Select
-                                value={String(selectedUser?.shareRoleId ?? 1)}
-                                onValueChange={(value) =>
-                                  updateUserRole(
-                                    shareableUser.id,
-                                    Number(value),
-                                  )
-                                }
+                      <ComboboxChips ref={anchor}>
+                        <ComboboxValue>
+                          {selectedUsers.map((user) => (
+                            <ComboboxChip key={user.id}>
+                              {user.first_name} {user.middle_name ?? ""} {user.last_name}
+                            </ComboboxChip>
+                          ))}
+                        </ComboboxValue>
+                        <ComboboxChipsInput
+                          placeholder={
+                            selectedUsers.length === 0
+                              ? "Add people"
+                              : ""
+                          }
+                        />
+                      </ComboboxChips>
+                      <ComboboxContent anchor={anchor}>
+                        {searchTerm.trim().length === 0 ? null : isLoadingShareableUsers || isFetchingShareableUsers ? (
+                          <div className="flex items-center justify-center p-4">
+                            <Spinner className="text-primary size-5" />
+                          </div>
+                        ) : isShareableUsersError && shareableUsersError ? (
+                          <div className="flex items-center justify-center p-4">
+                            <p className="text-destructive text-sm">{shareableUsersError.message}</p>
+                          </div>
+                        ) : shareableUsers.length === 0 ? (
+                          searchTerm === debouncedSearchTerm ? (
+                            <div className="flex items-center justify-center p-4 text-muted-foreground">
+                              No users found.
+                            </div>
+                          ) : null
+                        ) : (
+                          <ComboboxList>
+                            {shareableUsers.map((shareableUser) => (
+                              <ComboboxItem
+                                key={shareableUser.id}
+                                value={shareableUser}
                               >
-                                <SelectTrigger>
-                                  <SelectValue>
-                                    {
-                                      shareRoles.find(
-                                        (role) =>
-                                          role.id ===
-                                          (selectedUser?.shareRoleId ?? 1),
-                                      )?.name
-                                    }
-                                  </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {shareRoles.map((shareRole) => (
-                                    <SelectItem
-                                      key={shareRole.id}
-                                      value={String(shareRole.id)}
-                                    >
-                                      {shareRole.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() =>
-                                  toggleShareableUser(shareableUser.id)
-                                }
-                              >
-                                <X />
-                              </Button>
-                            </ItemActions>
-                          </Item>
-                        );
-                      })}
-                    </div>
+                                <div className="min-w-0">
+                                  <p className="truncate font-medium">
+                                    {shareableUser.first_name}{" "}
+                                    {shareableUser.middle_name ?? ""}{" "}
+                                    {shareableUser.last_name}
+                                  </p>
+                                  <p className="truncate text-muted-foreground text-xs">
+                                    {shareableUser.email}
+                                  </p>
+                                </div>
+                              </ComboboxItem>
+                            ))}
+                          </ComboboxList>
+                        )}
+                      </ComboboxContent>
+                    </Combobox>
                   )}
-                </ScrollArea>
-              </>
-            )}
+                />
+              </div>
+
+              {selectedUsers.length > 0 && (
+                <Controller
+                  name="share_role_id"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value ? String(field.value) : undefined}
+                      onValueChange={(value) => field.onChange(Number(value))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a role">
+                          {
+                            shareRoles.find(
+                              (role) => String(role.id) === String(field.value),
+                            )?.name
+                          }
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {isLoadingShareRoles ? (
+                          <div className="p-4 flex items-center justify-center">
+                            <Spinner className="text-primary size-5" />
+                          </div>
+                        ) : isShareRolesError && shareRolesError ? (
+                          <div className="p-4 text-center text-sm text-destructive">
+                            {shareRolesError.message}
+                          </div>
+                        ) : (
+                          shareRoles.map((shareRole) => (
+                            <SelectItem
+                              key={shareRole.id}
+                              value={String(shareRole.id)}
+                            >
+                              {shareRole.name}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              )}
+
+            </div>
           </div>
           <DialogFooter>
             <DialogClose render={<Button variant="outline" />}>
@@ -329,7 +279,7 @@ export function ShareDocumentDialog({
             </Button>
           </DialogFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </DialogContent >
+    </Dialog >
   );
 }

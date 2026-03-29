@@ -68,8 +68,7 @@ export function UserList() {
 
   return (
     <div className="flex-1 flex flex-col gap-4">
-      {userRole === "superuser" && (
-        <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2">
           <InputGroup>
             <InputGroupInput
               placeholder="Search users..."
@@ -120,12 +119,13 @@ export function UserList() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button onClick={() => setOpenInviteAdminDialog(true)}>
-            <Plus />
-            Invite Admin
-          </Button>
+          {userRole === "superuser" && (
+            <Button onClick={() => setOpenInviteAdminDialog(true)}>
+              <Plus />
+              Invite Admin
+            </Button>
+          )}
         </div>
-      )}
 
       {isLoading ? (
         <div className="flex-1 flex items-center justify-center">

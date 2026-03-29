@@ -17,6 +17,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
 import { TOrganizationUnitTree } from "@/types/organization-unit-tree";
+import { filterTree } from "@/lib/filter-tree";
 import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { useController, useFormContext } from "react-hook-form";
@@ -77,32 +78,7 @@ export function OrganizationUnitsDialog({
     selectedIds.includes(selectedId.id),
   );
 
-  const filterOrganizationUnits = (
-    organizationUnits: TOrganizationUnitTree[],
-    searchTerm: string,
-  ): TOrganizationUnitTree[] => {
-    if (!searchTerm) return organizationUnits;
-    const lower = searchTerm.toLowerCase();
-    return organizationUnits
-      .map((organizationUnit: TOrganizationUnitTree) => {
-        const children = organizationUnit.children
-          ? filterOrganizationUnits(organizationUnit.children, searchTerm)
-          : [];
-        if (
-          organizationUnit.name.toLowerCase().includes(lower) ||
-          children.length > 0
-        ) {
-          return { ...organizationUnit, children };
-        }
-        return null;
-      })
-      .filter(Boolean) as TOrganizationUnitTree[];
-  };
-
-  const filteredOrganizationUnits = filterOrganizationUnits(
-    organizationUnits,
-    searchTerm,
-  );
+  const filteredOrganizationUnits = filterTree(organizationUnits, searchTerm);
 
   return (
     <>

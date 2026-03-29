@@ -24,6 +24,7 @@ import { STATUSES } from "@/lib/constants";
 import { useUpdateStatus } from "@/services/users/mutations";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
+import { useUserStore } from "@/stores/user-store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -39,6 +40,10 @@ export function UserDetails({
   const [status, setStatus] = useState(user.status);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const userId = useUserStore((state) => state.userId);
+  const userRole = useUserStore((state) => state.userRole);
+
+  const isAdminViewingAdmin = userRole === "admin" && user.role === "admin";
 
   const { mutateAsync: updateStatusMutation, isPending } =
     useUpdateStatus(setStatus);
@@ -59,15 +64,17 @@ export function UserDetails({
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
             <CardAction className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={() =>
-                  router.push(`/admin/user-management/edit/${user.id}`)
-                }
-              >
-                Edit
-              </Button>
-              {user.role !== "superuser" && (
+              {!isAdminViewingAdmin && (
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    router.push(`/admin/user-management/edit/${user.id}`)
+                  }
+                >
+                  Edit
+                </Button>
+              )}
+              {user.id !== userId && !isAdminViewingAdmin && (
                 <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
                   <AlertDialogTrigger render={<Button />}>
                     {isPending ? (

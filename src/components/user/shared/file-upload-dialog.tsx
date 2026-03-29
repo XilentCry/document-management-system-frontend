@@ -202,7 +202,7 @@ export function FileUploadDialog({
             </DialogHeader>
             {isClassificationsLoading ? (
               <div className="flex-1 flex items-center justify-center">
-                <Spinner className="text-primary size-9" />
+                <Spinner className="text-primary size-5" />
               </div>
             ) : isClassificationsError && classificationsError ? (
               <div className="flex-1 flex items-center justify-center">

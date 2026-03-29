@@ -18,12 +18,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useReinviteAdmin } from "@/services/users/mutations";
+import { useUserStore } from "@/stores/user-store";
 import { TUser } from "@/types/user";
 import { Ellipsis } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function UserTable({ users }: { users: TUser[] }) {
   const router = useRouter();
+  const userRole = useUserStore((state) => state.userRole);
 
   console.log(users);
 
@@ -58,12 +60,11 @@ export function UserTable({ users }: { users: TUser[] }) {
             </TableCell>
             <TableCell>
               <Badge
-                className={`${
-                  user.status === "pending"
+                className={`${user.status === "pending"
                     ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
                     : user.status === "approved" &&
-                      "bg-green-500/15 dark:bg-green-500/10 text-green-500"
-                }`}
+                    "bg-green-500/15 dark:bg-green-500/10 text-green-500"
+                  }`}
               >
                 {user.status}
               </Badge>
@@ -87,14 +88,16 @@ export function UserTable({ users }: { users: TUser[] }) {
                     >
                       View
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() =>
-                        router.push(`/admin/user-management/edit/${user.id}`)
-                      }
-                    >
-                      Edit
-                    </DropdownMenuItem>
-                    {user.role === "admin" && (
+                    {!(userRole === "admin" && user.role === "admin") && (
+                      <DropdownMenuItem
+                        onClick={() =>
+                          router.push(`/admin/user-management/edit/${user.id}`)
+                        }
+                      >
+                        Edit
+                      </DropdownMenuItem>
+                    )}
+                    {userRole === "superuser" && (
                       <DropdownMenuItem
                         onClick={() => handleReinvite(user.id)}
                         disabled={isPending}

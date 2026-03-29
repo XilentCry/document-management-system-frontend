@@ -9,28 +9,34 @@ import {
   getAllOrganizationUnitsTree,
   getOrganizationUnitFolders,
   getOrganizationUnitItems,
-  getSpecificUsers,
+  searchSpecificUsers,
   searchOrganizationUnitItems,
   searchTopOrganizationUnitItems,
 } from "./api";
 import { TFilterOwner } from "@/types/filter-owner";
 
-export const useGetSpecificUsers = (id: number | null, enabled: boolean = true) => {
+export const useSearchSpecificUsers = (
+  id: number | null,
+  searchTerm: string,
+  enabled: boolean = true,
+) => {
   const {
     isLoading,
+    isFetching,
     isError,
     error,
     isSuccess,
     data: specificUsers,
   } = useQuery({
-    queryKey: ["organization-unit", Number(id), "specific-users"],
-    queryFn: () => getSpecificUsers(id),
-    enabled: !!id && enabled,
+    queryKey: ["organization-unit", Number(id), "specific-users", searchTerm],
+    queryFn: () => searchSpecificUsers(id, searchTerm),
+    enabled: !!id && !!searchTerm && enabled,
     staleTime: 0,
   });
 
   return {
     isLoading,
+    isFetching,
     isError,
     error,
     isSuccess,
@@ -79,7 +85,7 @@ export const useSearchOrganizationUnitItems = (
       }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
-    enabled: !!id && !!searchTerm,
+    enabled: !!id,
     staleTime: 0,
   });
 
@@ -213,7 +219,7 @@ export const useSearchTopOrganizationUnitItems = (
         filterOwner,
         filterOwnerId,
       }),
-    enabled: !!id && !!searchTerm,
+    enabled: !!id && (!!searchTerm || !!filterType || !!filterClassification || !!filterOwner),
     staleTime: 0,
   });
 

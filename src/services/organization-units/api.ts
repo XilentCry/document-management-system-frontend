@@ -22,11 +22,15 @@ type TGetOrganizationUnitFoldersResponse = {
   breadcrumb: TBreadcrumb;
 } & TCursorPaginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
 
-export const getSpecificUsers = async (
+export const searchSpecificUsers = async (
   id: number | null,
+  searchTerm: string,
 ): Promise<TBasicUser[]> => {
+  const params = new URLSearchParams();
+  params.append("q", searchTerm);
+
   const { data } = await apiClient.get(
-    `/api/organization-units/${id}/specific-users`,
+    `/api/organization-units/${id}/specific-users/search?${params.toString()}`,
   );
   return data.specificUsers;
 };

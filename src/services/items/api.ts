@@ -5,9 +5,13 @@ import { TAuditLog } from "@/types/audit-log";
 import { TBasicUser } from "@/types/basic-user";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 
-export async function getShareableUsers(id: number): Promise<TBasicUser[]> {
+export async function getShareableUsers(
+  id: number,
+  searchTerm?: string,
+): Promise<TBasicUser[]> {
+  const queryParam = searchTerm ? `?q=${encodeURIComponent(searchTerm)}` : "";
   const { data } = await apiClient.get(
-    `/api/documents/${id}/shareable-users`,
+    `/api/documents/${id}/shareable-users${queryParam}`,
   );
   return data.users;
 }
