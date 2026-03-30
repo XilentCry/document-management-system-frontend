@@ -176,7 +176,7 @@ export function SharedDocument({
           </DropdownMenu>
         </ItemActions>
         <ItemFooter className="justify-center bg-background p-4 h-40 rounded-md">
-          <File className="size-4" />
+          <File className="size-16" strokeWidth={1} />
         </ItemFooter>
       </Item>
 
