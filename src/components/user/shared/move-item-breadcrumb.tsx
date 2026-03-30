@@ -27,7 +27,7 @@ export function MoveItemBreadCrumb({
   item,
 }: {
   breadcrumb: TBreadcrumb[] | TBreadcrumb;
-  setCurrentParentFolderId: Dispatch<SetStateAction<number | null>>;
+  setCurrentParentFolderId: Dispatch<SetStateAction<string | null>>;
   setValue: UseFormSetValue<TMoveItemFormSchema>;
   reset: UseFormReset<TMoveItemFormSchema>;
   item: TItem;

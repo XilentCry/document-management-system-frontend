@@ -40,8 +40,8 @@ export async function getAllUsers(
 }
 
 export async function updateStatus(
-  userId: number,
-  statusId: number,
+  userId: string,
+  statusId: string,
 ): Promise<{ message: string }> {
   const { data } = await apiClient.patch(`/api/users/${userId}/status`, {
     status_id: statusId,
@@ -56,7 +56,7 @@ export async function getUser(id: string): Promise<TGetUserResponse> {
 
 export async function updateUser(
   userData: TUpdateUserFormSchema,
-  userId: number,
+  userId: string,
 ): Promise<TUpdateUserResponse> {
   try {
     const { data } = await apiClient.patch(`/api/users/${userId}`, userData);
@@ -94,25 +94,25 @@ export async function inviteAdmin(
   }
 }
 
-export async function reinviteAdmin(id: number): Promise<{ message: string }> {
+export async function reinviteAdmin(id: string): Promise<{ message: string }> {
   const { data } = await apiClient.post(
     `/api/users/${id}/admin-reinvitation`,
   );
   return { message: data.message };
 }
 
-export async function getRoles(): Promise<{ roles: { id: number; name: string }[] }> {
+export async function getRoles(): Promise<{ roles: { id: string; name: string }[] }> {
   const { data } = await apiClient.get("/api/users/roles");
   return data;
 }
 
-export async function getStatuses(): Promise<{ statuses: { id: number; name: string }[] }> {
+export async function getStatuses(): Promise<{ statuses: { id: string; name: string }[] }> {
   const { data } = await apiClient.get("/api/users/statuses");
   return data;
 }
 
 export async function getUserAuditLogs(
-  userId: number | string,
+  userId: string | string,
   page: number,
 ): Promise<TPaginate<TAuditLog>> {
   const { data } = await apiClient.get(

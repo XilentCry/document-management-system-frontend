@@ -2,18 +2,18 @@ import { TCurrentUser } from "./current-user";
 import { TSharePermission } from "./share-permission";
 
 export type TItem = {
-  id: number;
+  id: string;
   name: string;
   type?: "pdf" | "folder";
   is_folder: boolean;
-  parent_item_id: number | null;
+  parent_item_id: string | null;
   owner: TCurrentUser;
-  organization_unit_id: number;
+  organization_unit_id: string;
   classification: string;
   location: string;
   current_version: {
-    id: number;
-    item_id: number;
+    id: string;
+    item_id: string;
     file_size: number;
     file_path: string;
   } | null;

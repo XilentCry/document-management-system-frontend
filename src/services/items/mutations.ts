@@ -24,7 +24,7 @@ export const useRenameItem = (
       id,
       renameData,
     }: {
-      id: number;
+      id: string;
       renameData: TRenameItemFormSchema;
     }) => renameItem(id, renameData),
     onSuccess: (data, variables) => {
@@ -69,7 +69,7 @@ export const useMoveItem = () => {
       id,
       moveData,
     }: {
-      id: number;
+      id: string;
       moveData: TMoveItemFormSchema;
     }) => moveItem(id, moveData),
     onSuccess: (data) => {

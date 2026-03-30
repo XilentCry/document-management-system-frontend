@@ -59,7 +59,7 @@ export function OrganizationUnitsDialog({
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  const toggleOrganizationUnit = (id: number) => {
+  const toggleOrganizationUnit = (id: string) => {
     onChange(
       selectedIds.includes(id)
         ? selectedIds.filter((selectedId) => selectedId !== id)
@@ -67,7 +67,7 @@ export function OrganizationUnitsDialog({
     );
   };
 
-  const removeOrganizationUnit = (id: number) => {
+  const removeOrganizationUnit = (id: string) => {
     onChange(selectedIds.filter((selectedId) => selectedId !== id));
   };
 

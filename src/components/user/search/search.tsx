@@ -33,18 +33,16 @@ export function Search() {
       ? filterTypeParam
       : null;
   const filterClassificationStr = searchParams.get("classification");
-  const filterClassification = filterClassificationStr
-    ? Number(filterClassificationStr)
-    : null;
-    const filterOwnerParam = searchParams.get("owner");
+  const filterClassification = filterClassificationStr || null;
+  const filterOwnerParam = searchParams.get("owner");
 const filterOwner: TFilterOwner =
   filterOwnerParam === "me" || filterOwnerParam === "not_me" || filterOwnerParam === "user"
     ? filterOwnerParam
     : null;
 const filterOwnerIdStr = searchParams.get("owner_id");
-const filterOwnerId = filterOwnerIdStr ? Number(filterOwnerIdStr) : null;
+const filterOwnerId = filterOwnerIdStr || null;
 const filterSharedToStr = searchParams.get("shared_to");
-const filterSharedTo = filterSharedToStr ? Number(filterSharedToStr) : null;
+const filterSharedTo = filterSharedToStr || null;
 
   const currentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,

@@ -50,7 +50,7 @@ export const useGetStatuses = () => {
   });
 };
 
-export const useGetUserAuditLogs = (userId: number | string, page: number) => {
+export const useGetUserAuditLogs = (userId: string | string, page: number) => {
   const { isLoading, isError, error, isSuccess, data, isPlaceholderData } =
     useQuery({
       queryKey: ["user-audit-logs", userId, page],

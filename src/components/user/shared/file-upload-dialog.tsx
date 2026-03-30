@@ -63,7 +63,7 @@ export function FileUploadDialog({
   const [isCheckingConflicts, setIsCheckingConflicts] = useState(false);
   const [conflictData, setConflictData] = useState<{
     open: boolean;
-    conflicts: { id: number; name: string; can_replace: boolean }[];
+    conflicts: { id: string; name: string; can_replace: boolean }[];
     pendingData: TUploadFileFormSchema | null;
   }>({ open: false, conflicts: [], pendingData: null });
 
@@ -88,7 +88,7 @@ export function FileUploadDialog({
     files.forEach((file) => {
       append({
         organization_unit_id: currentOrganizationUnitId!,
-        classification_id: 1,
+        classification_id: classifications[0]?.id ?? "",
         folder_id: currentParentFolderId,
         file,
       });

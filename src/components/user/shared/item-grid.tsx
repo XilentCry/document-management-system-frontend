@@ -15,7 +15,7 @@ export function ItemGrid({ data }: { data: TCursorPaginate<TItem>["data"] }) {
 
   const { openRail } = useRailStore();
 
-  const handleFolderDoubleClick = (folderId: number) => {
+  const handleFolderDoubleClick = (folderId: string) => {
     router.push(`/drive/folders/${folderId}`);
   };
 

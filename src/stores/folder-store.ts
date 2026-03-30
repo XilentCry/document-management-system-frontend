@@ -4,15 +4,15 @@ import { createSelectors } from "./selector";
 import { persist } from "zustand/middleware";
 
 export interface FolderStore {
-  currentParentFolderId: number | null;
-  setCurrentParentFolderId: (id: number | null) => void;
+  currentParentFolderId: string | null;
+  setCurrentParentFolderId: (id: string | null) => void;
 }
 
 const folderStore = create<FolderStore>()(
   persist(
     immer((set) => ({
       currentParentFolderId: null,
-      setCurrentParentFolderId: (id: number | null) =>
+      setCurrentParentFolderId: (id: string | null) =>
         set({ currentParentFolderId: id }),
     })),
     {

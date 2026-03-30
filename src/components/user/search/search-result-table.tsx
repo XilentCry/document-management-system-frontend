@@ -48,8 +48,8 @@ export function SearchResultTable({
   onDocumentDoubleClick,
 }: {
   data: TCursorPaginate<TItem>["data"];
-  onFolderDoubleClick: (folderId: number) => void;
-  onDocumentDoubleClick: (documentId: number) => Promise<void>;
+  onFolderDoubleClick: (folderId: string) => void;
+  onDocumentDoubleClick: (documentId: string) => Promise<void>;
 }) {
   const userId = useUserStore((state) => state.userId);
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
@@ -67,7 +67,7 @@ export function SearchResultTable({
   } = useRailStore();
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
-  const handleDownload = (id: number, fileName: string) => {
+  const handleDownload = (id: string, fileName: string) => {
     downloadDocumentMutation({ id, fileName });
   };
 

@@ -16,13 +16,13 @@ import { Dispatch, SetStateAction } from "react";
 interface FileUploadConflictDialogProps {
   conflictData: {
     open: boolean;
-    conflicts: { id: number; name: string; can_replace: boolean }[];
+    conflicts: { id: string; name: string; can_replace: boolean }[];
     pendingData: TUploadFileFormSchema | null;
   };
   setConflictData: Dispatch<
     SetStateAction<{
       open: boolean;
-      conflicts: { id: number; name: string; can_replace: boolean }[];
+      conflicts: { id: string; name: string; can_replace: boolean }[];
       pendingData: TUploadFileFormSchema | null;
     }>
   >;

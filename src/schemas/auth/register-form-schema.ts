@@ -26,7 +26,7 @@ export const registerFormSchema = loginFormSchema
       .nonempty("Last name is required.")
       .max(50, "Last name must be at most 50 characters."),
     organization_unit_ids: z
-      .array(z.number().int().positive("Invalid organization unit id."))
+      .array(z.string().uuid("Invalid organization unit id."))
       .min(1, "Select at least one office or unit."),
     password_confirmation: z
       .string()

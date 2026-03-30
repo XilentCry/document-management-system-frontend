@@ -41,9 +41,9 @@ export function MoveItemDialog({
   openMoveItemDialog: boolean;
   setOpenMoveItemDialog: Dispatch<SetStateAction<boolean>>;
 }) {
-  const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [currentParentFolderId, setCurrentParentFolderId] = useState<
-    number | null
+    string | null
   >(null);
 
   const currentOrganizationUnitId = useOrganizationUnitStore(

@@ -36,7 +36,7 @@ export function Folder({
   onDoubleClick,
 }: {
   item: TItem;
-  onDoubleClick: (folderId: number) => void;
+  onDoubleClick: (folderId: string) => void;
 }) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);

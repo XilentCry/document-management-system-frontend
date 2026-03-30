@@ -17,7 +17,7 @@ export function PublicDocumentViewerRail({
   > & {
     classification: string;
     current_version: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
-      item_id: number;
+      item_id: string;
     };
   };
   setOpenRail: Dispatch<SetStateAction<boolean>>;

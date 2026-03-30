@@ -1,5 +1,5 @@
 export type TBreadcrumb = {
-  id: number;
+  id: string;
   name: string;
   type: "organization_unit" | "folder";
 };

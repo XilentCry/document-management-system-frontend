@@ -24,12 +24,10 @@ import {
 import { getCsrfCookie } from "@/services/auth/api";
 import { useForgotPassword } from "@/services/reset-password/mutations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export function ForgotPasswordForm() {
-  "use no memo";
-
   const {
     register,
     handleSubmit,

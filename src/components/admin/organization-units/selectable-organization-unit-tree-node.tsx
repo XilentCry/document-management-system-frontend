@@ -14,8 +14,8 @@ export function SelectableOrganizationUnitTreeNode({
   onSelect,
 }: {
   node: TOrganizationUnitTree;
-  selectedId: number | undefined;
-  onSelect: (id: number, name: string) => void;
+  selectedId: string | undefined;
+  onSelect: (id: string, name: string) => void;
 }) {
   const [open, setOpen] = useState(true);
 

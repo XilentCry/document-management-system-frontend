@@ -44,7 +44,7 @@ export function SharedDocument({
 }: {
   item: TItem;
   sharePermissions: TSharePermission[];
-  onDoubleClick: (documentId: number) => Promise<void>;
+  onDoubleClick: (documentId: string) => Promise<void>;
 }) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);

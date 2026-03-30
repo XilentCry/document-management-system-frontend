@@ -9,7 +9,7 @@ export function SharedDocumentList({
 }: {
   data: TCursorPaginate<TSharedWithMe>["data"];
 }) {
-  const handleDocumentDoubleClick = async (documentId: number) => {
+  const handleDocumentDoubleClick = async (documentId: string) => {
     try {
       const url = await viewDocument(documentId);
       const newWindow = window.open(url);

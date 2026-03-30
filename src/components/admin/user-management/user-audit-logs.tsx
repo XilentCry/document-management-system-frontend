@@ -20,7 +20,7 @@ import { Activity } from "lucide-react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { AuditLogTable } from "@/components/admin/audit-logs/audit-log-table";
 
-export function UserAuditLogs({ userId }: { userId: number }) {
+export function UserAuditLogs({ userId }: { userId: string }) {
   const [page, setPage] = useState(1);
 
   const {

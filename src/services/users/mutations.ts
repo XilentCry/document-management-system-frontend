@@ -14,8 +14,8 @@ export const useUpdateStatus = (
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ userId, statusId }: { userId: number; statusId: number }) =>
-      updateStatus(userId, statusId),
+    mutationFn: ({ userId, statusId }: { userId: string; statusId: number }) =>
+      updateStatus(userId, statusId.toString()),
     onSuccess: (data, variables) => {
       toast.success(data.message);
       setStatus(
@@ -42,7 +42,7 @@ export const useUpdateUser = (
       userId,
     }: {
       userData: TUpdateUserFormSchema;
-      userId: number;
+      userId: string;
     }) => updateUser(userData, userId),
     onSuccess: (data, variables) => {
       setFormErrors(null);
@@ -87,7 +87,7 @@ export const useInviteAdmin = (
 
 export const useReinviteAdmin = () => {
   return useMutation({
-    mutationFn: (id: number) => reinviteAdmin(id),
+    mutationFn: (id: string) => reinviteAdmin(id),
     onSuccess: (data) => {
       toast.success(data.message);
     },

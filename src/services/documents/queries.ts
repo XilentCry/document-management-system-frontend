@@ -5,7 +5,7 @@ import {
   getPublicDocumentDetails,
 } from "./api";
 
-export const useGetDocumentVersions = (id: number, enabled: boolean = true) => {
+export const useGetDocumentVersions = (id: string, enabled: boolean = true) => {
   const {
     isLoading,
     isError,
@@ -38,7 +38,7 @@ export const useGetDocumentVersions = (id: number, enabled: boolean = true) => {
 };
 
 export const useGetDocumentDetails = (
-  id: number | null,
+  id: string | null,
   isRailTabDetails: boolean,
   enabled: boolean = true,
 ) => {

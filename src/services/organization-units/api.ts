@@ -12,18 +12,18 @@ import { TOrganizationUnitTree } from "@/types/organization-unit-tree";
 import { TPaginate } from "@/types/paginate";
 
 type TGetOrganizationUnitItemsResponse = {
-  currentOrganizationUnitId: number;
+  currentOrganizationUnitId: string;
   currentOrganizationUnitName: string;
   breadcrumb: TBreadcrumb;
 } & TCursorPaginate<TItem>;
 
 type TGetOrganizationUnitFoldersResponse = {
-  currentOrganizationUnitId: number;
+  currentOrganizationUnitId: string;
   breadcrumb: TBreadcrumb;
 } & TCursorPaginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
 
 export const searchSpecificUsers = async (
-  id: number | null,
+  id: string | null,
   searchTerm: string,
 ): Promise<TBasicUser[]> => {
   const params = new URLSearchParams();
@@ -45,23 +45,23 @@ export const searchOrganizationUnitItems = async ({
   filterOwnerId,
   filterSharedTo,
 }: {
-  id: number | null;
+  id: string | null;
   pageParam: string | null;
   searchTerm: string | null;
   filterType: TFilterType;
-  filterClassification: number | null;
+  filterClassification: string | null;
   filterOwner: TFilterOwner;
-  filterOwnerId: number | null;
-  filterSharedTo: number | null;
+  filterOwnerId: string | null;
+  filterSharedTo: string | null;
 }): Promise<TCursorPaginate<TItem>> => {
   const params = new URLSearchParams();
   if (pageParam) params.append("cursor", pageParam);
   if (searchTerm) params.append("q", searchTerm);
   if (filterType) params.append("type", filterType);
-  if (filterClassification) params.append("classification", filterClassification.toString());
+  if (filterClassification) params.append("classification", filterClassification);
   if (filterOwner) params.append("owner", filterOwner);
-  if (filterOwnerId) params.append("owner_id", filterOwnerId.toString());
-  if (filterSharedTo) params.append("shared_to", filterSharedTo.toString());
+  if (filterOwnerId) params.append("owner_id", filterOwnerId);
+  if (filterSharedTo) params.append("shared_to", filterSharedTo);
 
   const { data } = await apiClient.get(
     `/api/organization-units/${id}/items/search?${params.toString()}`,
@@ -78,21 +78,21 @@ export const searchTopOrganizationUnitItems = async ({
   filterOwnerId,
   filterSharedTo,
 }: {
-  id: number | null;
+  id: string | null;
   searchTerm: string | null;
   filterType: TFilterType | null;
-  filterClassification: number | null;
+  filterClassification: string | null;
   filterOwner: TFilterOwner | null;
-  filterOwnerId: number | null;
-  filterSharedTo: number | null;
+  filterOwnerId: string | null;
+  filterSharedTo: string | null;
 }): Promise<TItem[]> => {
   const params = new URLSearchParams();
   if (searchTerm) params.append("q", searchTerm);
   if (filterType) params.append("type", filterType);
-  if (filterClassification) params.append("classification", filterClassification.toString());
+  if (filterClassification) params.append("classification", filterClassification);
   if (filterOwner) params.append("owner", filterOwner);
-  if (filterOwnerId) params.append("owner_id", filterOwnerId.toString());
-  if (filterSharedTo) params.append("shared_to", filterSharedTo.toString());
+  if (filterOwnerId) params.append("owner_id", filterOwnerId);
+  if (filterSharedTo) params.append("shared_to", filterSharedTo);
 
   const { data } = await apiClient.get(
     `/api/organization-units/${id}/items/search/top?${params.toString()}`,
@@ -137,7 +137,7 @@ export const getOrganizationUnitFolders = async ({
   id,
   pageParam,
 }: {
-  id: number | null;
+  id: string | null;
   pageParam: string | null;
 }): Promise<TGetOrganizationUnitFoldersResponse> => {
   const { data } = await apiClient.get(
@@ -157,7 +157,7 @@ export async function editOrganizationUnit({
   id,
   data: organizationUnitData,
 }: {
-  id: number;
+  id: string;
   data: TEditOrganizationUnitFormSchema;
 }): Promise<{ message: string }> {
   const { data } = await apiClient.patch(

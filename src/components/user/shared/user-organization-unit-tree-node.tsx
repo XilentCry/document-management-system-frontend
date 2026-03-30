@@ -25,7 +25,7 @@ export function UserOrganizationUnitTreeNode({
 
   const router = useRouter();
 
-  const handleSelectOrganizationUnit = (id: number) => {
+  const handleSelectOrganizationUnit = (id: string) => {
     router.push(`/drive/organizational-drive/${id}`);
   };
 

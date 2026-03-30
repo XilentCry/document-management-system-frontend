@@ -1,7 +1,7 @@
 import { TCurrentUser } from "./current-user";
 
 type TBaseAuditLog = {
-  id: number;
+  id: string;
   actor: TCurrentUser;
   subject: string;
   created_at: string;

@@ -1,4 +1,4 @@
 export type TClassification = {
-  id: number;
+  id: string;
   name: string;
 };

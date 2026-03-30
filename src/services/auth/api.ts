@@ -13,7 +13,7 @@ type TErrorResponse = {
 export type TLoginResponse = {
   message: string;
   user: TCurrentUser;
-  currentOrganizationUnitId?: number;
+  currentOrganizationUnitId?: string;
   currentOrganizationUnitName?: string;
   lastLogin: string;
   lastFailedLogin: string;

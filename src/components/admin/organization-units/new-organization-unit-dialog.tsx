@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { newOrganizationUnitFormSchema, TNewOrganizationUnitFormSchema } from "@/schemas/organization-units/new-organization-unit-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateOrganizationUnit } from "@/services/organization-units/mutations";
@@ -25,7 +25,7 @@ export function NewOrganizationUnitDialog({ openNewOrganizationUnitDialog, setOp
     formState: { errors, isSubmitting, isSubmitSuccessful },
     reset,
     setValue,
-    watch,
+    control,
   } = useForm<TNewOrganizationUnitFormSchema>({
     resolver: zodResolver(newOrganizationUnitFormSchema),
     defaultValues: {
@@ -36,9 +36,9 @@ export function NewOrganizationUnitDialog({ openNewOrganizationUnitDialog, setOp
 
   const [selectedParentName, setSelectedParentName] = useState<string | null>(null);
 
-  const parentOrganizationUnitId = watch("parent_organization_unit_id");
+  const parentOrganizationUnitId = useWatch({ control, name: "parent_organization_unit_id" });
 
-  const handleSelectParent = (id: number, name: string) => {
+  const handleSelectParent = (id: string, name: string) => {
     setValue("parent_organization_unit_id", id, { shouldValidate: true });
     setSelectedParentName(name);
   };
@@ -53,7 +53,8 @@ export function NewOrganizationUnitDialog({ openNewOrganizationUnitDialog, setOp
       handleReset();
       setOpenNewOrganizationUnitDialog(false);
     }
-  }, [isSubmitSuccessful, reset, setOpenNewOrganizationUnitDialog]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSubmitSuccessful, setOpenNewOrganizationUnitDialog]);
 
   const { mutateAsync: createOrganizationUnitMutation } = useCreateOrganizationUnit();
 

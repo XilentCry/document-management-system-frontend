@@ -16,7 +16,7 @@ import {
 import { TFilterOwner } from "@/types/filter-owner";
 
 export const useSearchSpecificUsers = (
-  id: number | null,
+  id: string | null,
   searchTerm: string,
   enabled: boolean = true,
 ) => {
@@ -45,13 +45,13 @@ export const useSearchSpecificUsers = (
 };
 
 export const useSearchOrganizationUnitItems = (
-  id: number | null,
+  id: string | null,
   searchTerm: string | null,
   filterType: TFilterType | null,
-  filterClassification: number | null,
+  filterClassification: string | null,
   filterOwner: TFilterOwner,
-  filterOwnerId: number | null,
-  filterSharedTo: number | null,
+  filterOwnerId: string | null,
+  filterSharedTo: string | null,
 ) => {
   const {
     isLoading,
@@ -159,8 +159,8 @@ export const useGetOrganizationUnitItems = (id: string) => {
 };
 
 export const useGetOrganizationUnitFolders = (
-  organizationUnitId: number | null,
-  folderId: number | null,
+  organizationUnitId: string | null,
+  folderId: string | null,
   enabled: boolean = true
 ) => {
   const {
@@ -194,13 +194,13 @@ export const useGetOrganizationUnitFolders = (
 };
 
 export const useSearchTopOrganizationUnitItems = (
-  id: number | null,
+  id: string | null,
   searchTerm: string | null,
   filterType: TFilterType | null,
-  filterClassification: number | null,
+  filterClassification: string | null,
   filterOwner: TFilterOwner | null,
-  filterOwnerId: number | null,
-  filterSharedTo: number | null,
+  filterOwnerId: string | null,
+  filterSharedTo: string | null,
 ) => {
   const { isLoading, isError, error, isSuccess, data } = useQuery({
     queryKey: [

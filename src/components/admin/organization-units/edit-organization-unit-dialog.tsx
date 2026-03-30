@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { editOrganizationUnitFormSchema, TEditOrganizationUnitFormSchema } from "@/schemas/organization-units/edit-organization-unit-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEditOrganizationUnit } from "@/services/organization-units/mutations";
@@ -34,7 +34,7 @@ export function EditOrganizationUnitDialog({
     formState: { errors, isSubmitting, isSubmitSuccessful },
     reset,
     setValue,
-    watch,
+    control,
   } = useForm<TEditOrganizationUnitFormSchema>({
     resolver: zodResolver(editOrganizationUnitFormSchema),
     defaultValues: {
@@ -47,9 +47,9 @@ export function EditOrganizationUnitDialog({
     organizationUnit.parent?.name ?? null
   );
 
-  const parentOrganizationUnitId = watch("parent_organization_unit_id");
+  const parentOrganizationUnitId = useWatch({ control, name: "parent_organization_unit_id" });
 
-  const handleSelectParent = (id: number, name: string) => {
+  const handleSelectParent = (id: string, name: string) => {
     setValue("parent_organization_unit_id", id, { shouldValidate: true });
     setSelectedParentName(name);
   };
@@ -96,7 +96,7 @@ export function EditOrganizationUnitDialog({
               <SelectParentOrganizationUnitDialog
                 selectedId={parentOrganizationUnitId ?? undefined}
                 selectedParentName={selectedParentName}
-                onSelect={(id: number, name: string) => handleSelectParent(id, name)}
+                onSelect={(id: string, name: string) => handleSelectParent(id, name)}
               />
               {errors.parent_organization_unit_id && (
                 <FieldError>{errors.parent_organization_unit_id.message}</FieldError>

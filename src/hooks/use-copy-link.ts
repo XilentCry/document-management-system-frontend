@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 
 export function useCopyLink() {
-  const copyLink = async (documentId: number) => {
+  const copyLink = async (documentId: string) => {
     try {
       const url = `${process.env.NEXT_PUBLIC_FRONTEND_URL}/document/${documentId}/view`;
       await navigator.clipboard.writeText(url);

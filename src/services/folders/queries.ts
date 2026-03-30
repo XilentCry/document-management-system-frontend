@@ -32,7 +32,7 @@ export const useGetFolderItems = (id: string) => {
   };
 };
 
-export const useGetFolderSubfolders = (id: number | null, enabled: boolean = true) => {
+export const useGetFolderSubfolders = (id: string | null, enabled: boolean = true) => {
   const {
     isLoading,
     isError,
@@ -63,7 +63,7 @@ export const useGetFolderSubfolders = (id: number | null, enabled: boolean = tru
 };
 
 export const useGetFolderDetails = (
-  id: number | null,
+  id: string | null,
   isRailTabDetails: boolean,
   enabled: boolean = true,
 ) => {

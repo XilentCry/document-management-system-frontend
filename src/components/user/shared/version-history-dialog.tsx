@@ -61,7 +61,7 @@ export function VersionHistoryDialog({
                                     <TableRow>
                                         <TableHead>Version</TableHead>
                                         <TableHead>Created by</TableHead>
-                                        <TableHead>Created at</TableHead>
+                                        <TableHead>Modified</TableHead>
                                         <TableHead>File size</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -72,7 +72,7 @@ export function VersionHistoryDialog({
                                             <TableCell>
                                                 {version.created_by.first_name} {version.created_by.middle_name} {version.created_by.last_name}
                                             </TableCell>
-                                            <TableCell>{version.created_at}</TableCell>
+                                            <TableCell>{version.updated_at}</TableCell>
                                             <TableCell>{formatFileSize(version.file_size)}</TableCell>
                                         </TableRow>
                                     ))}

@@ -4,14 +4,13 @@ export const advancedSearchFormSchema = z
   .object({
     type: z.enum(["file", "folder"]).nullable(),
     owner: z.enum(["me", "not_me", "user"]).nullable(),
-    owner_id: z.number().int().positive("Invalid owner id.").nullable(),
+    owner_id: z.string().uuid("Invalid owner id.").nullable(),
     classification: z
-      .number()
-      .int()
-      .positive("Invalid classification id.")
+      .string()
+      .uuid("Invalid classification id.")
       .nullable(),
     itemName: z.string().trim().nonempty("Item name is required."),
-    shared_to: z.number().int().positive("Invalid user id.").nullable().optional(),
+    shared_to: z.string().uuid("Invalid user id.").nullable().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.owner === "user" && !data.owner_id) {

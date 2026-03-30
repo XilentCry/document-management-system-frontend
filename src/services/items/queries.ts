@@ -2,7 +2,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getItemActivities, getShareableUsers } from "./api";
 
 export const useGetShareableUsers = (
-  id: number,
+  id: string,
   searchTerm: string,
   enabled: boolean = true,
 ) => {
@@ -17,7 +17,7 @@ export const useGetShareableUsers = (
 };
 
 export const useGetItemActivities = (
-  id: number | null,
+  id: string | null,
   isRailTabActivity: boolean,
 ) => {
   const {

@@ -12,11 +12,11 @@ export function SearchResultList({
 }) {
   const router = useRouter();
 
-  const handleFolderDoubleClick = (folderId: number) => {
+  const handleFolderDoubleClick = (folderId: string) => {
     router.push(`/drive/folders/${folderId}`);
   };
 
-  const handleDocumentDoubleClick = async (documentId: number) => {
+  const handleDocumentDoubleClick = async (documentId: string) => {
     try {
       const url = await viewDocument(documentId);
       const newWindow = window.open(url);

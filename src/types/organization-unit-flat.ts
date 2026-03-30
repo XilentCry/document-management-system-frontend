@@ -2,7 +2,7 @@ import { TOrganizationUnitBase } from "./organization-unit-base";
 
 export type TOrganizationUnitFlat = {
   parent: {
-    id: number;
+    id: string;
     name: string;
   } | null;
   created_at: string;

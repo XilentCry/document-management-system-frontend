@@ -54,7 +54,7 @@ export function ItemTable({
   selectedDocument,
 }: {
   data: TCursorPaginate<TItem>["data"];
-  onFolderDoubleClick: (folderId: number) => void;
+  onFolderDoubleClick: (folderId: string) => void;
   onDocumentDoubleClick: (document: TItem) => Promise<void>;
   openDocumentViewer: boolean;
   setOpenDocumentViewer: Dispatch<SetStateAction<boolean>>;
@@ -80,7 +80,7 @@ export function ItemTable({
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
   const { copyLink } = useCopyLink();
 
-  const handleDownload = (id: number, fileName: string) => {
+  const handleDownload = (id: string, fileName: string) => {
     downloadDocumentMutation({ id, fileName });
   };
 

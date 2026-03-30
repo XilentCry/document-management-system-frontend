@@ -21,9 +21,9 @@ export function SelectParentOrganizationUnitDialog({
   selectedParentName,
   onSelect,
 }: {
-  selectedId: number | undefined;
+  selectedId: string | undefined;
   selectedParentName: string | null;
-  onSelect: (id: number, name: string) => void;
+  onSelect: (id: string, name: string) => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -38,7 +38,7 @@ export function SelectParentOrganizationUnitDialog({
 
   const filteredUnits = !organizationUnits ? [] : filterTree(organizationUnits, searchQuery);
 
-  const handleSelect = (id: number, name: string) => {
+  const handleSelect = (id: string, name: string) => {
     onSelect(id, name);
     setOpen(false);
   };

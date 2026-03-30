@@ -1,4 +1,4 @@
 export type TShareRole = {
-  id: number;
+  id: string;
   name: string;
 };

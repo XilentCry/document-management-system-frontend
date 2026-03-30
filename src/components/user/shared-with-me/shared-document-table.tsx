@@ -43,7 +43,7 @@ export function SharedDocumentTable({
   onDocumentDoubleClick,
 }: {
   data: TCursorPaginate<TSharedWithMe>["data"];
-  onDocumentDoubleClick: (documentId: number) => Promise<void>;
+  onDocumentDoubleClick: (documentId: string) => Promise<void>;
 }) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
@@ -62,7 +62,7 @@ export function SharedDocumentTable({
 
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
-  const handleDownload = (id: number, fileName: string) => {
+  const handleDownload = (id: string, fileName: string) => {
     downloadDocumentMutation({ id, fileName });
   };
 

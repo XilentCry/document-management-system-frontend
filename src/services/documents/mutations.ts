@@ -11,7 +11,7 @@ export const useShareDocument = () => {
       id,
       shareData,
     }: {
-      id: number;
+      id: string;
       shareData: TShareDocumentFormSchema;
     }) => shareDocument(id, shareData),
     onSuccess: (data) => {
@@ -51,7 +51,7 @@ export const useUploadDocument = () => {
 
 export const useDownloadDocument = () => {
   return useMutation({
-    mutationFn: ({ id, fileName }: { id: number; fileName: string }) =>
+    mutationFn: ({ id, fileName }: { id: string; fileName: string }) =>
       downloadDocument(id, fileName),
     onSuccess: () => {
       toast.success("Document downloaded successfully.");

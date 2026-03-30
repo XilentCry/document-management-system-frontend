@@ -9,7 +9,7 @@ export const getDocumentVersions = async ({
   id,
   pageParam,
 }: {
-  id: number;
+  id: string;
   pageParam: string | null;
 }): Promise<TCursorPaginate<TDocumentVersion>> => {
   const { data } = await apiClient.get(
@@ -19,7 +19,7 @@ export const getDocumentVersions = async ({
 };
 
 export const shareDocument = async (
-  id: number,
+  id: string,
   shareData: TShareDocumentFormSchema,
 ) => {
   const { data } = await apiClient.post(
@@ -29,7 +29,7 @@ export const shareDocument = async (
   return data;
 };
 
-export const downloadDocument = async (id: number, fileName: string) => {
+export const downloadDocument = async (id: string, fileName: string) => {
   const { data } = await apiClient.get(`/api/documents/${id}/download`, {
     responseType: "blob",
   });
@@ -44,7 +44,7 @@ export const downloadDocument = async (id: number, fileName: string) => {
   URL.revokeObjectURL(url);
 };
 
-export const viewDocument = async (id: number): Promise<string> => {
+export const viewDocument = async (id: string): Promise<string> => {
   const { data } = await apiClient.get(`/api/documents/${id}/view`, {
     responseType: "blob",
     headers: { Accept: "application/pdf" },
@@ -63,10 +63,10 @@ export const viewPublicDocument = async (id: string): Promise<string> => {
 };
 
 export const checkConflicts = async (conflictData: {
-  organization_unit_id: number;
+  organization_unit_id: string;
   file_names: string[];
 }): Promise<{
-  conflicts: { id: number; name: string; can_replace: boolean }[];
+  conflicts: { id: string; name: string; can_replace: boolean }[];
 }> => {
   const { data } = await apiClient.post(
     "/api/documents/check-conflicts",
@@ -79,19 +79,19 @@ export async function uploadDocument(documentData: TSingleFile) {
   const formData = new FormData();
   formData.append(
     "organization_unit_id",
-    documentData.organization_unit_id.toString(),
+    documentData.organization_unit_id,
   );
   formData.append(
     "classification_id",
-    documentData.classification_id.toString(),
+    documentData.classification_id,
   );
 
   if (documentData.folder_id) {
-    formData.append("folder_id", documentData.folder_id.toString());
+    formData.append("folder_id", documentData.folder_id);
   }
 
   if (documentData.replace_item_id) {
-    formData.append("replace_item_id", documentData.replace_item_id.toString());
+    formData.append("replace_item_id", documentData.replace_item_id);
   }
 
   formData.append("file", documentData.file);
@@ -100,7 +100,7 @@ export async function uploadDocument(documentData: TSingleFile) {
 }
 
 export const getDocumentDetails = async (
-  id: number | null,
+  id: string | null,
 ): Promise<
   Pick<
     TItem,
@@ -108,7 +108,7 @@ export const getDocumentDetails = async (
   > & {
     classification: string;
     current_version: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
-      item_id: number;
+      item_id: string;
     };
   }
 > => {
@@ -125,7 +125,7 @@ export const getPublicDocumentDetails = async (
   > & {
     classification: string;
     current_version: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
-      item_id: number;
+      item_id: string;
     };
   }
 > => {

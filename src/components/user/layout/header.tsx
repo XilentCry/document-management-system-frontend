@@ -106,10 +106,10 @@ export function Header() {
       currentOrganizationUnitId,
       debouncedSearchTerm,
       filterType,
-      filterClassification ? Number(filterClassification) : null,
+      filterClassification,
       filterOwner,
-      filterOwnerIdParam ? Number(filterOwnerIdParam) : null,
-      filterSharedToParam ? Number(filterSharedToParam) : null,
+      filterOwnerIdParam,
+      filterSharedToParam,
     );
 
   const handleSearch = () => {
@@ -134,15 +134,10 @@ export function Header() {
     reset({
       type: filterType,
       itemName: draftSearchTerm,
-      classification: filterClassification
-        ? Number(filterClassification)
-        : null,
+      classification: filterClassification,
       owner: filterOwner,
-      owner_id:
-        filterOwner === "user" && filterOwnerIdParam
-          ? Number(filterOwnerIdParam)
-          : null,
-      shared_to: filterSharedToParam ? Number(filterSharedToParam) : null,
+      owner_id: filterOwner === "user" ? filterOwnerIdParam : null,
+      shared_to: filterSharedToParam,
     });
     setOpen(true);
   };

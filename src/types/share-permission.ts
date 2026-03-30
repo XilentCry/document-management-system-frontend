@@ -1,4 +1,4 @@
 export type TSharePermission = {
-  id: number;
+  id: string;
   name: string;
 };

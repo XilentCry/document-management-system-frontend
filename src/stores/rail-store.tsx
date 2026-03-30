@@ -6,15 +6,15 @@ import { persist } from "zustand/middleware";
 export interface RailStore {
   openRail: boolean;
   railTab: string;
-  selectedDocumentId: number | null;
+  selectedDocumentId: string | null;
   selectedDocumentFileName: string | null;
-  selectedFolderId: number | null;
+  selectedFolderId: string | null;
   selectedFolderName: string | null;
   setOpenRail: (openRail: boolean) => void;
   setRailTab: (tab: "details" | "activity") => void;
-  setSelectedDocumentId: (documentId: number | null) => void;
+  setSelectedDocumentId: (documentId: string | null) => void;
   setSelectedDocumentFileName: (fileName: string | null) => void;
-  setSelectedFolderId: (folderId: number | null) => void;
+  setSelectedFolderId: (folderId: string | null) => void;
   setSelectedFolderName: (folderName: string | null) => void;
   reset: () => void;
 }
@@ -34,11 +34,11 @@ const railStore = create<RailStore>()(
       ...initialState,
       setOpenRail: (openRail: boolean) => set({ openRail }),
       setRailTab: (tab: "details" | "activity") => set({ railTab: tab }),
-      setSelectedDocumentId: (documentId: number | null) =>
+      setSelectedDocumentId: (documentId: string | null) =>
         set({ selectedDocumentId: documentId }),
       setSelectedDocumentFileName: (fileName: string | null) =>
         set({ selectedDocumentFileName: fileName }),
-      setSelectedFolderId: (folderId: number | null) =>
+      setSelectedFolderId: (folderId: string | null) =>
         set({ selectedFolderId: folderId }),
       setSelectedFolderName: (folderName: string | null) =>
         set({ selectedFolderName: folderName }),

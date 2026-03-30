@@ -5,17 +5,13 @@ export const uploadFileFormSchema = z.object({
     .array(
       z.object({
         organization_unit_id: z
-          .number()
-          .int()
-          .positive("Invalid organization unit id.")
-          .min(1, "Organization unit id is required."),
+          .string({ message: "Organization unit id is required." })
+          .uuid("Invalid organization unit id."),
         classification_id: z
-          .number()
-          .int()
-          .positive("Invalid classification id.")
-          .min(1, "Classification id is required."),
-        folder_id: z.number().int().positive("Invalid folder id.").nullable(),
-        replace_item_id: z.number().int().positive().optional(),
+          .string({ message: "Classification id is required." })
+          .uuid("Invalid classification id."),
+        folder_id: z.string().uuid("Invalid folder id.").nullable(),
+        replace_item_id: z.string().uuid("Invalid replace item id.").optional(),
         file: z
           .instanceof(File, { message: "Please select a file." })
           .refine((file) => file.size > 0, "File cannot be empty.")

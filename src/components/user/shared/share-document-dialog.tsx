@@ -91,11 +91,8 @@ export function ShareDocumentDialog({
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      setSelectedUsers([]);
-      setSearchTerm("");
-      setOpenShareDialog(false);
     }
-  }, [isSubmitSuccessful, reset, setOpenShareDialog]);
+  }, [isSubmitSuccessful, reset]);
 
   useEffect(() => {
     if (shareRoles.length > 0 && shareRoleId === undefined) {
@@ -110,6 +107,9 @@ export function ShareDocumentDialog({
       id: item.id,
       shareData: data,
     });
+    setSelectedUsers([]);
+    setSearchTerm("");
+    setOpenShareDialog(false);
   };
 
   return (

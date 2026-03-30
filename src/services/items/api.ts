@@ -6,7 +6,7 @@ import { TBasicUser } from "@/types/basic-user";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 
 export async function getShareableUsers(
-  id: number,
+  id: string,
   searchTerm?: string,
 ): Promise<TBasicUser[]> {
   const queryParam = searchTerm ? `?q=${encodeURIComponent(searchTerm)}` : "";
@@ -20,7 +20,7 @@ export async function getItemActivities({
   id,
   pageParam,
 }: {
-  id: number | null;
+  id: string | null;
   pageParam: string | null;
 }): Promise<TCursorPaginate<TAuditLog>> {
   const { data } = await apiClient.get(
@@ -30,7 +30,7 @@ export async function getItemActivities({
 }
 
 export async function renameItem(
-  id: number,
+  id: string,
   renameData: TRenameItemFormSchema,
 ): Promise<{ message: string }> {
   const { data } = await apiClient.patch(`/api/items/${id}/rename`, renameData);
@@ -38,7 +38,7 @@ export async function renameItem(
 }
 
 export async function moveItem(
-  id: number,
+  id: string,
   moveData: TMoveItemFormSchema,
 ): Promise<{ message: string }> {
   const { data } = await apiClient.patch(`/api/items/${id}/move`, moveData);

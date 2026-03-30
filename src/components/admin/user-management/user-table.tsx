@@ -31,7 +31,7 @@ export function UserTable({ users }: { users: TUser[] }) {
 
   const { mutateAsync: reinviteAdminMutation, isPending } = useReinviteAdmin();
 
-  const handleReinvite = async (id: number) => {
+  const handleReinvite = async (id: string) => {
     await reinviteAdminMutation(id);
   };
 
@@ -44,7 +44,7 @@ export function UserTable({ users }: { users: TUser[] }) {
           <TableHead>Role</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Created</TableHead>
-          <TableHead>Updated</TableHead>
+          <TableHead>Modified</TableHead>
           <TableHead></TableHead>
         </TableRow>
       </TableHeader>

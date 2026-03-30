@@ -10,14 +10,16 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
+import { ROOT_ORGANIZATION_UNIT_ID, UNIVERSITY_PRESIDENT_ID } from "@/lib/constants";
+
 export function OrganizationUnitTreeNode({
   node,
   selectedIds,
   onToggle,
 }: {
   node: TOrganizationUnitTree;
-  selectedIds: number[];
-  onToggle: (id: number) => void;
+  selectedIds: string[];
+  onToggle: (id: string) => void;
 }) {
   const [open, setOpen] = useState(true);
   const hasChildren = !!node.children?.length;
@@ -32,7 +34,7 @@ export function OrganizationUnitTreeNode({
         ) : (
           <div className="w-6" />
         )}
-        {node.id !== 1 && node.id !== 3 && (
+        {node.id !== ROOT_ORGANIZATION_UNIT_ID && node.id !== UNIVERSITY_PRESIDENT_ID && (
           <Checkbox
             checked={selectedIds.includes(node.id)}
             onCheckedChange={() => onToggle(node.id)}

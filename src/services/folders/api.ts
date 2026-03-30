@@ -5,12 +5,12 @@ import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
 
 type TGetFolderItemsResponse = {
-  currentParentFolderId: number;
+  currentParentFolderId: string;
   breadcrumb: TBreadcrumb[];
 } & TCursorPaginate<TItem>;
 
 type TGetFolderSuboldersResponse = {
-  currentOrganizationUnitId: number;
+  currentOrganizationUnitId: string;
   breadcrumb: TBreadcrumb;
 } & TCursorPaginate<Pick<TItem, "id" | "name" | "parent_item_id">>;
 
@@ -38,7 +38,7 @@ export const getFolderSubfolders = async ({
   id,
   pageParam,
 }: {
-  id: number | null;
+  id: string | null;
   pageParam: string | null;
 }): Promise<TGetFolderSuboldersResponse> => {
   const { data } = await apiClient.get(
@@ -48,7 +48,7 @@ export const getFolderSubfolders = async ({
 };
 
 export const getFolderDetails = async (
-  id: number | null,
+  id: string | null,
 ): Promise<
   Pick<TItem, "id" | "name" | "type" | "owner" | "created_at" | "updated_at">
 > => {

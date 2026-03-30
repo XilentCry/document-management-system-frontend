@@ -12,7 +12,7 @@ export function DocumentViewerRail({
   openRail,
   setOpenRail,
 }: {
-  documentId: number;
+  documentId: string;
   openRail: boolean;
   setOpenRail: Dispatch<SetStateAction<boolean>>;
 }) {

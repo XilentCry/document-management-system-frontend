@@ -10,7 +10,7 @@ export function ItemList({ data }: { data: TCursorPaginate<TItem>["data"] }) {
   const [openDocumentViewer, setOpenDocumentViewer] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<TItem | null>(null);
 
-  const handleFolderDoubleClick = (folderId: number) => {
+  const handleFolderDoubleClick = (folderId: string) => {
     router.push(`/drive/folders/${folderId}`);
   };
 
