@@ -42,7 +42,7 @@ import { useSearchSpecificUsers } from "@/services/organization-units/queries";
 import { useSearchSharedToUsers } from "@/services/users/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { TBasicUser } from "@/types/basic-user";
-import { FileText, Folder, User, X } from "lucide-react";
+import { Folder, User, X, File } from "lucide-react";
 import { useRef, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { Controller, SubmitHandler, useWatch } from "react-hook-form";
@@ -159,7 +159,7 @@ export function AdvancedSearchDialog({
                                 Folder
                               </SelectItem>
                               <SelectItem value="file">
-                                <FileText />
+                                <File className="size-4" />
                                 File
                               </SelectItem>
                             </SelectGroup>

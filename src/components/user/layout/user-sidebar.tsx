@@ -48,7 +48,7 @@ export function UserSidebar() {
           <SidebarMenu>
             <SidebarMenuItem>
               <div className="flex items-center gap-2">
-                <Image src="/logo.png" alt="NORSU" width={32} height={32} />
+                <Image src="/norsu.png" alt="NORSU" width={32} height={32} />
                 <span className="text-2xl font-bold">DMS</span>
               </div>
             </SidebarMenuItem>

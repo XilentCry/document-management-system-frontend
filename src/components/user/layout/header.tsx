@@ -41,11 +41,11 @@ import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CornerDownLeft,
-  FileText,
   Folder,
   Search,
   SlidersHorizontal,
-  X
+  X,
+  File
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -276,7 +276,7 @@ export function Header() {
                           {item.is_folder ? (
                             <Folder className="size-4" />
                           ) : (
-                            <FileText className="size-4" />
+                            <File className="size-4" />
                           )}
                         </ItemMedia>
                         <ItemContent className="min-w-0">

@@ -29,8 +29,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 export function ForgotPasswordForm() {
   "use no memo";
-  
-  const [formError, setFormError] = useState("");
 
   const {
     register,
@@ -45,7 +43,7 @@ export function ForgotPasswordForm() {
   });
 
   const { mutateAsync: forgotPasswordMutation } =
-    useForgotPassword(setFormError);
+    useForgotPassword();
 
   useEffect(() => {
     if (isSubmitSuccessful) {
@@ -80,7 +78,6 @@ export function ForgotPasswordForm() {
               </InputGroupAddon>
             </InputGroup>
             {errors.email && <FieldError>{errors.email.message}</FieldError>}
-            {formError && <FieldError>{formError}</FieldError>}
           </Field>
           <Field>
             <Button type="submit">

@@ -24,8 +24,8 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  FileText,
   X,
+  File
 } from "lucide-react";
 import { useState } from "react";
 
@@ -61,9 +61,8 @@ export function UploadProgress() {
       return `Uploading ${uploadingCount} items`;
     }
     if (completedCount > 0 && failedCount === 0) {
-      return `${completedCount} upload${
-        completedCount > 1 ? "s" : ""
-      } complete`;
+      return `${completedCount} upload${completedCount > 1 ? "s" : ""
+        } complete`;
     }
     if (failedCount > 0) {
       return `${failedCount} upload${failedCount > 1 ? "s" : ""} failed`;
@@ -97,7 +96,7 @@ export function UploadProgress() {
             {[...uploadingFiles].reverse().map((file) => (
               <Item key={file.id}>
                 <ItemMedia variant="icon">
-                  <FileText />
+                  <File className="size-4" />
                 </ItemMedia>
                 <ItemContent className="min-w-0">
                   <ItemTitle className="block w-auto truncate">

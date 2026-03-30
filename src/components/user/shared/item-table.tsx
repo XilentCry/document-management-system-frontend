@@ -28,7 +28,6 @@ import {
   CircleAlert,
   Download,
   EllipsisVertical,
-  FileText,
   Folder,
   FolderInput,
   History,
@@ -36,6 +35,7 @@ import {
   UserRoundPlus,
   Info,
   Link2,
+  File
 } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
@@ -127,7 +127,7 @@ export function ItemTable({
                   {item.is_folder ? (
                     <Folder className="size-4" />
                   ) : (
-                    <FileText className="size-4" />
+                    <File className="size-4" />
                   )}
                   {item.name}
                 </div>

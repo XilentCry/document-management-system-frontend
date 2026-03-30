@@ -20,7 +20,7 @@ export function VerifyEmail() {
     <div className="h-svh flex items-center justify-center">
       <div>
         <div className="flex flex-col items-center gap-2 text-center">
-          <Image src="/logo.png" alt="NORSU" width={80} height={80} />
+          <Image src="/norsu.png" alt="NORSU" width={80} height={80} />
           <span className="text-2xl font-bold">
             NORSU Document Management System
           </span>

@@ -6,7 +6,7 @@ import { PdfDisplay } from "@/components/user/shared/pdf-display";
 import { PublicDocumentViewerRail } from "@/components/user/shared/public-document-viewer-rail";
 import { viewPublicDocument } from "@/services/documents/api";
 import { useGetPublicDocumentDetails } from "@/services/documents/queries";
-import { FileText, Info } from "lucide-react";
+import { Info, File } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -62,7 +62,7 @@ export default function ViewDocumentPage() {
         <header className="border-b h-14 shrink-0 flex items-center justify-between px-4 sticky top-0 bg-background z-10">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-4">
-              <FileText className="size-4" />
+              <File className="size-4" />
               <span className="text-sm leading-snug font-medium">
                 {document?.name}
               </span>

@@ -26,13 +26,13 @@ import {
   CircleAlert,
   Download,
   EllipsisVertical,
-  FileText,
   FolderInput,
   Link2,
   PencilLine,
   UserRoundPlus,
   Info,
-  History
+  History,
+  File
 } from "lucide-react";
 import { useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
@@ -89,7 +89,7 @@ export function Document({
         onDoubleClick={() => onDoubleClick(item)}
       >
         <ItemMedia>
-          <FileText className="size-4" />
+          <File className="size-4" />
         </ItemMedia>
         <ItemContent className="min-w-0">
           <ItemTitle className="block w-auto truncate">{item.name}</ItemTitle>
@@ -179,7 +179,7 @@ export function Document({
           </DropdownMenu>
         </ItemActions>
         <ItemFooter className="justify-center bg-background p-4 h-40 rounded-md">
-          <FileText className="size-16" strokeWidth={1} />
+          <File className="size-16" strokeWidth={1} />
         </ItemFooter>
       </Item>
 

@@ -32,7 +32,7 @@ import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useUploadStore } from "@/stores/upload-store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FileText, UploadIcon, X } from "lucide-react";
+import { UploadIcon, X, File } from "lucide-react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useGetAllClassifications } from "@/services/classifications/queries";
@@ -232,7 +232,7 @@ export function FileUploadDialog({
                       {fields.map((field, index) => (
                         <Item key={field.id} size="xs">
                           <ItemMedia variant="icon">
-                            <FileText className="size-4" />
+                            <File className="size-4" />
                           </ItemMedia>
                           <ItemContent className="min-w-0">
                             <ItemTitle className="block w-auto truncate">

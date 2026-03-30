@@ -15,12 +15,12 @@ import { TItem } from "@/types/item";
 import {
   Download,
   EllipsisVertical,
-  FileText,
   FolderInput,
   Info,
   PencilLine,
   UserRoundPlus,
   X,
+  File
 } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { DocumentViewerRail } from "./document-viewer-rail";
@@ -91,7 +91,7 @@ export function DocumentViewer({
                 <X />
               </Button>
               <div className="flex items-center gap-4">
-                <FileText className="size-4" />
+                <File className="size-4" />
                 <span className="text-sm leading-snug font-medium">
                   {documentName}
                 </span>
@@ -142,17 +142,17 @@ export function DocumentViewer({
           </header>
           <div className="flex-1 min-h-0 flex">
             <div className="flex-1">
-            {pdfError ? (
-              <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
-                <p className="text-destructive text-sm">{pdfError}</p>
-              </div>
-            ) : pdfUrl ? (
-              <PdfDisplay fileUrl={pdfUrl} />
-            ) : (
-              <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
-                <Spinner className="text-primary size-9" />
-              </div>
-            )}
+              {pdfError ? (
+                <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
+                  <p className="text-destructive text-sm">{pdfError}</p>
+                </div>
+              ) : pdfUrl ? (
+                <PdfDisplay fileUrl={pdfUrl} />
+              ) : (
+                <div className="h-[calc(100vh-3.5rem)] flex items-center justify-center">
+                  <Spinner className="text-primary size-9" />
+                </div>
+              )}
             </div>
             {openViewerRail && (
               <DocumentViewerRail

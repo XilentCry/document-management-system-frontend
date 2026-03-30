@@ -26,10 +26,10 @@ import {
   CircleAlert,
   Download,
   EllipsisVertical,
-  FileText,
   Info,
   PencilLine,
-  UserRoundPlus
+  UserRoundPlus,
+  File
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -93,7 +93,7 @@ export function SharedDocument({
         }}
       >
         <ItemMedia>
-          <FileText className="size-4" />
+          <File className="size-4" />
         </ItemMedia>
         <ItemContent className="min-w-0">
           <ItemTitle className="block w-auto truncate">{item.name}</ItemTitle>
@@ -115,27 +115,27 @@ export function SharedDocument({
               {sharePermissions.some(
                 (sharePermission) => sharePermission.name === "can_download",
               ) && (
-                <DropdownMenuItem onClick={handleDownload}>
-                  <Download />
-                  Download
-                </DropdownMenuItem>
-              )}
+                  <DropdownMenuItem onClick={handleDownload}>
+                    <Download />
+                    Download
+                  </DropdownMenuItem>
+                )}
               {sharePermissions.some(
                 (sharePermission) => sharePermission.name === "can_rename",
               ) && (
-                <DropdownMenuItem onClick={() => setOpenRenameItemDialog(true)}>
-                  <PencilLine />
-                  Rename
-                </DropdownMenuItem>
-              )}
+                  <DropdownMenuItem onClick={() => setOpenRenameItemDialog(true)}>
+                    <PencilLine />
+                    Rename
+                  </DropdownMenuItem>
+                )}
               {sharePermissions.some(
                 (sharePermission) => sharePermission.name === "can_share",
               ) && (
-                <DropdownMenuItem onClick={() => setOpenShareDialog(true)}>
-                  <UserRoundPlus />
-                  Share
-                </DropdownMenuItem>
-              )}
+                  <DropdownMenuItem onClick={() => setOpenShareDialog(true)}>
+                    <UserRoundPlus />
+                    Share
+                  </DropdownMenuItem>
+                )}
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <CircleAlert />
@@ -176,7 +176,7 @@ export function SharedDocument({
           </DropdownMenu>
         </ItemActions>
         <ItemFooter className="justify-center bg-background p-4 h-40 rounded-md">
-          <FileText className="size-16" strokeWidth={1} />
+          <File className="size-4" />
         </ItemFooter>
       </Item>
 

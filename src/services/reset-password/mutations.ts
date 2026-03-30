@@ -1,21 +1,17 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { forgotPassword, resetPassword } from "./api";
 
-export const useForgotPassword = (
-  setFormError: Dispatch<SetStateAction<string>>,
-) => {
+export const useForgotPassword = () => {
   return useMutation({
     mutationFn: forgotPassword,
     onSuccess: (data) => {
-      setFormError("");
       toast.success(data.message);
     },
     onError: (error) => {
       if (error instanceof Error) {
-        setFormError(error.message);
+        toast.error(error.message);
       }
     },
   });

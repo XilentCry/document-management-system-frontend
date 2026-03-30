@@ -27,10 +27,10 @@ import {
   CircleAlert,
   Download,
   EllipsisVertical,
-  FileText,
   Info,
   PencilLine,
-  UserRoundPlus
+  UserRoundPlus,
+  File
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -105,7 +105,7 @@ export function SharedDocumentTable({
             >
               <TableCell>
                 <div className="flex items-center gap-2">
-                  {<FileText className="size-4" />}
+                  <File className="size-4" />
                   {sharedDocument.item.name}
                 </div>
               </TableCell>
@@ -129,45 +129,45 @@ export function SharedDocumentTable({
                       (sharePermission) =>
                         sharePermission.name === "can_download",
                     ) && (
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleDownload(
-                            sharedDocument.item.id,
-                            sharedDocument.item.name,
-                          )
-                        }
-                      >
-                        <Download />
-                        Download
-                      </DropdownMenuItem>
-                    )}
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleDownload(
+                              sharedDocument.item.id,
+                              sharedDocument.item.name,
+                            )
+                          }
+                        >
+                          <Download />
+                          Download
+                        </DropdownMenuItem>
+                      )}
                     {sharedDocument.share_permissions.some(
                       (sharePermission) =>
                         sharePermission.name === "can_rename",
                     ) && (
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setSelectedItem(sharedDocument.item);
-                          setOpenRenameItemDialog(true);
-                        }}
-                      >
-                        <PencilLine />
-                        Rename
-                      </DropdownMenuItem>
-                    )}
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedItem(sharedDocument.item);
+                            setOpenRenameItemDialog(true);
+                          }}
+                        >
+                          <PencilLine />
+                          Rename
+                        </DropdownMenuItem>
+                      )}
                     {sharedDocument.share_permissions.some(
                       (sharePermission) => sharePermission.name === "can_share",
                     ) && (
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setSelectedItem(sharedDocument.item);
-                          setOpenShareDialog(true);
-                        }}
-                      >
-                        <UserRoundPlus />
-                        Share
-                      </DropdownMenuItem>
-                    )}
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedItem(sharedDocument.item);
+                            setOpenShareDialog(true);
+                          }}
+                        >
+                          <UserRoundPlus />
+                          Share
+                        </DropdownMenuItem>
+                      )}
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>
                         <CircleAlert />
