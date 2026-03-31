@@ -28,7 +28,7 @@ export const useSearchSpecificUsers = (
     isSuccess,
     data: specificUsers,
   } = useQuery({
-    queryKey: ["organization-unit", Number(id), "specific-users", searchTerm],
+    queryKey: ["organization-unit", id, "specific-users", searchTerm],
     queryFn: () => searchSpecificUsers(id, searchTerm),
     enabled: !!id && !!searchTerm && enabled,
     staleTime: 0,
@@ -139,7 +139,7 @@ export const useGetOrganizationUnitItems = (id: string) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["organization-unit", Number(id), "items"],
+    queryKey: ["organization-unit", id, "items"],
     queryFn: ({ pageParam }) => getOrganizationUnitItems({ id, pageParam }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,

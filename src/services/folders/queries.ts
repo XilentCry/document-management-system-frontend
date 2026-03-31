@@ -13,7 +13,7 @@ export const useGetFolderItems = (id: string) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["folder", Number(id), "items"],
+    queryKey: ["folder", id, "items"],
     queryFn: ({ pageParam }) => getFolderItems({ id, pageParam }),
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.meta.next_cursor,

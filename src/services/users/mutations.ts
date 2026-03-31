@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 import { TFormError } from "@/types/form-error";
 import { UseFormReset } from "react-hook-form";
-import { STATUSES } from "@/lib/constants";
 
 export const useUpdateStatus = (
   setStatus: Dispatch<SetStateAction<"pending" | "approved">>,
@@ -14,13 +13,18 @@ export const useUpdateStatus = (
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ userId, statusId }: { userId: string; statusId: number }) =>
-      updateStatus(userId, statusId.toString()),
+    mutationFn: ({
+      userId,
+      statusId,
+      nextStatus,
+    }: {
+      userId: string;
+      statusId: string;
+      nextStatus: "pending" | "approved";
+    }) => updateStatus(userId, statusId),
     onSuccess: (data, variables) => {
       toast.success(data.message);
-      setStatus(
-        variables.statusId === STATUSES.APPROVED ? "approved" : "pending",
-      );
+      setStatus(variables.nextStatus);
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
     onError: (error) => {

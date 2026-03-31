@@ -20,13 +20,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
-import { STATUSES } from "@/lib/constants";
 import { useUpdateStatus } from "@/services/users/mutations";
+import { useGetStatuses } from "@/services/users/queries";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
 import { useUserStore } from "@/stores/user-store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { UserAuditLogs } from "./user-audit-logs";
 
@@ -48,13 +49,29 @@ export function UserDetails({
   const { mutateAsync: updateStatusMutation, isPending } =
     useUpdateStatus(setStatus);
 
+  const { data: statusesData } = useGetStatuses();
+
   const handleApprove = async () => {
     setIsOpen(false);
 
-    const statusId =
-      user.status === "approved" ? STATUSES.PENDING : STATUSES.APPROVED;
+    if (!statusesData?.statuses?.length) {
+      toast.error("Statuses are still loading. Please try again.");
+      return;
+    }
 
-    await updateStatusMutation({ userId: user.id, statusId });
+    const nextStatus: "pending" | "approved" =
+      status === "approved" ? "pending" : "approved";
+
+    const statusId = statusesData?.statuses?.find(
+      (s) => s.name.toLowerCase() === nextStatus,
+    )?.id;
+
+    if (!statusId) {
+      toast.error("Could not resolve status id. Please try again.");
+      return;
+    }
+
+    await updateStatusMutation({ userId: user.id, statusId, nextStatus });
   };
 
   return (

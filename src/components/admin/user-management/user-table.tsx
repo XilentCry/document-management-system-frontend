@@ -61,9 +61,9 @@ export function UserTable({ users }: { users: TUser[] }) {
             <TableCell>
               <Badge
                 className={`${user.status === "pending"
-                    ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
-                    : user.status === "approved" &&
-                    "bg-green-500/15 dark:bg-green-500/10 text-green-500"
+                  ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
+                  : user.status === "approved" &&
+                  "bg-green-500/15 dark:bg-green-500/10 text-green-500"
                   }`}
               >
                 {user.status}
@@ -97,7 +97,7 @@ export function UserTable({ users }: { users: TUser[] }) {
                         Edit
                       </DropdownMenuItem>
                     )}
-                    {userRole === "superuser" && (
+                    {userRole === "superuser" && user.role === "admin" && (
                       <DropdownMenuItem
                         onClick={() => handleReinvite(user.id)}
                         disabled={isPending}
