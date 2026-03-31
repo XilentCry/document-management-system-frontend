@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -35,6 +35,12 @@ export function SelectParentOrganizationUnitDialog({
   } = useGetAllOrganizationUnitsTree();
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (!open) {
+      setSearchQuery("");
+    }
+  }, [open]);
 
   const filteredUnits = !organizationUnits ? [] : filterTree(organizationUnits, searchQuery);
 

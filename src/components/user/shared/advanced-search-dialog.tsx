@@ -43,7 +43,7 @@ import { useSearchSharedToUsers } from "@/services/users/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { TBasicUser } from "@/types/basic-user";
 import { Folder, File } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { Controller, SubmitHandler, useWatch } from "react-hook-form";
 
@@ -117,6 +117,23 @@ export function AdvancedSearchDialog({
 
   const searchType = useWatch({ control, name: "type", defaultValue: null });
   const searchOwner = useWatch({ control, name: "owner", defaultValue: null });
+
+  useEffect(() => {
+    if (!open) {
+      reset({
+        type: null,
+        itemName: "",
+        classification: null,
+        owner: null,
+        owner_id: null,
+        shared_to: null,
+      });
+      setSpecificUserSearchTerm("");
+      setSelectedUser(null);
+      setSharedToUserSearchTerm("");
+      setSelectedSharedToUser(null);
+    }
+  }, [open, reset, setDraftSearchTerm]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -339,10 +356,10 @@ export function AdvancedSearchDialog({
                         control={control}
                         render={({ field }) => (
                           <Select
-                            value={field.value?.toString() ?? "any"}
+                            value={field.value ?? "any"}
                             onValueChange={(value) => {
                               field.onChange(
-                                value === "any" ? null : Number(value),
+                                value === "any" ? null : value,
                               );
                             }}
                           >
@@ -375,7 +392,7 @@ export function AdvancedSearchDialog({
                                   {classifications.map((classification) => (
                                     <SelectItem
                                       key={classification.id}
-                                      value={classification.id.toString()}
+                                      value={classification.id}
                                     >
                                       {classification.name}
                                     </SelectItem>

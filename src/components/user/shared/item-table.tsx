@@ -35,7 +35,8 @@ import {
   UserRoundPlus,
   Info,
   Link2,
-  File
+  File,
+  Shield
 } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
@@ -44,6 +45,7 @@ import { ShareDocumentDialog } from "./share-document-dialog";
 import { DocumentViewer } from "./document-viewer";
 import { VersionHistoryDialog } from "./version-history-dialog";
 import { useCopyLink } from "@/hooks/use-copy-link";
+import { ChangeClassificationDialog } from "./change-classification-dialog";
 
 export function ItemTable({
   data,
@@ -66,6 +68,7 @@ export function ItemTable({
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);
   const [openShareDialog, setOpenShareDialog] = useState(false);
   const [openVersionHistoryDialog, setOpenVersionHistoryDialog] = useState(false);
+  const [openChangeClassificationDialog, setOpenChangeClassificationDialog] = useState(false);
 
   const {
     setSelectedDocumentId,
@@ -185,6 +188,17 @@ export function ItemTable({
                       Rename
                     </DropdownMenuItem>
                     {!item.is_folder && item.owner.id === userId && (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setOpenChangeClassificationDialog(true);
+                        }}
+                      >
+                        <Shield />
+                        Change classification
+                      </DropdownMenuItem>
+                    )}
+                    {!item.is_folder && item.owner.id === userId && (
                       <>
                         {item.classification === "protected" ? (
                           <DropdownMenuItem
@@ -286,7 +300,7 @@ export function ItemTable({
         </TableBody>
       </Table>
 
-      {openRenameItemDialog && selectedItem && (
+      {selectedItem && (
         <RenameItemDialog
           item={selectedItem}
           openRenameItemDialog={openRenameItemDialog}
@@ -294,7 +308,7 @@ export function ItemTable({
         />
       )}
 
-      {openMoveItemDialog && selectedItem && (
+      {selectedItem && (
         <MoveItemDialog
           item={selectedItem}
           openMoveItemDialog={openMoveItemDialog}
@@ -302,7 +316,7 @@ export function ItemTable({
         />
       )}
 
-      {openShareDialog && selectedItem && (
+      {selectedItem && (
         <ShareDocumentDialog
           item={selectedItem}
           openShareDialog={openShareDialog}
@@ -310,7 +324,7 @@ export function ItemTable({
         />
       )}
 
-      {openVersionHistoryDialog && selectedItem && (
+      {selectedItem && (
         <VersionHistoryDialog
           item={selectedItem}
           openVersionHistoryDialog={openVersionHistoryDialog}
@@ -318,7 +332,15 @@ export function ItemTable({
         />
       )}
 
-      {openDocumentViewer && selectedDocument && (
+      {selectedItem && (
+        <ChangeClassificationDialog
+          item={selectedItem}
+          openChangeClassificationDialog={openChangeClassificationDialog}
+          setOpenChangeClassificationDialog={setOpenChangeClassificationDialog}
+        />
+      )}
+
+      {selectedDocument && (
         <DocumentViewer
           openDocumentViewer={openDocumentViewer}
           setOpenDocumentViewer={setOpenDocumentViewer}

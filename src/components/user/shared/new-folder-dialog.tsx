@@ -51,10 +51,19 @@ export default function NewFolderDialog({
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset();
       setOpenNewFolderDialog(false);
     }
-  }, [isSubmitSuccessful, reset, setOpenNewFolderDialog]);
+  }, [isSubmitSuccessful, setOpenNewFolderDialog]);
+
+  useEffect(() => {
+    if (!openNewFolderDialog) {
+      reset({
+        name: "",
+        folder_id: currentParentFolderId,
+        organization_unit_id: currentOrganizationUnitId!,
+      });
+    }
+  }, [openNewFolderDialog, reset, currentParentFolderId, currentOrganizationUnitId]);
 
   const { mutateAsync: createFolderMutation } = useCreateFolder();
 

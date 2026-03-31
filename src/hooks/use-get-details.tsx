@@ -45,6 +45,20 @@ export function useGetDetails() {
           </span>
         );
 
+      case "classification_changed":
+        return (
+          <span>
+            Classification changed from{" "}
+            <span className="text-primary capitalize">
+              {auditLog.properties.old_classification}
+            </span>{" "}
+            to{" "}
+            <span className="text-primary capitalize">
+              {auditLog.properties.new_classification}
+            </span>
+          </span>
+        );
+
       case "moved":
         return (
           <span>

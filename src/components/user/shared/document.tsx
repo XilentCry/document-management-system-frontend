@@ -32,7 +32,8 @@ import {
   UserRoundPlus,
   Info,
   History,
-  File
+  File,
+  Shield
 } from "lucide-react";
 import { useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
@@ -40,6 +41,7 @@ import { RenameItemDialog } from "./rename-item-dialog";
 import { ShareDocumentDialog } from "./share-document-dialog";
 import { useCopyLink } from "@/hooks/use-copy-link";
 import { VersionHistoryDialog } from "./version-history-dialog";
+import { ChangeClassificationDialog } from "./change-classification-dialog";
 
 export function Document({
   item,
@@ -52,6 +54,7 @@ export function Document({
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [openShareDialog, setOpenShareDialog] = useState(false);
   const [openVersionHistoryDialog, setOpenVersionHistoryDialog] = useState(false);
+  const [openChangeClassificationDialog, setOpenChangeClassificationDialog] = useState(false);
 
   const userId = useUserStore((state) => state.userId);
 
@@ -116,6 +119,12 @@ export function Document({
                 <PencilLine />
                 Rename
               </DropdownMenuItem>
+              {item.owner.id === userId && (
+                <DropdownMenuItem onClick={() => setOpenChangeClassificationDialog(true)}>
+                  <Shield />
+                  Change classification
+                </DropdownMenuItem>
+              )}
               {item.owner.id === userId && (
                 <>
                   {item.classification === "protected" ? (
@@ -205,6 +214,12 @@ export function Document({
         item={item}
         openVersionHistoryDialog={openVersionHistoryDialog}
         setOpenVersionHistoryDialog={setOpenVersionHistoryDialog}
+      />
+
+      <ChangeClassificationDialog
+        item={item}
+        openChangeClassificationDialog={openChangeClassificationDialog}
+        setOpenChangeClassificationDialog={setOpenChangeClassificationDialog}
       />
     </>
   );

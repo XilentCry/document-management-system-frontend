@@ -33,7 +33,7 @@ import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useUploadStore } from "@/stores/upload-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UploadIcon, X, File } from "lucide-react";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState, useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useGetAllClassifications } from "@/services/classifications/queries";
 import { Spinner } from "@/components/ui/spinner";
@@ -74,10 +74,16 @@ export function FileUploadDialog({
     data: classifications = [],
   } = useGetAllClassifications(openFileUploadDialog);
 
-  const { control, handleSubmit } = useForm<TUploadFileFormSchema>({
+  const { control, handleSubmit, reset } = useForm<TUploadFileFormSchema>({
     resolver: zodResolver(uploadFileFormSchema),
     defaultValues: { documents: [] },
   });
+
+  useEffect(() => {
+    if (!openFileUploadDialog) {
+      reset({ documents: [] });
+    }
+  }, [openFileUploadDialog, reset]);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -245,9 +251,9 @@ export function FileUploadDialog({
                               name={`documents.${index}.classification_id`}
                               render={({ field }) => (
                                 <Select
-                                  value={field.value.toString()}
+                                  value={field.value}
                                   onValueChange={(value) =>
-                                    field.onChange(Number(value))
+                                    field.onChange(value)
                                   }
                                 >
                                   <SelectTrigger>
@@ -263,7 +269,7 @@ export function FileUploadDialog({
                                     {classifications.map((classification) => (
                                       <SelectItem
                                         key={classification.id}
-                                        value={classification.id.toString()}
+                                        value={classification.id}
                                       >
                                         {classification.name}
                                       </SelectItem>

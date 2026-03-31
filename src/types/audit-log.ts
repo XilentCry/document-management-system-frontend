@@ -119,6 +119,15 @@ export type TOrganizationUnitUpdatedAuditLog = TBaseAuditLog & {
   };
 };
 
+export type TClassificationChangedAuditLog = TBaseAuditLog & {
+  action: "classification_changed";
+  properties: {
+    name: string;
+    old_classification: string;
+    new_classification: string;
+  };
+};
+
 export type TAuditLog =
   | TUploadedAuditLog
   | TCreatedAuditLog
@@ -132,4 +141,5 @@ export type TAuditLog =
   | TAdminInvitedAuditLog
   | TAdminReinvitedAuditLog
   | TOrganizationUnitCreatedAuditLog
-  | TOrganizationUnitUpdatedAuditLog;
+  | TOrganizationUnitUpdatedAuditLog
+  | TClassificationChangedAuditLog;

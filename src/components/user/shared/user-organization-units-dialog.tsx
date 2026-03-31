@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +30,12 @@ export function UserOrganizationUnitsDialog({
   } = useGetUserOrganizationUnits(openUserOrganizationUnitsDialog);
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (!openUserOrganizationUnitsDialog) {
+      setSearchQuery("");
+    }
+  }, [openUserOrganizationUnitsDialog]);
 
   const totalUnits = countTotalUnits(userOrganizationUnits);
 

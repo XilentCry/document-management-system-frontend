@@ -124,10 +124,17 @@ export function MoveItemDialog({
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset();
       setOpenMoveItemDialog(false);
     }
-  }, [isSubmitSuccessful, reset, setOpenMoveItemDialog]);
+  }, [isSubmitSuccessful, setOpenMoveItemDialog]);
+
+  useEffect(() => {
+    if (!openMoveItemDialog) {
+      setSelectedFolderId(null);
+      setCurrentParentFolderId(null);
+      reset({ parent_folder_id: null });
+    }
+  }, [openMoveItemDialog, reset]);
 
   const { mutateAsync: moveItemMutation } = useMoveItem();
 

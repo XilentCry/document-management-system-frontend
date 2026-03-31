@@ -1,6 +1,7 @@
 import apiClient from "@/lib/api-client";
 import { TShareDocumentFormSchema } from "@/schemas/documents/share-document-form-schema";
 import { TSingleFile } from "@/schemas/documents/upload-file-form-schema";
+import { TChangeClassificationFormSchema } from "@/schemas/documents/change-classification-form-schema";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TDocumentVersion } from "@/types/document-version";
 import { TItem } from "@/types/item";
@@ -134,4 +135,15 @@ export const getPublicDocumentDetails = async (
     { withCredentials: false },
   );
   return data.documentDetails;
+};
+
+export const updateClassification = async (
+  id: string,
+  classificationData: TChangeClassificationFormSchema,
+) => {
+  const { data } = await apiClient.patch(
+    `/api/documents/${id}/classification`,
+    classificationData,
+  );
+  return data;
 };

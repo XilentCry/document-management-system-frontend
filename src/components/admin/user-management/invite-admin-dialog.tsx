@@ -55,10 +55,16 @@ export function InviteAdminDialog({
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset();
       setOpenInviteAdminDialog(false);
     }
-  }, [isSubmitSuccessful, reset, setOpenInviteAdminDialog]);
+  }, [isSubmitSuccessful, setOpenInviteAdminDialog]);
+
+  useEffect(() => {
+    if (!openInviteAdminDialog) {
+      reset();
+      setFormErrors(null);
+    }
+  }, [openInviteAdminDialog, reset]);
 
   const onSubmit: SubmitHandler<TInviteAdminFormSchema> = async (data) => {
     await getCsrfCookie();

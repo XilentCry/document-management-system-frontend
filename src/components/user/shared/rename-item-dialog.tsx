@@ -52,10 +52,13 @@ export function RenameItemDialog({
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset();
       setOpenRenameItemDialog(false);
     }
-  }, [isSubmitSuccessful, reset, setOpenRenameItemDialog]);
+  }, [isSubmitSuccessful, setOpenRenameItemDialog]);
+
+  useEffect(() => {
+    reset({ name: item.name });
+  }, [item, reset, openRenameItemDialog]);
 
   const { mutateAsync: renameItemMutation } = useRenameItem(
     item.is_folder ? "folder" : "document",

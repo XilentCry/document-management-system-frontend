@@ -68,6 +68,14 @@ export function EditOrganizationUnitDialog({
     }
   }, [isSubmitSuccessful, setOpenEditOrganizationUnitDialog]);
 
+  useEffect(() => {
+    reset({
+      name: organizationUnit.name,
+      parent_organization_unit_id: organizationUnit.parent?.id ?? undefined,
+    });
+    setSelectedParentName(organizationUnit.parent?.name ?? null);
+  }, [organizationUnit, reset, openEditOrganizationUnitDialog]);
+
   const { mutateAsync: editOrganizationUnitMutation } = useEditOrganizationUnit();
 
   const onSubmit: SubmitHandler<TEditOrganizationUnitFormSchema> = async (data) => {

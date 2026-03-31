@@ -90,9 +90,17 @@ export function ShareDocumentDialog({
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      reset();
+      setOpenShareDialog(false);
     }
-  }, [isSubmitSuccessful, reset]);
+  }, [isSubmitSuccessful, setOpenShareDialog]);
+
+  useEffect(() => {
+    if (!openShareDialog) {
+      reset({ share_with: [] });
+      setSelectedUsers([]);
+      setSearchTerm("");
+    }
+  }, [openShareDialog, reset]);
 
   useEffect(() => {
     if (shareRoles.length > 0 && shareRoleId === undefined) {
@@ -107,9 +115,6 @@ export function ShareDocumentDialog({
       id: item.id,
       shareData: data,
     });
-    setSelectedUsers([]);
-    setSearchTerm("");
-    setOpenShareDialog(false);
   };
 
   return (
@@ -221,14 +226,14 @@ export function ShareDocumentDialog({
                   control={control}
                   render={({ field }) => (
                     <Select
-                      value={field.value ? String(field.value) : undefined}
-                      onValueChange={(value) => field.onChange(Number(value))}
+                      value={field.value || undefined}
+                      onValueChange={(value) => field.onChange(value)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a role">
                           {
                             shareRoles.find(
-                              (role) => String(role.id) === String(field.value),
+                              (role) => role.id === field.value,
                             )?.name
                           }
                         </SelectValue>
@@ -246,7 +251,7 @@ export function ShareDocumentDialog({
                           shareRoles.map((shareRole) => (
                             <SelectItem
                               key={shareRole.id}
-                              value={String(shareRole.id)}
+                              value={shareRole.id}
                             >
                               {shareRole.name}
                             </SelectItem>

@@ -78,6 +78,18 @@ export function useGetDescription() {
           </>
         );
 
+      case "classification_changed":
+        return (
+          <>
+            {actor} changed the classification of{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>{" "}
+            to{" "}
+            <span className="text-primary capitalize">
+              {auditLog.properties.new_classification}
+            </span>
+          </>
+        );
+
       case "moved":
         return (
           <>

@@ -50,11 +50,16 @@ export function NewOrganizationUnitDialog({ openNewOrganizationUnitDialog, setOp
 
   useEffect(() => {
     if (isSubmitSuccessful) {
-      handleReset();
       setOpenNewOrganizationUnitDialog(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitSuccessful, setOpenNewOrganizationUnitDialog]);
+
+  useEffect(() => {
+    if (!openNewOrganizationUnitDialog) {
+      reset();
+      setSelectedParentName(null);
+    }
+  }, [openNewOrganizationUnitDialog, reset]);
 
   const { mutateAsync: createOrganizationUnitMutation } = useCreateOrganizationUnit();
 
