@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ROOT_ORGANIZATION_UNIT_ID } from "@/lib/constants";
+import { ROOT_ORGANIZATION_UNIT_SLUG } from "@/lib/constants";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,7 +55,7 @@ export function OrganizationUnitTable({
                 <TableCell>{organizationUnit.created_at}</TableCell>
                 <TableCell>{organizationUnit.updated_at}</TableCell>
                 <TableCell>
-                  {organizationUnit.id !== ROOT_ORGANIZATION_UNIT_ID && (
+                  {organizationUnit.slug !== ROOT_ORGANIZATION_UNIT_SLUG && (
                     <DropdownMenu>
                       <DropdownMenuTrigger
                         render={<Button variant="ghost" size="icon-sm" />}

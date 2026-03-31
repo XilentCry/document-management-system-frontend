@@ -3,5 +3,5 @@ export const STATUSES = {
   APPROVED: 2,
 };
 
-export const ROOT_ORGANIZATION_UNIT_ID = "9d5b83e4-18c2-47d9-b0c7-000000000001";
-export const UNIVERSITY_PRESIDENT_ID = "9d5b83e4-18c2-47d9-b0c7-000000000003";
+export const ROOT_ORGANIZATION_UNIT_SLUG = "office-of-the-board-of-regents";
+export const UNIVERSITY_PRESIDENT_SLUG = "office-of-the-university-president";
