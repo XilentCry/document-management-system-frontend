@@ -16,7 +16,6 @@ export const useUpdateStatus = (
     mutationFn: ({
       userId,
       statusId,
-      nextStatus,
     }: {
       userId: string;
       statusId: string;
