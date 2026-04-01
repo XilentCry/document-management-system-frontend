@@ -3,7 +3,7 @@ import { TAuditLog } from "@/types/audit-log";
 export function useGetDetails() {
   const getDetails = (auditLog: TAuditLog) => {
     switch (auditLog.action) {
-      case "shared":
+      case "document.share":
         return (
           <span>
             Shared with:{" "}
@@ -13,7 +13,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "uploaded":
+      case "document.upload":
         return (
           <span>
             Location:{" "}
@@ -21,7 +21,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "created":
+      case "folder.create":
         return (
           <span>
             Location:{" "}
@@ -29,7 +29,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "edited":
+      case "document.edit":
         return (
           <span>
             Location:{" "}
@@ -37,7 +37,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "renamed":
+      case "item.rename":
         return (
           <span>
             Renamed to:{" "}
@@ -45,7 +45,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "classification_changed":
+      case "document.change_classification":
         return (
           <span>
             Classification changed from{" "}
@@ -59,7 +59,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "moved":
+      case "item.move":
         return (
           <span>
             Moved to:{" "}
@@ -69,7 +69,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "viewed":
+      case "document.view":
         return (
           <span>
             Viewed in:{" "}
@@ -77,7 +77,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "user_status_updated":
+      case "user.update_status":
         return (
           <span>
             Updated to:{" "}
@@ -87,7 +87,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "admin_invited":
+      case "admin.invite":
         return (
           <span>
             Invited admin:{" "}
@@ -98,7 +98,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "admin_reinvited":
+      case "admin.reinvite":
         return (
           <span>
             Reinvited admin:{" "}
@@ -109,7 +109,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "user_updated": {
+      case "user.update": {
         const formatValue = (value: string | string[] | null) => {
           if (Array.isArray(value)) {
             return value.join(", ");
@@ -140,7 +140,7 @@ export function useGetDetails() {
         );
       }
 
-      case "organization_unit_created":
+      case "organization_unit.create":
         if (!auditLog.properties.parent) return null;
         return (
           <span>
@@ -149,7 +149,7 @@ export function useGetDetails() {
           </span>
         );
 
-      case "organization_unit_updated": {
+      case "organization_unit.update": {
         const formatValue = (value: string | null) => {
           return value ?? "None";
         };

@@ -13,22 +13,22 @@ type TNamedInParentProps = {
 };
 
 export type TUploadedAuditLog = TBaseAuditLog & {
-  action: "uploaded";
+  action: "document.upload";
   properties: TNamedInParentProps;
 };
 
 export type TCreatedAuditLog = TBaseAuditLog & {
-  action: "created";
+  action: "folder.create";
   properties: TNamedInParentProps;
 };
 
 export type TEditedAuditLog = TBaseAuditLog & {
-  action: "edited";
+  action: "document.edit";
   properties: TNamedInParentProps;
 };
 
 export type TRenamedAuditLog = TBaseAuditLog & {
-  action: "renamed";
+  action: "item.rename";
   properties: {
     old_name: string;
     new_name: string;
@@ -36,7 +36,7 @@ export type TRenamedAuditLog = TBaseAuditLog & {
 };
 
 export type TMovedAuditLog = TBaseAuditLog & {
-  action: "moved";
+  action: "item.move";
   properties: {
     name: string;
     new_parent: string;
@@ -44,12 +44,12 @@ export type TMovedAuditLog = TBaseAuditLog & {
 };
 
 export type TViewedAuditLog = TBaseAuditLog & {
-  action: "viewed";
+  action: "document.view";
   properties: TNamedInParentProps;
 };
 
 export type TUserStatusUpdatedAuditLog = TBaseAuditLog & {
-  action: "user_status_updated";
+  action: "user.update_status";
   properties: {
     name: string;
     new_status: string;
@@ -62,7 +62,7 @@ type ChangedField<T> = {
 };
 
 export type TUserUpdatedAuditLog = TBaseAuditLog & {
-  action: "user_updated";
+  action: "user.update";
   properties: {
     name: string;
     changed_fields: {
@@ -76,7 +76,7 @@ export type TUserUpdatedAuditLog = TBaseAuditLog & {
 };
 
 export type TSharedAuditLog = TBaseAuditLog & {
-  action: "shared";
+  action: "document.share";
   properties: {
     name: string;
     shared_with: string[];
@@ -85,7 +85,7 @@ export type TSharedAuditLog = TBaseAuditLog & {
 };
 
 export type TAdminInvitedAuditLog = TBaseAuditLog & {
-  action: "admin_invited";
+  action: "admin.invite";
   properties: {
     name: string;
     email: string;
@@ -93,7 +93,7 @@ export type TAdminInvitedAuditLog = TBaseAuditLog & {
 };
 
 export type TAdminReinvitedAuditLog = TBaseAuditLog & {
-  action: "admin_reinvited";
+  action: "admin.reinvite";
   properties: {
     name: string;
     email: string;
@@ -101,7 +101,7 @@ export type TAdminReinvitedAuditLog = TBaseAuditLog & {
 };
 
 export type TOrganizationUnitCreatedAuditLog = TBaseAuditLog & {
-  action: "organization_unit_created";
+  action: "organization_unit.create";
   properties: {
     name: string;
     parent: string | null;
@@ -109,7 +109,7 @@ export type TOrganizationUnitCreatedAuditLog = TBaseAuditLog & {
 };
 
 export type TOrganizationUnitUpdatedAuditLog = TBaseAuditLog & {
-  action: "organization_unit_updated";
+  action: "organization_unit.update";
   properties: {
     name: string;
     changed_fields: {
@@ -120,7 +120,7 @@ export type TOrganizationUnitUpdatedAuditLog = TBaseAuditLog & {
 };
 
 export type TClassificationChangedAuditLog = TBaseAuditLog & {
-  action: "classification_changed";
+  action: "document.change_classification";
   properties: {
     name: string;
     old_classification: string;

@@ -12,7 +12,7 @@ export function useGetDescription() {
         } ${auditLog.actor.last_name}`;
 
     switch (auditLog.action) {
-      case "shared":
+      case "document.share":
         return (
           <>
             {actor} shared{" "}
@@ -41,7 +41,7 @@ export function useGetDescription() {
           </>
         );
 
-      case "uploaded":
+      case "document.upload":
         return (
           <>
             {actor} uploaded{" "}
@@ -50,7 +50,7 @@ export function useGetDescription() {
           </>
         );
 
-      case "created":
+      case "folder.create":
         return (
           <>
             {actor} created{" "}
@@ -59,7 +59,7 @@ export function useGetDescription() {
           </>
         );
 
-      case "edited":
+      case "document.edit":
         return (
           <>
             {actor} edited{" "}
@@ -68,7 +68,7 @@ export function useGetDescription() {
           </>
         );
 
-      case "renamed":
+      case "item.rename":
         return (
           <>
             {actor} renamed{" "}
@@ -78,7 +78,7 @@ export function useGetDescription() {
           </>
         );
 
-      case "classification_changed":
+      case "document.change_classification":
         return (
           <>
             {actor} changed the classification of{" "}
@@ -90,7 +90,7 @@ export function useGetDescription() {
           </>
         );
 
-      case "moved":
+      case "item.move":
         return (
           <>
             {actor} moved{" "}
@@ -101,7 +101,7 @@ export function useGetDescription() {
           </>
         );
 
-      case "viewed":
+      case "document.view":
         return (
           <>
             {actor} viewed{" "}
@@ -110,7 +110,7 @@ export function useGetDescription() {
           </>
         );
 
-      case "user_status_updated":
+      case "user.update_status":
         return (
           <>
             {actor} updated{" "}
@@ -125,7 +125,7 @@ export function useGetDescription() {
           </>
         );
 
-      case "user_updated":
+      case "user.update":
         return (
           <>
             {actor} updated{" "}

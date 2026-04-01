@@ -35,7 +35,7 @@ export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
               <Badge variant="secondary">{auditLog.action}</Badge>
             </TableCell>
             <TableCell>
-              {auditLog.action === "renamed"
+              {auditLog.action === "item.rename"
                 ? auditLog.properties.old_name
                 : auditLog.properties.name}
             </TableCell>
