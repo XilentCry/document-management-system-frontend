@@ -59,12 +59,13 @@ export function InviteAdminDialog({
     }
   }, [isSubmitSuccessful, setOpenInviteAdminDialog]);
 
-  useEffect(() => {
-    if (!openInviteAdminDialog) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
       reset();
       setFormErrors(null);
     }
-  }, [openInviteAdminDialog, reset]);
+    setOpenInviteAdminDialog(open);
+  };
 
   const onSubmit: SubmitHandler<TInviteAdminFormSchema> = async (data) => {
     await getCsrfCookie();
@@ -72,7 +73,7 @@ export function InviteAdminDialog({
   };
 
   return (
-    <Dialog open={openInviteAdminDialog} onOpenChange={setOpenInviteAdminDialog}>
+    <Dialog open={openInviteAdminDialog} onOpenChange={handleOpenChange}>
       <DialogContent className="w-150 max-w-150!">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <DialogHeader>

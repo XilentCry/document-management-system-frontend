@@ -43,15 +43,21 @@ export function EditOrganizationUnitDialog({
     },
   });
 
-  const [selectedParentName, setSelectedParentName] = useState<string | null>(
-    organizationUnit.parent?.name ?? null
-  );
+  const [manualParentName, setManualParentName] = useState<{
+    forUnitId: string;
+    name: string;
+  } | null>(null);
+
+  const selectedParentName =
+    manualParentName?.forUnitId === organizationUnit.id
+      ? manualParentName.name
+      : organizationUnit.parent?.name ?? null;
 
   const parentOrganizationUnitId = useWatch({ control, name: "parent_organization_unit_id" });
 
   const handleSelectParent = (id: string, name: string) => {
     setValue("parent_organization_unit_id", id, { shouldValidate: true });
-    setSelectedParentName(name);
+    setManualParentName({ forUnitId: organizationUnit.id, name });
   };
 
   const handleReset = () => {
@@ -59,7 +65,7 @@ export function EditOrganizationUnitDialog({
       name: organizationUnit.name,
       parent_organization_unit_id: organizationUnit.parent?.id ?? undefined,
     });
-    setSelectedParentName(organizationUnit.parent?.name ?? null);
+    setManualParentName(null);
   };
 
   useEffect(() => {
@@ -73,8 +79,14 @@ export function EditOrganizationUnitDialog({
       name: organizationUnit.name,
       parent_organization_unit_id: organizationUnit.parent?.id ?? undefined,
     });
-    setSelectedParentName(organizationUnit.parent?.name ?? null);
-  }, [organizationUnit, reset, openEditOrganizationUnitDialog]);
+  }, [organizationUnit, reset]);
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      handleReset();
+    }
+    setOpenEditOrganizationUnitDialog(open);
+  };
 
   const { mutateAsync: editOrganizationUnitMutation } = useEditOrganizationUnit();
 
@@ -83,7 +95,7 @@ export function EditOrganizationUnitDialog({
   };
 
   return (
-    <Dialog open={openEditOrganizationUnitDialog} onOpenChange={setOpenEditOrganizationUnitDialog}>
+    <Dialog open={openEditOrganizationUnitDialog} onOpenChange={handleOpenChange}>
       <DialogContent className="w-150 max-w-150!">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <DialogHeader>

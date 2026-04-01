@@ -43,7 +43,7 @@ import { useSearchSharedToUsers } from "@/services/users/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { TBasicUser } from "@/types/basic-user";
 import { Folder, File } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { Controller, SubmitHandler, useWatch } from "react-hook-form";
 
@@ -118,25 +118,30 @@ export function AdvancedSearchDialog({
   const searchType = useWatch({ control, name: "type", defaultValue: null });
   const searchOwner = useWatch({ control, name: "owner", defaultValue: null });
 
-  useEffect(() => {
-    if (!open) {
-      reset({
-        type: null,
-        itemName: "",
-        classification: null,
-        owner: null,
-        owner_id: null,
-        shared_to: null,
-      });
-      setSpecificUserSearchTerm("");
-      setSelectedUser(null);
-      setSharedToUserSearchTerm("");
-      setSelectedSharedToUser(null);
+  const handleReset = () => {
+    reset({
+      type: null,
+      itemName: "",
+      classification: null,
+      owner: null,
+      owner_id: null,
+      shared_to: null,
+    });
+    setSpecificUserSearchTerm("");
+    setSelectedUser(null);
+    setSharedToUserSearchTerm("");
+    setSelectedSharedToUser(null);
+  };
+
+  const handleOpenChange = (next: boolean) => {
+    if (!next) {
+      handleReset();
     }
-  }, [open, reset, setDraftSearchTerm]);
+    onOpenChange(next);
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="w-250 max-w-250!">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <DialogHeader>
@@ -548,20 +553,7 @@ export function AdvancedSearchDialog({
             <Button
               type="button"
               variant="outline"
-              onClick={() => {
-                reset({
-                  type: null,
-                  itemName: "",
-                  classification: null,
-                  owner: null,
-                  owner_id: null,
-                  shared_to: null,
-                });
-                setSpecificUserSearchTerm("");
-                setSelectedUser(null);
-                setSharedToUserSearchTerm("");
-                setSelectedSharedToUser(null);
-              }}
+              onClick={handleReset}
             >
               Reset
             </Button>

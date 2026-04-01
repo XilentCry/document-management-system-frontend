@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -36,11 +36,12 @@ export function SelectParentOrganizationUnitDialog({
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    if (!open) {
+  const handleOpenChange = (next: boolean) => {
+    if (!next) {
       setSearchQuery("");
     }
-  }, [open]);
+    setOpen(next);
+  };
 
   const filteredUnits = !organizationUnits ? [] : filterTree(organizationUnits, searchQuery);
 
@@ -50,7 +51,7 @@ export function SelectParentOrganizationUnitDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
         render={
           <Button

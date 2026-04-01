@@ -42,9 +42,7 @@ export function MoveItemDialog({
   setOpenMoveItemDialog: Dispatch<SetStateAction<boolean>>;
 }) {
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
-  const [currentParentFolderId, setCurrentParentFolderId] = useState<
-    string | null
-  >(null);
+  const [currentParentFolderId, setCurrentParentFolderId] = useState<string | null>(null);
 
   const currentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
@@ -128,13 +126,14 @@ export function MoveItemDialog({
     }
   }, [isSubmitSuccessful, setOpenMoveItemDialog]);
 
-  useEffect(() => {
-    if (!openMoveItemDialog) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
       setSelectedFolderId(null);
       setCurrentParentFolderId(null);
       reset({ parent_folder_id: null });
     }
-  }, [openMoveItemDialog, reset]);
+    setOpenMoveItemDialog(open);
+  };
 
   const { mutateAsync: moveItemMutation } = useMoveItem();
 
@@ -143,7 +142,7 @@ export function MoveItemDialog({
   };
 
   return (
-    <Dialog open={openMoveItemDialog} onOpenChange={setOpenMoveItemDialog}>
+    <Dialog open={openMoveItemDialog} onOpenChange={handleOpenChange}>
       <DialogContent className="w-150 max-w-150!">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <DialogHeader>

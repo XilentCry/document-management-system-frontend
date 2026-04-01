@@ -48,18 +48,19 @@ export function NewOrganizationUnitDialog({ openNewOrganizationUnitDialog, setOp
     setSelectedParentName(null);
   };
 
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      reset();
+      setSelectedParentName(null);
+    }
+    setOpenNewOrganizationUnitDialog(open);
+  };
+
   useEffect(() => {
     if (isSubmitSuccessful) {
       setOpenNewOrganizationUnitDialog(false);
     }
   }, [isSubmitSuccessful, setOpenNewOrganizationUnitDialog]);
-
-  useEffect(() => {
-    if (!openNewOrganizationUnitDialog) {
-      reset();
-      setSelectedParentName(null);
-    }
-  }, [openNewOrganizationUnitDialog, reset]);
 
   const { mutateAsync: createOrganizationUnitMutation } = useCreateOrganizationUnit();
 
@@ -68,7 +69,7 @@ export function NewOrganizationUnitDialog({ openNewOrganizationUnitDialog, setOp
   };
 
   return (
-    <Dialog open={openNewOrganizationUnitDialog} onOpenChange={setOpenNewOrganizationUnitDialog}>
+    <Dialog open={openNewOrganizationUnitDialog} onOpenChange={handleOpenChange}>
       <DialogContent className="w-150 max-w-150!">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <DialogHeader>
@@ -121,7 +122,6 @@ export function NewOrganizationUnitDialog({ openNewOrganizationUnitDialog, setOp
           </DialogFooter>
         </form>
       </DialogContent>
-
     </Dialog>
   )
 }

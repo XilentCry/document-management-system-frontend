@@ -37,7 +37,6 @@ import { useGetAllShareRoles } from "@/services/share-roles/queries";
 import { TBasicUser } from "@/types/basic-user";
 import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 
@@ -54,7 +53,7 @@ export function ShareDocumentDialog({
   const debouncedSearchTerm = useDebounce(searchTerm);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const anchor = useComboboxAnchor()
+  const anchor = useComboboxAnchor();
 
   const {
     isLoading: isLoadingShareableUsers,
@@ -94,13 +93,14 @@ export function ShareDocumentDialog({
     }
   }, [isSubmitSuccessful, setOpenShareDialog]);
 
-  useEffect(() => {
-    if (!openShareDialog) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
       reset({ share_with: [] });
       setSelectedUsers([]);
       setSearchTerm("");
     }
-  }, [openShareDialog, reset]);
+    setOpenShareDialog(open);
+  };
 
   useEffect(() => {
     if (shareRoles.length > 0 && shareRoleId === undefined) {
@@ -118,7 +118,7 @@ export function ShareDocumentDialog({
   };
 
   return (
-    <Dialog open={openShareDialog} onOpenChange={setOpenShareDialog}>
+    <Dialog open={openShareDialog} onOpenChange={handleOpenChange}>
       <DialogContent className="w-150 max-w-150!">
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -141,7 +141,7 @@ export function ShareDocumentDialog({
                       value={selectedUsers}
                       onValueChange={(users) => {
                         setSelectedUsers(users);
-                        field.onChange(users.map(u => u.id));
+                        field.onChange(users.map((u) => u.id));
                       }}
                       inputValue={searchTerm}
                       onInputValueChange={(val) => {
@@ -161,20 +161,18 @@ export function ShareDocumentDialog({
                         setIsDropdownOpen(isOpen);
                       }}
                     >
-
                       <ComboboxChips ref={anchor}>
                         <ComboboxValue>
                           {selectedUsers.map((user) => (
                             <ComboboxChip key={user.id}>
-                              {user.first_name} {user.middle_name ?? ""} {user.last_name}
+                              {user.first_name} {user.middle_name ?? ""}{" "}
+                              {user.last_name}
                             </ComboboxChip>
                           ))}
                         </ComboboxValue>
                         <ComboboxChipsInput
                           placeholder={
-                            selectedUsers.length === 0
-                              ? "Add people"
-                              : ""
+                            selectedUsers.length === 0 ? "Add people" : ""
                           }
                         />
                       </ComboboxChips>
@@ -185,7 +183,9 @@ export function ShareDocumentDialog({
                           </div>
                         ) : isShareableUsersError && shareableUsersError ? (
                           <div className="flex items-center justify-center p-4">
-                            <p className="text-destructive text-sm">{shareableUsersError.message}</p>
+                            <p className="text-destructive text-sm">
+                              {shareableUsersError.message}
+                            </p>
                           </div>
                         ) : shareableUsers.length === 0 ? (
                           searchTerm === debouncedSearchTerm ? (
@@ -231,11 +231,7 @@ export function ShareDocumentDialog({
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a role">
-                          {
-                            shareRoles.find(
-                              (role) => role.id === field.value,
-                            )?.name
-                          }
+                          {shareRoles.find((role) => role.id === field.value)?.name}
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
@@ -249,10 +245,7 @@ export function ShareDocumentDialog({
                           </div>
                         ) : (
                           shareRoles.map((shareRole) => (
-                            <SelectItem
-                              key={shareRole.id}
-                              value={shareRole.id}
-                            >
+                            <SelectItem key={shareRole.id} value={shareRole.id}>
                               {shareRole.name}
                             </SelectItem>
                           ))
@@ -262,7 +255,6 @@ export function ShareDocumentDialog({
                   )}
                 />
               )}
-
             </div>
           </div>
           <DialogFooter>
@@ -284,7 +276,7 @@ export function ShareDocumentDialog({
             </Button>
           </DialogFooter>
         </form>
-      </DialogContent >
-    </Dialog >
+      </DialogContent>
+    </Dialog>
   );
 }

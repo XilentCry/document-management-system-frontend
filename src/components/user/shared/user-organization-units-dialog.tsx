@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState, useEffect } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -31,11 +31,12 @@ export function UserOrganizationUnitsDialog({
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    if (!openUserOrganizationUnitsDialog) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
       setSearchQuery("");
     }
-  }, [openUserOrganizationUnitsDialog]);
+    setOpenUserOrganizationUnitsDialog(open);
+  };
 
   const totalUnits = countTotalUnits(userOrganizationUnits);
 
@@ -46,7 +47,7 @@ export function UserOrganizationUnitsDialog({
   return (
     <Dialog
       open={openUserOrganizationUnitsDialog}
-      onOpenChange={setOpenUserOrganizationUnitsDialog}
+      onOpenChange={handleOpenChange}
     >
       <DialogContent className="w-250 max-w-250!">
         <DialogHeader>
