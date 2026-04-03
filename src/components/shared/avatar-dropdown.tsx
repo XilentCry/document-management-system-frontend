@@ -37,8 +37,8 @@ export function AvatarDropdown() {
                 <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight min-w-0">
-                <p className="truncate font-medium">{[firstName, middleName, lastName].filter(Boolean).join(" ")}</p>
-                <p className="truncate text-muted-foreground text-xs">{email || "No email provided"}</p>
+                <p className="truncate font-medium">{firstName} {middleName ?? ""} {lastName}</p>
+                <p className="truncate text-muted-foreground text-xs">{email}</p>
               </div>
             </div>
           </DropdownMenuLabel>
