@@ -81,9 +81,8 @@ export default function OrganizationalDrivePage() {
   }
 
   return (
-    <DriveDropzone>
-      <div className="flex-1 flex flex-col p-4 pt-0">
-        <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
+    <div className="flex-1 flex flex-col p-4 pt-0">
+      <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
           {breadcrumb && <UserBreadCrumb breadcrumb={breadcrumb} />}
           <ToggleGroup
             variant="outline"
@@ -102,7 +101,8 @@ export default function OrganizationalDrivePage() {
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
-        {isSuccess && organizationUnitItems.length === 0 ? (
+        <DriveDropzone>
+          {isSuccess && organizationUnitItems.length === 0 ? (
           <EmptyState
             icon={Files}
             title="No items yet"
@@ -147,7 +147,7 @@ export default function OrganizationalDrivePage() {
             </Button>
           </div>
         )}
-      </div>
-    </DriveDropzone>
+      </DriveDropzone>
+    </div>
   );
 }

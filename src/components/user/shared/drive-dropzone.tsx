@@ -1,3 +1,13 @@
+import { EmptyState } from "@/components/shared/empty-state";
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { useUploadDialogStore } from "@/stores/upload-dialog-store";
 import { UploadCloud } from "lucide-react";
 import { useCallback } from "react";
@@ -17,7 +27,7 @@ export function DriveDropzone({ children }: { children: React.ReactNode }) {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    noClick: true, // Prevents intercepting clicks on the grid/list items
+    noClick: true,
     noKeyboard: true,
     accept: {
       "application/pdf": [".pdf"],
@@ -31,13 +41,18 @@ export function DriveDropzone({ children }: { children: React.ReactNode }) {
     >
       <input {...getInputProps()} />
       {children}
-      
+
       {isDragActive && (
-        <div className="absolute inset-x-4 inset-y-0 mt-4 mb-4 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm border-2 border-dashed border-primary rounded-lg">
-          <div className="flex flex-col items-center gap-4 text-primary pointer-events-none">
-            <UploadCloud className="size-16 animate-bounce" />
-            <h2 className="text-2xl font-bold">Drop PDF files here to upload</h2>
-          </div>
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm border-2 border-primary border-dashed rounded-xl animate-in fade-in-0">
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia>
+                <UploadCloud className="size-16 animate-bounce text-primary" />
+              </EmptyMedia>
+              <EmptyTitle>Drop PDF files here to upload</EmptyTitle>
+              <EmptyDescription>Release to instantly prepare your files for upload</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         </div>
       )}
     </div>

@@ -64,9 +64,8 @@ export default function FoldersPage() {
   }
 
   return (
-    <DriveDropzone>
-      <div className="flex-1 flex flex-col p-4 pt-0">
-        <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
+    <div className="flex-1 flex flex-col p-4 pt-0">
+      <div className="flex items-center justify-between sticky top-14 bg-background z-10 py-4">
           {breadcrumb && <UserBreadCrumb breadcrumb={breadcrumb} />}
           <ToggleGroup
             variant="outline"
@@ -85,7 +84,8 @@ export default function FoldersPage() {
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
-        {isSuccess && folderItems.length === 0 ? (
+        <DriveDropzone>
+          {isSuccess && folderItems.length === 0 ? (
           <EmptyState
             icon={Files}
             title="No items yet"
@@ -130,7 +130,7 @@ export default function FoldersPage() {
             </Button>
           </div>
         )}
-      </div>
-    </DriveDropzone>
+      </DriveDropzone>
+    </div>
   );
 }

@@ -213,20 +213,8 @@ export function FileUploadDialog() {
             <DialogHeader>
               <DialogTitle>Upload file</DialogTitle>
             </DialogHeader>
-            {isClassificationsLoading ? (
-              <div className="flex-1 flex items-center justify-center">
-                <Spinner className="text-primary size-5" />
-              </div>
-            ) : isClassificationsError && classificationsError ? (
-              <div className="flex-1 flex items-center justify-center">
-                <p className="text-destructive text-sm">
-                  {classificationsError.message}
-                </p>
-              </div>
-            ) : (
-              <>
-                <div className="max-h-96 flex flex-col gap-6">
-                  <div
+            <div className="max-h-96 flex flex-col gap-6">
+              <div
                     className="border-2 border-dashed rounded-lg p-8 text-center hover:bg-muted/50 transition-colors cursor-pointer"
                     onClick={() => fileInputRef.current?.click()}
                     onDragOver={(e) => e.preventDefault()}
@@ -273,14 +261,26 @@ export function FileUploadDialog() {
                                     </SelectValue>
                                   </SelectTrigger>
                                   <SelectContent>
-                                    {classifications.map((classification) => (
-                                      <SelectItem
-                                        key={classification.id}
-                                        value={classification.id}
-                                      >
-                                        {classification.name}
-                                      </SelectItem>
-                                    ))}
+                                    {isClassificationsLoading ? (
+                                      <div className="flex items-center justify-center p-4">
+                                        <Spinner className="text-primary size-5" />
+                                      </div>
+                                    ) : isClassificationsError && classificationsError ? (
+                                      <div className="flex items-center justify-center p-4">
+                                        <p className="text-destructive text-sm">
+                                          {classificationsError.message}
+                                        </p>
+                                      </div>
+                                    ) : (
+                                      classifications.map((classification) => (
+                                        <SelectItem
+                                          key={classification.id}
+                                          value={classification.id}
+                                        >
+                                          {classification.name}
+                                        </SelectItem>
+                                      ))
+                                    )}
                                   </SelectContent>
                                 </Select>
                               )}
@@ -306,8 +306,6 @@ export function FileUploadDialog() {
                   accept=".pdf,application/pdf"
                   onChange={handleFileSelect}
                 />
-              </>
-            )}
             <DialogFooter>
               <DialogClose render={<Button variant="outline" />}>
                 Cancel
