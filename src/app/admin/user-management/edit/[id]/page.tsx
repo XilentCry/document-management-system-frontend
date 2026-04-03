@@ -2,7 +2,7 @@
 
 import { EditUser } from "@/components/admin/user-management/edit-user";
 import { ModeToggle } from "@/components/shared/mode-toggle";
-import { LogoutButton } from "@/components/shared/logout-button";
+import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -39,7 +39,7 @@ export default function EditUserPage() {
         </Breadcrumb>
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <LogoutButton />
+          <AvatarDropdown />
         </div>
       </header>
       <div className="p-4 flex-1 flex flex-col gap-4">

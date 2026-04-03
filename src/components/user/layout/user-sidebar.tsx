@@ -39,8 +39,8 @@ export function UserSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const lastLogin = useUserStore((state) => state.lastLogin);
-  const lastFailedLogin = useUserStore((state) => state.lastFailedLogin);
+  const lastLogin = useUserStore((state) => state.user.lastLogin);
+  const lastFailedLogin = useUserStore((state) => state.user.lastFailedLogin);
 
   return (
     <>

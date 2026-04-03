@@ -6,6 +6,7 @@ import { persist } from "zustand/middleware";
 export interface FolderStore {
   currentParentFolderId: string | null;
   setCurrentParentFolderId: (id: string | null) => void;
+  reset: () => void;
 }
 
 const folderStore = create<FolderStore>()(
@@ -14,6 +15,7 @@ const folderStore = create<FolderStore>()(
       currentParentFolderId: null,
       setCurrentParentFolderId: (id: string | null) =>
         set({ currentParentFolderId: id }),
+      reset: () => set({ currentParentFolderId: null }),
     })),
     {
       name: "folder-storage",

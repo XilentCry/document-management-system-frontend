@@ -50,7 +50,7 @@ export function SearchResultTable({
   onFolderDoubleClick: (folderId: string) => void;
   onDocumentDoubleClick: (documentId: string) => Promise<void>;
 }) {
-  const userId = useUserStore((state) => state.userId);
+  const userId = useUserStore((state) => state.user.userId);
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);

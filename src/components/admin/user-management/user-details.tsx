@@ -41,8 +41,8 @@ export function UserDetails({
   const [status, setStatus] = useState(user.status);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const userId = useUserStore((state) => state.userId);
-  const userRole = useUserStore((state) => state.userRole);
+  const userId = useUserStore((state) => state.user.userId);
+  const userRole = useUserStore((state) => state.user.userRole);
 
   const isAdminViewingAdmin = userRole === "admin" && user.role === "admin";
 

@@ -2,7 +2,7 @@ import { useUserStore } from "@/stores/user-store";
 import { TAuditLog } from "@/types/audit-log";
 
 export function useGetDescription() {
-  const userId = useUserStore((state) => state.userId);
+  const userId = useUserStore((state) => state.user.userId);
 
   const getDescription = (auditLog: TAuditLog) => {
     const actor =

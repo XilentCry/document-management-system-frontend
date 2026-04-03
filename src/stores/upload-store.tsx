@@ -15,6 +15,7 @@ interface UploadStore {
   removeUpload: (id: string) => void;
 
   clearCompleted: () => void;
+  reset: () => void;
 }
 
 export const useUploadStore = create<UploadStore>((set) => ({
@@ -42,4 +43,6 @@ export const useUploadStore = create<UploadStore>((set) => ({
     set(() => ({
       uploadingFiles: [],
     })),
+
+  reset: () => set({ uploadingFiles: [] }),
 }));

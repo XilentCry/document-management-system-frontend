@@ -3,29 +3,48 @@ import { immer } from "zustand/middleware/immer";
 import { createSelectors } from "./selector";
 import { persist } from "zustand/middleware";
 
-export interface UserStore {
+export interface User {
   userId: string | null;
+  email: string | null;
+  firstName: string | null;
+  middleName: string | null;
+  lastName: string | null;
   userRole: string | null;
   lastLogin: string | null;
   lastFailedLogin: string | null;
-  setUserId: (userId: string | null) => void;
-  setUserRole: (userRole: string | null) => void;
-  setLastLogin: (lastLogin: string | null) => void;
-  setLastFailedLogin: (lastLogin: string | null) => void;
 }
+
+export interface UserStore {
+  user: User;
+  setUser: (user: Partial<User>) => void;
+  reset: () => void;
+}
+
+const initialUser: User = {
+  userId: null,
+  email: null,
+  firstName: null,
+  middleName: null,
+  lastName: null,
+  userRole: null,
+  lastLogin: null,
+  lastFailedLogin: null,
+};
 
 const userStore = create<UserStore>()(
   persist(
     immer((set) => ({
-      userId: null,
-      userRole: null,
-      lastLogin: null,
-      lastFailedLogin: null,
-      setUserId: (userId: string | null) => set({ userId }),
-      setUserRole: (userRole: string | null) => set({ userRole }),
-      setLastLogin: (lastLogin: string | null) => set({ lastLogin }),
-      setLastFailedLogin: (lastFailedLogin: string | null) =>
-        set({ lastFailedLogin }),
+      user: { ...initialUser },
+
+      setUser: (user) =>
+        set((state) => {
+          Object.assign(state.user, user);
+        }),
+
+      reset: () =>
+        set((state) => {
+          state.user = { ...initialUser };
+        }),
     })),
     {
       name: "user-storage",

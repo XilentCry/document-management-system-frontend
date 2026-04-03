@@ -13,7 +13,7 @@ export function ItemDetails({
     };
   };
 }) {
-  const userId = useUserStore((state) => state.userId);
+  const userId = useUserStore((state) => state.user.userId);
 
   return (
     <>

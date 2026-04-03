@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation";
 
 export function UserTable({ users }: { users: TUser[] }) {
   const router = useRouter();
-  const userRole = useUserStore((state) => state.userRole);
+  const userRole = useUserStore((state) => state.user.userRole);
 
   console.log(users);
 

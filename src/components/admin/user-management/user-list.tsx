@@ -55,7 +55,7 @@ export function UserList() {
     setPage(1);
   }, []);
 
-  const userRole = useUserStore((state) => state.userRole);
+  const userRole = useUserStore((state) => state.user.userRole);
 
   const {
     isLoading,

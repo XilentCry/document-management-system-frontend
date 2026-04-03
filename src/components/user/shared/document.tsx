@@ -55,7 +55,7 @@ export function Document({
   const [openVersionHistoryDialog, setOpenVersionHistoryDialog] = useState(false);
   const [openChangeClassificationDialog, setOpenChangeClassificationDialog] = useState(false);
 
-  const userId = useUserStore((state) => state.userId);
+  const userId = useUserStore((state) => state.user.userId);
 
   const {
     setSelectedDocumentId,

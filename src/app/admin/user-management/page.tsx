@@ -1,6 +1,6 @@
 import { UserList } from "@/components/admin/user-management/user-list";
 import { ModeToggle } from "@/components/shared/mode-toggle";
-import { LogoutButton } from "@/components/shared/logout-button";
+import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
 
 export default function UserManagementPage() {
   return (
@@ -8,7 +8,7 @@ export default function UserManagementPage() {
       <header className="z-10 bg-background sticky top-0 h-14 border-b flex items-center justify-end px-4">
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <LogoutButton />
+          <AvatarDropdown />
         </div>
       </header>
       <div className="p-4 flex-1 flex flex-col gap-4">

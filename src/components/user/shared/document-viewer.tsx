@@ -44,7 +44,7 @@ export function DocumentViewer({
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
-  const userId = useUserStore((state) => state.userId);
+  const userId = useUserStore((state) => state.user.userId);
 
   const documentDetailsQuery = useGetDocumentDetails(document.id, openDocumentViewer);
   const documentName = documentDetailsQuery.data?.name ?? document.name;

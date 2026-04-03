@@ -14,10 +14,7 @@ export const useLogin = () => {
   const setCurrentOrganizationUnitName = useOrganizationUnitStore(
     (state) => state.setCurrentOrganizationUnitName,
   );
-  const setUserId = useUserStore((state) => state.setUserId);
-  const setUserRole = useUserStore((state) => state.setUserRole);
-  const setLastLogin = useUserStore((state) => state.setLastLogin);
-  const setLastFailedLogin = useUserStore((state) => state.setLastFailedLogin);
+  const setUser = useUserStore((state) => state.setUser);
 
   const router = useRouter();
 
@@ -25,10 +22,16 @@ export const useLogin = () => {
     mutationFn: login,
     onSuccess: (data) => {
       toast.success(data.message);
-      setUserId(data.user.id);
-      setUserRole(data.user.role);
-      setLastLogin(data.lastLogin);
-      setLastFailedLogin(data.lastFailedLogin);
+      setUser({
+        userId: data.user.id,
+        email: data.user.email,
+        firstName: data.user.first_name,
+        middleName: data.user.middle_name,
+        lastName: data.user.last_name,
+        userRole: data.user.role,
+        lastLogin: data.lastLogin,
+        lastFailedLogin: data.lastFailedLogin,
+      });
 
       if (
         data.user.role === "user" &&

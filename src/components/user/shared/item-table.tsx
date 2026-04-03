@@ -61,7 +61,7 @@ export function ItemTable({
   setOpenDocumentViewer: Dispatch<SetStateAction<boolean>>;
   selectedDocument: TItem | null;
 }) {
-  const userId = useUserStore((state) => state.userId);
+  const userId = useUserStore((state) => state.user.userId);
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);

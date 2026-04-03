@@ -1,5 +1,5 @@
 import { OrganizationUnitList } from "@/components/admin/organization-units/organization-unit-list";
-import { LogoutButton } from "@/components/shared/logout-button";
+import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 
 export default function OrganizationUnitsPage() {
@@ -8,7 +8,7 @@ export default function OrganizationUnitsPage() {
       <header className="z-10 bg-background sticky top-0 h-14 border-b flex items-center justify-end px-4">
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <LogoutButton />
+          <AvatarDropdown />
         </div>
       </header>
       <div className="p-4 flex-1 flex flex-col gap-4">

@@ -1,7 +1,7 @@
 "use client";
 
+import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
 import { EmptyState } from "@/components/shared/empty-state";
-import { LogoutButton } from "@/components/shared/logout-button";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -329,7 +329,7 @@ export function Header() {
         </form>
         <div className="flex items-center gap-2">
           <ModeToggle />
-          <LogoutButton />
+          <AvatarDropdown />
         </div>
       </header>
 
