@@ -28,6 +28,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { AdvancedSearchDialog } from "@/components/user/shared/advanced-search-dialog";
 import { DocumentViewer } from "@/components/user/shared/document-viewer";
 import { useDebounce } from "@/hooks/use-debounce";
+import Image from "next/image";
 import {
   advancedSearchFormSchema,
   TAdvancedSearchFormSchema,
@@ -270,7 +271,7 @@ export function Header() {
                           {item.is_folder ? (
                             <Folder className="size-4" />
                           ) : (
-                            <img src="/pdf.svg" alt="PDF icon" className="size-4" />
+                            <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} className="size-4" />
                           )}
                         </ItemMedia>
                         <ItemContent className="min-w-0">

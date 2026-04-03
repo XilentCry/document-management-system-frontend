@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   Card,
   CardAction,
@@ -95,7 +96,7 @@ export function UploadProgress() {
             {[...uploadingFiles].reverse().map((file) => (
               <Item key={file.id}>
                 <ItemMedia variant="icon">
-                  <img src="/pdf.svg" alt="PDF icon" className="size-4" />
+                  <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} className="size-4" />
                 </ItemMedia>
                 <ItemContent className="min-w-0">
                   <ItemTitle className="block w-auto truncate">

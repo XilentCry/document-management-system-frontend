@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -181,7 +182,7 @@ export function AdvancedSearchDialog({
                                 Folder
                               </SelectItem>
                               <SelectItem value="file">
-                                <img src="/pdf.svg" alt="PDF icon" className="size-4" />
+                                <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} className="size-4" />
                                 File
                               </SelectItem>
                             </SelectGroup>

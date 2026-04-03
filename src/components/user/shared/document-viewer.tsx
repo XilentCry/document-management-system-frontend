@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -90,7 +91,7 @@ export function DocumentViewer({
                 <X />
               </Button>
               <div className="flex items-center gap-4">
-                <img src="/pdf.svg" alt="PDF icon" className="size-4" />
+                <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} className="size-4" />
                 <span className="text-sm leading-snug font-medium">
                   {documentName}
                 </span>

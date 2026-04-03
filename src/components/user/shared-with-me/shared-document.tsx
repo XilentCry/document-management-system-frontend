@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -92,7 +93,7 @@ export function SharedDocument({
         }}
       >
         <ItemMedia>
-          <img src="/pdf.svg" alt="PDF icon" className="size-4" />
+          <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} className="size-4" />
         </ItemMedia>
         <ItemContent className="min-w-0">
           <ItemTitle className="block w-auto truncate">{item.name}</ItemTitle>
@@ -175,7 +176,7 @@ export function SharedDocument({
           </DropdownMenu>
         </ItemActions>
         <ItemFooter className="justify-center bg-background p-4 h-40 rounded-md">
-          <img src="/pdf.svg" alt="PDF icon" className="size-16" />
+          <Image src="/pdf.svg" alt="PDF icon" width={64} height={64} className="size-16" />
         </ItemFooter>
       </Item>
 

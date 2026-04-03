@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   Item,
   ItemActions,
@@ -88,7 +89,7 @@ export function Rail() {
       <Item>
         <ItemMedia>
           {isDocumentSelected ? (
-            <img src="/pdf.svg" alt="PDF icon" className="size-4" />
+            <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} className="size-4" />
           ) : (
             <Folder className="size-4" />
           )}
