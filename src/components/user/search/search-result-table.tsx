@@ -33,8 +33,7 @@ import {
   FolderInput,
   Info,
   PencilLine,
-  UserRoundPlus,
-  File
+  UserRoundPlus
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -124,7 +123,7 @@ export function SearchResultTable({
                     {item.is_folder ? (
                       <Folder className="size-4" />
                     ) : (
-                      <File className="size-4" />
+                      <img src="/pdf.svg" alt="PDF icon" className="size-4" />
                     )}
                     {item.name}
                   </div>

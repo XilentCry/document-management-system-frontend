@@ -29,8 +29,7 @@ import {
   EllipsisVertical,
   Info,
   PencilLine,
-  UserRoundPlus,
-  File
+  UserRoundPlus
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -105,7 +104,7 @@ export function SharedDocumentTable({
             >
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <File className="size-4" />
+                  <img src="/pdf.svg" alt="PDF icon" className="size-4" />
                   {sharedDocument.item.name}
                 </div>
               </TableCell>

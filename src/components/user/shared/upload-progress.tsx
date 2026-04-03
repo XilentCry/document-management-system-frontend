@@ -24,8 +24,7 @@ import {
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  X,
-  File
+  X
 } from "lucide-react";
 import { useState } from "react";
 
@@ -37,7 +36,7 @@ export function UploadProgress() {
   if (uploadingFiles.length === 0) return null;
 
   const counts = uploadingFiles.reduce(
-    (acc, file) => {
+    (acc) => {
       switch (file.status) {
         case "uploading":
           acc.uploadingCount += 1;
@@ -96,7 +95,7 @@ export function UploadProgress() {
             {[...uploadingFiles].reverse().map((file) => (
               <Item key={file.id}>
                 <ItemMedia variant="icon">
-                  <File className="size-4" />
+                  <img src="/pdf.svg" alt="PDF icon" className="size-4" />
                 </ItemMedia>
                 <ItemContent className="min-w-0">
                   <ItemTitle className="block w-auto truncate">

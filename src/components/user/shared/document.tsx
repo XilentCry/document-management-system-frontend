@@ -32,7 +32,6 @@ import {
   UserRoundPlus,
   Info,
   History,
-  File,
   Shield
 } from "lucide-react";
 import { useState } from "react";
@@ -92,7 +91,7 @@ export function Document({
         onDoubleClick={() => onDoubleClick(item)}
       >
         <ItemMedia>
-          <File className="size-4" />
+          <img src="/pdf.svg" alt="PDF icon" className="size-4" />
         </ItemMedia>
         <ItemContent className="min-w-0">
           <ItemTitle className="block w-auto truncate">{item.name}</ItemTitle>
@@ -188,7 +187,7 @@ export function Document({
           </DropdownMenu>
         </ItemActions>
         <ItemFooter className="justify-center bg-background p-4 h-40 rounded-md">
-          <File className="size-16" strokeWidth={1} />
+          <img src="/pdf.svg" alt="PDF icon" className="size-16" />
         </ItemFooter>
       </Item>
 

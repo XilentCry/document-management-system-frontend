@@ -44,8 +44,7 @@ import {
   Folder,
   Search,
   SlidersHorizontal,
-  X,
-  File
+  X
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -271,7 +270,7 @@ export function Header() {
                           {item.is_folder ? (
                             <Folder className="size-4" />
                           ) : (
-                            <File className="size-4" />
+                            <img src="/pdf.svg" alt="PDF icon" className="size-4" />
                           )}
                         </ItemMedia>
                         <ItemContent className="min-w-0">

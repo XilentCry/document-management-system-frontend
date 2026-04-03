@@ -13,7 +13,7 @@ import { useGetDocumentDetails } from "@/services/documents/queries";
 import { useGetFolderDetails } from "@/services/folders/queries";
 import { useGetItemActivities } from "@/services/items/queries";
 import { useRailStore } from "@/stores/rail-store";
-import { Folder, X, File } from "lucide-react";
+import { Folder, X } from "lucide-react";
 import { ItemActivityList } from "./item-activity-list";
 import { ItemDetails } from "./item-details";
 import { ItemDetailsSkeleton } from "./item-details-skeleton";
@@ -88,7 +88,7 @@ export function Rail() {
       <Item>
         <ItemMedia>
           {isDocumentSelected ? (
-            <File className="size-4" />
+            <img src="/pdf.svg" alt="PDF icon" className="size-4" />
           ) : (
             <Folder className="size-4" />
           )}

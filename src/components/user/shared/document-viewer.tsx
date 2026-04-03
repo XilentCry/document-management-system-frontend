@@ -19,8 +19,7 @@ import {
   Info,
   PencilLine,
   UserRoundPlus,
-  X,
-  File
+  X
 } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { DocumentViewerRail } from "./document-viewer-rail";
@@ -91,7 +90,7 @@ export function DocumentViewer({
                 <X />
               </Button>
               <div className="flex items-center gap-4">
-                <File className="size-4" />
+                <img src="/pdf.svg" alt="PDF icon" className="size-4" />
                 <span className="text-sm leading-snug font-medium">
                   {documentName}
                 </span>

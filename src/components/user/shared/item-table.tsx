@@ -35,7 +35,6 @@ import {
   UserRoundPlus,
   Info,
   Link2,
-  File,
   Shield
 } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
@@ -130,7 +129,7 @@ export function ItemTable({
                   {item.is_folder ? (
                     <Folder className="size-4" />
                   ) : (
-                    <File className="size-4" />
+                    <img src="/pdf.svg" alt="PDF icon" className="size-4" />
                   )}
                   {item.name}
                 </div>
