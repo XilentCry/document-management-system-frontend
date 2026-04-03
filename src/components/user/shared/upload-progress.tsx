@@ -36,7 +36,7 @@ export function UploadProgress() {
   if (uploadingFiles.length === 0) return null;
 
   const counts = uploadingFiles.reduce(
-    (acc) => {
+    (acc, file) => {
       switch (file.status) {
         case "uploading":
           acc.uploadingCount += 1;
