@@ -20,6 +20,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useUploadDialogStore } from "@/stores/upload-dialog-store";
 import { useUserStore } from "@/stores/user-store";
 import { Building, FileUp, FolderPlus, Plus, UsersRound } from "lucide-react";
 import Image from "next/image";
@@ -33,7 +34,7 @@ export function UserSidebar() {
   const [openUserOrganizationUnitsDialog, setOpenUserOrganizationUnitsDialog] =
     useState(false);
   const [openNewFolderDialog, setOpenNewFolderDialog] = useState(false);
-  const [openFileUploadDialog, setOpenFileUploadDialog] = useState(false);
+  const setIsOpen = useUploadDialogStore((state) => state.setIsOpen);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -72,7 +73,7 @@ export function UserSidebar() {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onClick={() => setOpenFileUploadDialog(true)}
+                      onClick={() => setIsOpen(true)}
                     >
                       <FileUp />
                       File upload
@@ -144,10 +145,7 @@ export function UserSidebar() {
         setOpenNewFolderDialog={setOpenNewFolderDialog}
       />
 
-      <FileUploadDialog
-        openFileUploadDialog={openFileUploadDialog}
-        setOpenFileUploadDialog={setOpenFileUploadDialog}
-      />
+      <FileUploadDialog />
     </>
   );
 }

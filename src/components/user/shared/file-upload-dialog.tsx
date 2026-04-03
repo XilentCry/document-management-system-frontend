@@ -33,20 +33,19 @@ import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useUploadStore } from "@/stores/upload-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UploadIcon, X, File } from "lucide-react";
-import { Dispatch, SetStateAction, useRef, useState, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { useUploadDialogStore } from "@/stores/upload-dialog-store";
 import { useGetAllClassifications } from "@/services/classifications/queries";
 import { Spinner } from "@/components/ui/spinner";
 import { checkConflicts } from "@/services/documents/api";
 import { FileUploadConflictDialog } from "./file-upload-conflict-dialog";
 
-export function FileUploadDialog({
-  openFileUploadDialog,
-  setOpenFileUploadDialog,
-}: {
-  openFileUploadDialog: boolean;
-  setOpenFileUploadDialog: Dispatch<SetStateAction<boolean>>;
-}) {
+export function FileUploadDialog() {
+  const isOpen = useUploadDialogStore((state) => state.isOpen);
+  const setIsOpen = useUploadDialogStore((state) => state.setIsOpen);
+  const pendingFiles = useUploadDialogStore((state) => state.pendingFiles);
+  const clearPendingFiles = useUploadDialogStore((state) => state.clearPendingFiles);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const currentOrganizationUnitId = useOrganizationUnitStore(
@@ -70,9 +69,10 @@ export function FileUploadDialog({
   const {
     isLoading: isClassificationsLoading,
     isError: isClassificationsError,
+    isSuccess: isClassificationsSuccess,
     error: classificationsError,
     data: classifications = [],
-  } = useGetAllClassifications(openFileUploadDialog);
+  } = useGetAllClassifications(isOpen);
 
   const { control, handleSubmit, reset } = useForm<TUploadFileFormSchema>({
     resolver: zodResolver(uploadFileFormSchema),
@@ -80,17 +80,17 @@ export function FileUploadDialog({
   });
 
   useEffect(() => {
-    if (!openFileUploadDialog) {
+    if (!isOpen) {
       reset({ documents: [] });
     }
-  }, [openFileUploadDialog, reset]);
+  }, [isOpen, reset]);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "documents",
   });
 
-  const addFilesToQueue = (files: File[]) => {
+  const addFilesToQueue = useCallback((files: File[]) => {
     files.forEach((file) => {
       append({
         organization_unit_id: currentOrganizationUnitId!,
@@ -99,7 +99,14 @@ export function FileUploadDialog({
         file,
       });
     });
-  };
+  }, [append, currentOrganizationUnitId, classifications, currentParentFolderId]);
+
+  useEffect(() => {
+    if (isOpen && pendingFiles.length > 0 && isClassificationsSuccess) {
+      addFilesToQueue(pendingFiles);
+      clearPendingFiles();
+    }
+  }, [isOpen, pendingFiles, isClassificationsSuccess, clearPendingFiles, addFilesToQueue]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files ?? []);
@@ -158,7 +165,7 @@ export function FileUploadDialog({
         return;
       }
 
-      setOpenFileUploadDialog(false);
+      setIsOpen(false);
       setIsCheckingConflicts(false);
       await Promise.all(
         data.documents.map((document) => uploadSingleDocument(document)),
@@ -171,7 +178,7 @@ export function FileUploadDialog({
 
   const handleConfirmReplacement = async () => {
     setConflictData((prev) => ({ ...prev, open: false }));
-    setOpenFileUploadDialog(false);
+    setIsOpen(false);
 
     const { conflicts, pendingData } = conflictData;
     if (!pendingData) return;
@@ -197,7 +204,7 @@ export function FileUploadDialog({
 
   return (
     <>
-      <Dialog open={openFileUploadDialog} onOpenChange={setOpenFileUploadDialog}>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="w-150 max-w-150!">
           <form
             onSubmit={handleSubmit(onSubmit)}

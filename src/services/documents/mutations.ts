@@ -6,6 +6,14 @@ import { toast } from "sonner";
 import { TShareDocumentFormSchema } from "@/schemas/documents/share-document-form-schema";
 import { TChangeClassificationFormSchema } from "@/schemas/documents/change-classification-form-schema";
 
+export type TUploadDocumentResponse = {
+  item: {
+    id: string;
+    parent_item_id: string | null;
+    organization_unit_id: string;
+  };
+};
+
 export const useShareDocument = () => {
   return useMutation({
     mutationFn: ({
@@ -36,15 +44,30 @@ export const useUploadDocument = () => {
 
   return useMutation({
     mutationFn: uploadDocument,
-    onSuccess: () => {
-      if (currentParentFolderId) {
-        queryClient.invalidateQueries({
-          queryKey: ["folder", currentParentFolderId, "items"],
-        });
+    onSuccess: (data: TUploadDocumentResponse, variables) => {
+      if (variables.replace_item_id) {
+        const parent_item_id = data.item.parent_item_id;
+        const org_unit_id = data.item.organization_unit_id;
+
+        if (parent_item_id) {
+          queryClient.invalidateQueries({
+            queryKey: ["folder", parent_item_id, "items"],
+          });
+        } else if (org_unit_id) {
+          queryClient.invalidateQueries({
+            queryKey: ["organization-unit", org_unit_id, "items"],
+          });
+        }
       } else {
-        queryClient.invalidateQueries({
-          queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
-        });
+        if (currentParentFolderId) {
+          queryClient.invalidateQueries({
+            queryKey: ["folder", currentParentFolderId, "items"],
+          });
+        } else {
+          queryClient.invalidateQueries({
+            queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
+          });
+        }
       }
     },
   });

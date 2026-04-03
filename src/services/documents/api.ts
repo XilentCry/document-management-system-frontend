@@ -97,7 +97,8 @@ export async function uploadDocument(documentData: TSingleFile) {
 
   formData.append("file", documentData.file);
 
-  await apiClient.post("/api/documents", formData);
+  const { data } = await apiClient.post("/api/documents", formData);
+  return data;
 }
 
 export const getDocumentDetails = async (
