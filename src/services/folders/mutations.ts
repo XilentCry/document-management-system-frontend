@@ -23,9 +23,15 @@ export const useCreateFolder = () => {
         queryClient.invalidateQueries({
           queryKey: ["folder", currentParentFolderId, "items"],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["folder", currentParentFolderId, "subfolders"],
+        });
       } else {
         queryClient.invalidateQueries({
           queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["organization-unit", currentOrganizationUnitId, "folders"],
         });
       }
     },

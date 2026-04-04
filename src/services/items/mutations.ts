@@ -37,9 +37,15 @@ export const useRenameItem = (
           queryClient.invalidateQueries({
             queryKey: ["folder", currentParentFolderId, "items"],
           });
+          queryClient.invalidateQueries({
+            queryKey: ["folder", currentParentFolderId, "subfolders"],
+          });
         } else {
           queryClient.invalidateQueries({
             queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["organization-unit", currentOrganizationUnitId, "folders"],
           });
         }
       }
@@ -83,9 +89,15 @@ export const useMoveItem = () => {
         queryClient.invalidateQueries({
           queryKey: ["folder", currentParentFolderId, "items"],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["folder", currentParentFolderId, "subfolders"],
+        });
       } else {
         queryClient.invalidateQueries({
           queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["organization-unit", currentOrganizationUnitId, "folders"],
         });
       }
 
