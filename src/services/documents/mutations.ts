@@ -84,11 +84,17 @@ export const useUploadDocument = () => {
 };
 
 export const useDownloadDocument = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({ id, fileName }: { id: string; fileName: string }) =>
       downloadDocument(id, fileName),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       toast.success("Document downloaded successfully.");
+
+      queryClient.invalidateQueries({
+        queryKey: ["item", variables.id, "activities"],
+      });
     },
     onError: (error) => {
       toast.error(error.message);
