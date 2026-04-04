@@ -300,7 +300,7 @@ export function AdvancedSearchDialog({
                                 <ComboboxChipsInput
                                   readOnly={!!selectedUser}
                                   placeholder={
-                                    selectedUser ? "" : "Search user..."
+                                    selectedUser ? "" : "Enter name or email"
                                   }
                                 />
                               </ComboboxChips>
@@ -500,7 +500,7 @@ export function AdvancedSearchDialog({
                             <ComboboxChipsInput
                               readOnly={!!selectedSharedToUser}
                               placeholder={
-                                selectedSharedToUser ? "" : "Search user..."
+                                selectedSharedToUser ? "" : "Enter name or email"
                               }
                             />
                           </ComboboxChips>
