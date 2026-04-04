@@ -176,7 +176,7 @@ export function SharedDocument({
           </DropdownMenu>
         </ItemActions>
         <ItemFooter className="justify-center bg-background p-4 h-40 rounded-md">
-          <Image src="/pdf.svg" alt="PDF icon" width={64} height={64} className="size-16" />
+          <Image src="/pdf.svg" alt="PDF icon" width={64} height={64} className="size-16" priority />
         </ItemFooter>
       </Item>
 
