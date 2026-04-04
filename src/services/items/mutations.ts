@@ -47,6 +47,10 @@ export const useRenameItem = (
       queryClient.invalidateQueries({
         queryKey: [type, variables.id, "details"],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: ["item", variables.id, "activities"],
+      });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -72,7 +76,7 @@ export const useMoveItem = () => {
       id: string;
       moveData: TMoveItemFormSchema;
     }) => moveItem(id, moveData),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       toast.success(data.message);
 
       if (currentParentFolderId) {
@@ -84,6 +88,10 @@ export const useMoveItem = () => {
           queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
         });
       }
+
+      queryClient.invalidateQueries({
+        queryKey: ["item", variables.id, "activities"],
+      });
     },
     onError: (error) => {
       toast.error(error.message);

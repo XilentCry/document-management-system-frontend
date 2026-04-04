@@ -15,6 +15,8 @@ export type TUploadDocumentResponse = {
 };
 
 export const useShareDocument = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: ({
       id,
@@ -23,8 +25,12 @@ export const useShareDocument = () => {
       id: string;
       shareData: TShareDocumentFormSchema;
     }) => shareDocument(id, shareData),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       toast.success(data.message);
+
+      queryClient.invalidateQueries({
+        queryKey: ["item", variables.id, "activities"],
+      });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -69,6 +75,10 @@ export const useUploadDocument = () => {
           });
         }
       }
+
+      queryClient.invalidateQueries({
+        queryKey: ["item", data.item.id, "activities"],
+      });
     },
   });
 };
@@ -104,7 +114,7 @@ export const useUpdateClassification = () => {
       id: string;
       classificationData: TChangeClassificationFormSchema;
     }) => updateClassification(id, classificationData),
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       toast.success(data.message);
       if (currentParentFolderId) {
         queryClient.invalidateQueries({
@@ -115,6 +125,10 @@ export const useUpdateClassification = () => {
           queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
         });
       }
+
+      queryClient.invalidateQueries({
+        queryKey: ["item", variables.id, "activities"],
+      });
     },
     onError: (error) => {
       toast.error(error.message);
