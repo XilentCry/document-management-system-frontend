@@ -130,7 +130,7 @@ export function ItemTable({
                   {item.is_folder ? (
                     <Folder className="size-4" />
                   ) : (
-                    <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} className="size-4" />
+                    <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} />
                   )}
                   {item.name}
                 </div>

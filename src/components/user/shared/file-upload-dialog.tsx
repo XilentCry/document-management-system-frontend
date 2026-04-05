@@ -234,7 +234,7 @@ export function FileUploadDialog() {
                       {fields.map((field, index) => (
                         <Item key={field.id} size="xs">
                           <ItemMedia variant="icon">
-                            <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} className="size-4" />
+                            <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} />
                           </ItemMedia>
                           <ItemContent className="min-w-0">
                             <ItemTitle className="block w-auto truncate">

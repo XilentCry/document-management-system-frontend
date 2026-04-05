@@ -91,7 +91,7 @@ export function DocumentViewer({
                 <X />
               </Button>
               <div className="flex items-center gap-4">
-                <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} className="size-4" priority />
+                <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} priority />
                 <span className="text-sm leading-snug font-medium">
                   {documentName}
                 </span>

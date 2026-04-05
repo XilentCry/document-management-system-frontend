@@ -89,7 +89,7 @@ export function Rail() {
       <Item>
         <ItemMedia>
           {isDocumentSelected ? (
-            <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} className="size-4" />
+            <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} />
           ) : (
             <Folder className="size-4" />
           )}
