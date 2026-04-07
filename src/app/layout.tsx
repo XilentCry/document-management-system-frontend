@@ -30,12 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", inter.variable)} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-w-300`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <MobileBlocker />
-        <div className="hidden md:contents">
-          <Providers>{children}</Providers>
-        </div>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
