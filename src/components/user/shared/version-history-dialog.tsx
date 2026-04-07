@@ -61,7 +61,7 @@ export function VersionHistoryDialog({
                                     <TableRow>
                                         <TableHead>Version</TableHead>
                                         <TableHead>Created by</TableHead>
-                                        <TableHead>Modified</TableHead>
+                                        <TableHead>Date modified</TableHead>
                                         <TableHead>File size</TableHead>
                                     </TableRow>
                                 </TableHeader>

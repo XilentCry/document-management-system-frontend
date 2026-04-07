@@ -44,7 +44,7 @@ export function UserTable({ users }: { users: TUser[] }) {
           <TableHead>Role</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Created</TableHead>
-          <TableHead>Modified</TableHead>
+          <TableHead>Date modified</TableHead>
           <TableHead></TableHead>
         </TableRow>
       </TableHeader>

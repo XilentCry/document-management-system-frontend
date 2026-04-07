@@ -49,7 +49,7 @@ export function ItemDetails({
         </p>
       </div>
       <div>
-        <p className="font-medium">Modified</p>
+        <p className="font-medium">Date modified</p>
         <p>{item.updated_at}</p>
       </div>
       <div>
