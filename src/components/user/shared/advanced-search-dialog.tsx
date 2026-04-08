@@ -182,7 +182,7 @@ export function AdvancedSearchDialog({
                                 Folder
                               </SelectItem>
                               <SelectItem value="file">
-                                <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} />
+                                <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
                                 File
                               </SelectItem>
                             </SelectGroup>

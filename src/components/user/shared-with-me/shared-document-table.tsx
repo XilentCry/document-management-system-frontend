@@ -105,7 +105,7 @@ export function SharedDocumentTable({
             >
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <Image src="/pdf.svg" alt="PDF icon" width={16} height={16} />
+                  <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
                   {sharedDocument.item.name}
                 </div>
               </TableCell>
