@@ -6,7 +6,7 @@ import { TItem } from "@/types/item";
 export function ItemDetails({
   item,
 }: {
-  item: Pick<TItem, "id" | "name" | "type" | "owner" | "created_at" | "updated_at"> & {
+  item: Pick<TItem, "id" | "name" | "type" | "owner" | "created_at" | "updated_at" | "updated_by"> & {
     classification?: string;
     current_version?: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
       item_id: string;
@@ -14,6 +14,10 @@ export function ItemDetails({
   };
 }) {
   const userId = useUserStore((state) => state.user.userId);
+
+  const updatedByLabel = userId === item.updated_by.id
+    ? "me"
+    : `${item.updated_by.first_name} ${item.updated_by.middle_name ?? ""} ${item.updated_by.last_name}`;
 
   return (
     <>
@@ -50,7 +54,9 @@ export function ItemDetails({
       </div>
       <div>
         <p className="font-medium">Date modified</p>
-        <p>{item.updated_at}</p>
+        <p>
+          {item.updated_at} by {updatedByLabel}
+        </p>
       </div>
       <div>
         <p className="font-medium">Date created</p>
@@ -59,3 +65,4 @@ export function ItemDetails({
     </>
   );
 }
+

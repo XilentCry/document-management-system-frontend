@@ -1,3 +1,4 @@
+import { TBasicUser } from "./basic-user";
 import { TCurrentUser } from "./current-user";
 import { TSharePermission } from "./share-permission";
 
@@ -20,4 +21,5 @@ export type TItem = {
   share_permissions: TSharePermission[] | null;
   created_at?: string;
   updated_at: string;
+  updated_by: TBasicUser;
 };

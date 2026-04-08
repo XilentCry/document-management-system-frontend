@@ -50,7 +50,7 @@ export const getFolderSubfolders = async ({
 export const getFolderDetails = async (
   id: string | null,
 ): Promise<
-  Pick<TItem, "id" | "name" | "type" | "owner" | "created_at" | "updated_at">
+  Pick<TItem, "id" | "name" | "type" | "owner" | "created_at" | "updated_at" | "updated_by">
 > => {
   const { data } = await apiClient.get(`/api/folders/${id}/details`);
   return data.folderDetails;

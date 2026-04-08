@@ -13,7 +13,7 @@ export function PublicDocumentViewerRail({
 }: {
   document: Pick<
     TItem,
-    "id" | "name" | "type" | "owner" | "created_at" | "updated_at"
+    "id" | "name" | "type" | "owner" | "created_at" | "updated_at" | "updated_by"
   > & {
     classification: string;
     current_version: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
