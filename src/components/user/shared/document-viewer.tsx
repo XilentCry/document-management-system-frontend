@@ -18,6 +18,7 @@ import {
   EllipsisVertical,
   FolderInput,
   Info,
+  Link2,
   PencilLine,
   UserRoundPlus,
   X
@@ -28,6 +29,7 @@ import { MoveItemDialog } from "./move-item-dialog";
 import { PdfDisplay } from "./pdf-display";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { ShareDocumentDialog } from "./share-document-dialog";
+import { useCopyLink } from "@/hooks/use-copy-link";
 
 export function DocumentViewer({
   openDocumentViewer,
@@ -49,6 +51,8 @@ export function DocumentViewer({
 
   const documentDetailsQuery = useGetDocumentDetails(document.id, openDocumentViewer);
   const documentName = documentDetailsQuery.data?.name ?? document.name;
+
+  const { copyLink } = useCopyLink();
 
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
@@ -135,7 +139,10 @@ export function DocumentViewer({
                       <UserRoundPlus />
                       Share
                     </Button>
-                  ) : document.classification === "public" ? null : null}
+                  ) : document.classification === "public" ? <Button onClick={() => copyLink(document.id)}>
+                    <Link2 />
+                    Copy Link
+                  </Button> : null}
                 </>
               )}
             </div>

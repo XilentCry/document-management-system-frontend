@@ -18,7 +18,7 @@ export function DiscardChangesAlertDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Discard unsaved changes?</AlertDialogTitle>
           <AlertDialogDescription>
-            You have selected users that haven't been shared yet. Are you sure you want to discard these changes?
+            You have unsaved selections. Are you sure you want to discard them?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
