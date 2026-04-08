@@ -40,7 +40,7 @@ export function OrganizationUnitTable({
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Parent</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead>Date created</TableHead>
               <TableHead>Date modified</TableHead>
               <TableHead></TableHead>
             </TableRow>

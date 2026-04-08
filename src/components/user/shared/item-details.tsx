@@ -53,7 +53,7 @@ export function ItemDetails({
         <p>{item.updated_at}</p>
       </div>
       <div>
-        <p className="font-medium">Created</p>
+        <p className="font-medium">Date created</p>
         <p>{item.created_at}</p>
       </div>
     </>

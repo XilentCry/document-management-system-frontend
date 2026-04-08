@@ -171,11 +171,11 @@ export function UserDetails({
           </CardContent>
           <CardFooter className="gap-4 border-t">
             <div className="flex-1">
-              <p className="font-medium">Created at</p>
+              <p className="font-medium">Date created</p>
               <p>{user.created_at}</p>
             </div>
             <div className="flex-1">
-              <p className="font-medium">Updated at</p>
+              <p className="font-medium">Date modified</p>
               <p>{user.updated_at}</p>
             </div>
           </CardFooter>
