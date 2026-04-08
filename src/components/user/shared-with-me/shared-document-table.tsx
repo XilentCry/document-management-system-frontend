@@ -85,7 +85,7 @@ export function SharedDocumentTable({
             <TableRow key={groupData.group} className="hover:bg-transparent border-none">
               <TableCell
                 colSpan={openRail ? 3 : 4}
-                className="font-medium text-sm py-2"
+                className="font-medium text-sm"
               >
                 {groupData.group}
               </TableCell>
