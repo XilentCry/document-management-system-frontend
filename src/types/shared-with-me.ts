@@ -8,4 +8,5 @@ export type TSharedWithMe = {
   share_permissions: TSharePermission[];
   item: TItem;
   created_at: string;
+  raw_created_at: string;
 };
