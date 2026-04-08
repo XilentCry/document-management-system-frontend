@@ -2,8 +2,8 @@
 
 import { EmailVerificationStatus } from "@/components/user/auth/email-verification-status";
 import { useResendVerificationEmail } from "@/services/auth/mutations";
-import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import { Header } from "./header";
 
 export function VerifyEmail() {
   const searchParams = useSearchParams();
@@ -17,14 +17,9 @@ export function VerifyEmail() {
   };
 
   return (
-    <div className="h-svh flex items-center justify-center">
-      <div>
-        <div className="flex flex-col items-center gap-2 text-center">
-          <Image src="/norsu.png" alt="NORSU" width={80} height={80} />
-          <span className="text-2xl font-bold">
-            NORSU Document Management System
-          </span>
-        </div>
+    <div className="flex flex-col min-h-svh">
+      <Header />
+      <div className="flex-1 flex items-center justify-center">
         {status === "verification_successful" ? (
           <EmailVerificationStatus
             title="Email verified successfully"

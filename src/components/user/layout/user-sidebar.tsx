@@ -50,7 +50,12 @@ export function UserSidebar() {
             <SidebarMenuItem>
               <div className="flex items-center gap-2">
                 <Image src="/norsu.png" alt="NORSU" width={32} height={32} />
-                <span className="text-2xl font-bold">DMS</span>
+                <div>
+                  <div className="flex flex-col">
+                    <span className="font-medium">DMS</span>
+                    <span className="text-xs">Negros Oriental State University</span>
+                  </div>
+                </div>
               </div>
             </SidebarMenuItem>
           </SidebarMenu>
