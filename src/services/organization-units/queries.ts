@@ -225,7 +225,7 @@ export const useSearchTopOrganizationUnitItems = (
         filterOwnerId,
         filterSharedTo,
       }),
-    enabled: !!id && (!!searchTerm || !!filterType || !!filterClassification || !!filterOwner || !!filterSharedTo),
+    enabled: !!id && !!searchTerm,
     staleTime: 0,
   });
 
