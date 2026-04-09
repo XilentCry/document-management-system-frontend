@@ -200,7 +200,7 @@ export function AdvancedSearchDialog({
             <Field>
               <div className="flex items-center gap-4">
                 <FieldLabel className="w-30">Owner</FieldLabel>
-                <div className="flex-1 flex items-center gap-4">
+                <div className="flex-1 flex items-start gap-4">
                   <div className="flex-1 flex flex-col gap-1">
                     <div className="flex-1">
                       <Controller
