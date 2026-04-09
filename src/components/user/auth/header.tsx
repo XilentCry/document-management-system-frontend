@@ -9,7 +9,7 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="h-14 border-b flex items-center justify-between px-4">
+    <header className="sticky top-0 bg-background/90 backdrop-blur-sm h-14 border-b flex items-center justify-between px-4">
       <Link href="/" className="flex items-center gap-2 cursor-pointer">
         <Image src="/norsu.png" alt="NORSU" width={32} height={32} />
         <div>
