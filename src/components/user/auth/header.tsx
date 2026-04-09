@@ -10,7 +10,7 @@ export function Header() {
 
   return (
     <header className="h-14 border-b flex items-center justify-between px-4">
-      <div className="flex items-center gap-2">
+      <Link href="/" className="flex items-center gap-2 cursor-pointer">
         <Image src="/norsu.png" alt="NORSU" width={32} height={32} />
         <div>
           <div className="flex flex-col">
@@ -18,15 +18,16 @@ export function Header() {
             <span className="text-xs">Negros Oriental State University</span>
           </div>
         </div>
+      </Link>
+      <div className="flex items-center gap-2">
+        <Button
+          variant={pathname === "/about-team" ? "secondary" : "ghost"}
+          render={<Link href="/about-team" />}
+          nativeButton={false}
+        >
+          About Team
+        </Button>
       </div>
-      <Button
-        variant="link"
-        className={`${pathname !== "/about-team" ? "text-primary-foreground" : ""}`}
-        render={<Link href="/about-team" />}
-        nativeButton={false}
-      >
-        About Team
-      </Button>
     </header>
   );
 }
