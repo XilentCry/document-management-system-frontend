@@ -19,16 +19,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Item,
+  ItemContent,
+  ItemTitle
+} from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
 import { useUpdateStatus } from "@/services/users/mutations";
 import { useGetStatuses } from "@/services/users/queries";
+import { useUserStore } from "@/stores/user-store";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
-import { useUserStore } from "@/stores/user-store";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-
 import { UserAuditLogs } from "./user-audit-logs";
 
 export function UserDetails({
@@ -158,11 +162,12 @@ export function UserDetails({
               <div className="flex flex-col gap-1">
                 <p className="font-medium">Status</p>
                 <Badge
-                  className={`${user.status === "pending"
-                    ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
-                    : user.status === "approved" &&
-                    "bg-green-500/15 dark:bg-green-500/10 text-green-500"
-                    }`}
+                  className={`${
+                    user.status === "pending"
+                      ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
+                      : user.status === "approved" &&
+                        "bg-green-500/15 dark:bg-green-500/10 text-green-500"
+                  }`}
                 >
                   {user.status}
                 </Badge>
@@ -186,9 +191,13 @@ export function UserDetails({
               <CardTitle>Offices/Units</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-2">
                 {user.organizationUnits.map((organizationUnit) => (
-                  <p key={organizationUnit.id}>{organizationUnit.name}</p>
+                  <Item key={organizationUnit.id} variant="muted">
+                    <ItemContent>
+                      <ItemTitle>{organizationUnit.name}</ItemTitle>
+                    </ItemContent>
+                  </Item>
                 ))}
               </div>
             </CardContent>
