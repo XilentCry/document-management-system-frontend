@@ -75,7 +75,7 @@ export function Folder({
               render={
                 <Button
                   variant="outline"
-                  size="icon-xs"
+                  size="icon-sm"
                   className="border-none bg-transparent hover:bg-input/50"
                 />
               }

@@ -46,6 +46,7 @@ export function FileUploadDialog() {
   const isOpen = useUploadDialogStore((state) => state.isOpen);
   const setIsOpen = useUploadDialogStore((state) => state.setIsOpen);
   const pendingFiles = useUploadDialogStore((state) => state.pendingFiles);
+  const replaceItemId = useUploadDialogStore((state) => state.replaceItemId);
   const clearPendingFiles = useUploadDialogStore((state) => state.clearPendingFiles);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -160,14 +161,31 @@ export function FileUploadDialog() {
         file_names: fileNames,
       });
 
-      if (res.conflicts && res.conflicts.length > 0) {
-        setConflictData({ open: true, conflicts: res.conflicts, pendingData: data });
+      let actualConflicts = res.conflicts || [];
+      if (replaceItemId) {
+        actualConflicts = actualConflicts.filter(c => c.id !== replaceItemId);
+      }
+
+      if (actualConflicts.length > 0) {
+        setConflictData({ open: true, conflicts: actualConflicts, pendingData: data });
         setIsCheckingConflicts(false);
         return;
       }
 
       setIsOpen(false);
       setIsCheckingConflicts(false);
+
+      if (replaceItemId) {
+        const docsWithReplaceId = data.documents.map((doc) => ({
+          ...doc,
+          replace_item_id: replaceItemId,
+        }));
+        await Promise.all(
+          docsWithReplaceId.map((document) => uploadSingleDocument(document)),
+        );
+        return;
+      }
+
       await Promise.all(
         data.documents.map((document) => uploadSingleDocument(document)),
       );
@@ -194,7 +212,7 @@ export function FileUploadDialog() {
             return null;
           }
         }
-        return doc;
+        return { ...doc, replace_item_id: replaceItemId || doc.replace_item_id };
       })
       .filter(Boolean) as TSingleFile[];
 
@@ -212,7 +230,7 @@ export function FileUploadDialog() {
             className="flex flex-col gap-6 min-w-0"
           >
             <DialogHeader>
-              <DialogTitle>Upload file</DialogTitle>
+              <DialogTitle>{replaceItemId ? 'Upload New Version' : 'Upload file'}</DialogTitle>
             </DialogHeader>
             <div className="max-h-96 flex flex-col gap-6">
               <div

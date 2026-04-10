@@ -45,6 +45,21 @@ export const downloadDocument = async (id: string, fileName: string) => {
   URL.revokeObjectURL(url);
 };
 
+export const downloadDocumentVersion = async (versionId: string, fileName: string) => {
+  const { data } = await apiClient.get(`/api/documents/versions/${versionId}/download`, {
+    responseType: "blob",
+  });
+
+  const url = URL.createObjectURL(data);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
 export const viewDocument = async (id: string): Promise<string> => {
   const { data } = await apiClient.get(`/api/documents/${id}/view`, {
     responseType: "blob",

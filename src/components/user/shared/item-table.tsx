@@ -43,7 +43,7 @@ import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { ShareDocumentDialog } from "./share-document-dialog";
 import { DocumentViewer } from "./document-viewer";
-import { VersionHistoryDialog } from "./version-history-dialog";
+import { VersionHistoryDialog } from "./manage-versions-dialog";
 import { useCopyLink } from "@/hooks/use-copy-link";
 import { ChangeClassificationDialog } from "./change-classification-dialog";
 
@@ -286,7 +286,7 @@ export function ItemTable({
                               }}
                             >
                               <History />
-                              Version history
+                              Manage versions
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuSubContent>

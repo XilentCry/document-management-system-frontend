@@ -40,7 +40,7 @@ import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { ShareDocumentDialog } from "./share-document-dialog";
 import { useCopyLink } from "@/hooks/use-copy-link";
-import { VersionHistoryDialog } from "./version-history-dialog";
+import { VersionHistoryDialog } from "./manage-versions-dialog";
 import { ChangeClassificationDialog } from "./change-classification-dialog";
 
 export function Document({
@@ -103,7 +103,7 @@ export function Document({
               render={
                 <Button
                   variant="outline"
-                  size="icon-xs"
+                  size="icon-sm"
                   className="border-none bg-transparent hover:bg-input/50"
                 />
               }
@@ -179,7 +179,7 @@ export function Document({
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setOpenVersionHistoryDialog(true)}>
                       <History />
-                      Version history
+                      Manage versions
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>

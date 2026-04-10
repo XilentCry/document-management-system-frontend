@@ -1,7 +1,7 @@
 import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { downloadDocument, shareDocument, uploadDocument, updateClassification } from "./api";
+import { downloadDocument, downloadDocumentVersion, shareDocument, uploadDocument, updateClassification } from "./api";
 import { toast } from "sonner";
 import { TShareDocumentFormSchema } from "@/schemas/documents/share-document-form-schema";
 import { TChangeClassificationFormSchema } from "@/schemas/documents/change-classification-form-schema";
@@ -79,6 +79,9 @@ export const useUploadDocument = () => {
       queryClient.invalidateQueries({
         queryKey: ["item", data.item.id, "activities"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["document", data.item.id, "versions"],
+      });
     },
   });
 };
@@ -95,6 +98,19 @@ export const useDownloadDocument = () => {
       queryClient.invalidateQueries({
         queryKey: ["item", variables.id, "activities"],
       });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useDownloadDocumentVersion = () => {
+  return useMutation({
+    mutationFn: ({ versionId, fileName }: { versionId: string; fileName: string }) =>
+      downloadDocumentVersion(versionId, fileName),
+    onSuccess: () => {
+      toast.success("Document version downloaded successfully.");
     },
     onError: (error) => {
       toast.error(error.message);
