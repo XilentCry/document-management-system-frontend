@@ -17,7 +17,7 @@ export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Occurred</TableHead>
+          <TableHead>Date occurred</TableHead>
           <TableHead>Actor</TableHead>
           <TableHead>Actions</TableHead>
           <TableHead>Subject</TableHead>
