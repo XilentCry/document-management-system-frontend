@@ -69,66 +69,64 @@ export function VersionHistoryDialog({
         <DialogHeader>
           <DialogTitle>Manage versions</DialogTitle>
         </DialogHeader>
-        <div className="h-96 flex flex-col">
+        <div className="h-96 flex flex-col gap-4">
+          {isOwner && (
+            <Button
+              variant="outline"
+              className="w-fit"
+              onClick={handleUploadNewVersion}
+            >
+              <Upload />
+              Upload new version
+            </Button>
+          )}
           <ScrollArea className="flex-1 flex flex-col min-h-0">
             {isLoading ? (
               <div className="h-full flex items-center justify-center">
                 <Spinner className="text-primary size-9" />
               </div>
             ) : (
-              <div className="flex flex-col gap-4">
-                {isOwner && (
-                  <Button
-                    variant="outline"
-                    className="w-fit"
-                    onClick={handleUploadNewVersion}
-                  >
-                    <Upload />
-                    Upload new version
-                  </Button>
-                )}
-                <div className="flex flex-col">
-                  {versions.map((version) => (
-                    <Item variant="outline" size="xs" className="rounded-none border-t-0 border-x-0" key={version.id}>
-                      <ItemMedia variant="icon">
-                        <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
-                      </ItemMedia>
-                      <ItemContent className="min-w-0">
-                        <ItemTitle className="block w-full truncate">
-                          {version.version_number === maxVersionNumber ? "Current version" : `Version ${version.version_number}`}
-                          &nbsp;&nbsp;
-                          {version.file_name}
-                        </ItemTitle>
-                        <ItemDescription className="truncate">
-                          {version.created_at}&nbsp;&nbsp;{version.created_by.first_name} {version.created_by.middle_name} {version.created_by.last_name}
-                        </ItemDescription>
-                      </ItemContent>
-                      {isOwner && (
-                        <ItemActions>
-                          <DropdownMenu modal={false}>
-                            <DropdownMenuTrigger
-                              render={
-                                <Button
-                                  variant="outline"
-                                  size="icon-sm"
-                                  className="border-none bg-transparent hover:bg-input/50"
-                                />
-                              }
-                            >
-                              <EllipsisVertical className="size-4" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-72">
-                              <DropdownMenuItem onClick={() => handleDownload(version.id)}>
-                                <Download />
-                                Download
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </ItemActions>
-                      )}
-                    </Item>
-                  ))}
-                </div>
+              <div className="flex flex-col">
+                {versions.map((version) => (
+                  <Item variant="outline" size="xs" className="rounded-none border-t-0 border-x-0" key={version.id}>
+                    <ItemMedia variant="icon">
+                      <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
+                    </ItemMedia>
+                    <ItemContent className="min-w-0">
+                      <ItemTitle className="block w-full truncate">
+                        {version.version_number === maxVersionNumber ? "Current version" : `Version ${version.version_number}`}
+                        &nbsp;&nbsp;
+                        {version.file_name}
+                      </ItemTitle>
+                      <ItemDescription className="truncate">
+                        {version.created_at}&nbsp;&nbsp;{version.created_by.first_name} {version.created_by.middle_name} {version.created_by.last_name}
+                      </ItemDescription>
+                    </ItemContent>
+                    {isOwner && (
+                      <ItemActions>
+                        <DropdownMenu modal={false}>
+                          <DropdownMenuTrigger
+                            render={
+                              <Button
+                                variant="outline"
+                                size="icon-sm"
+                                className="border-none bg-transparent hover:bg-input/50"
+                              />
+                            }
+                          >
+                            <EllipsisVertical className="size-4" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent className="w-72">
+                            <DropdownMenuItem onClick={() => handleDownload(version.id)}>
+                              <Download />
+                              Download
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </ItemActions>
+                    )}
+                  </Item>
+                ))}
               </div>
             )}
             {isError && error && (
