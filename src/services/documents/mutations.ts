@@ -53,15 +53,15 @@ export const useUploadDocument = () => {
     onSuccess: (data: TUploadDocumentResponse, variables) => {
       if (variables.replace_item_id) {
         const parent_item_id = data.item.parent_item_id;
-        const org_unit_id = data.item.organization_unit_id;
+        const organization_unit_id = data.item.organization_unit_id;
 
         if (parent_item_id) {
           queryClient.invalidateQueries({
             queryKey: ["folder", parent_item_id, "items"],
           });
-        } else if (org_unit_id) {
+        } else if (organization_unit_id) {
           queryClient.invalidateQueries({
-            queryKey: ["organization-unit", org_unit_id, "items"],
+            queryKey: ["organization-unit", organization_unit_id, "items"],
           });
         }
       } else {
