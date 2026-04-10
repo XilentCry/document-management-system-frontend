@@ -34,6 +34,7 @@ export function FileUploadConflictDialog({
   setConflictData,
   handleConfirmReplacement,
 }: FileUploadConflictDialogProps) {
+
   return (
     <AlertDialog
       open={conflictData.open}

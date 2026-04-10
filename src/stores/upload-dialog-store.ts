@@ -15,7 +15,10 @@ export const useUploadDialogStore = create<UploadDialogStore>((set) => ({
   isOpen: false,
   pendingFiles: [],
   replaceItemId: null,
-  setIsOpen: (isOpen) => set({ isOpen }),
+  setIsOpen: (isOpen) => set((state) => {
+    if (!isOpen) return { isOpen: false, replaceItemId: null, pendingFiles: [] };
+    return { isOpen: true, replaceItemId: null, pendingFiles: [] };
+  }),
   openWithFiles: (files) => set({ isOpen: true, pendingFiles: files, replaceItemId: null }),
   openForReplacement: (itemId) => set({ isOpen: true, replaceItemId: itemId, pendingFiles: [] }),
   clearPendingFiles: () => set({ pendingFiles: [] }),
