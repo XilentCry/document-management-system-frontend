@@ -17,7 +17,7 @@ import { useGetAllSharedWithMe } from "@/services/user/queries";
 import { useViewModeStore } from "@/stores/view-mode-store";
 import { Files, LayoutGrid, List } from "lucide-react";
 
-export default function SharedWithMe() {
+export default function SharedWithMePage() {
   const viewMode = useViewModeStore((state) => state.viewMode);
   const setViewMode = useViewModeStore((state) => state.setViewMode);
 

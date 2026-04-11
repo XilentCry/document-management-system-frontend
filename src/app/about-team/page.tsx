@@ -3,7 +3,7 @@ import { GoBackButton } from "@/components/user/auth/go-back-button";
 import { Header } from "@/components/user/auth/header";
 import Image from "next/image";
 
-export default function AboutTeam() {
+export default function AboutTeamPage() {
   const members = [
     {
       name: "Jay Vallespin",
