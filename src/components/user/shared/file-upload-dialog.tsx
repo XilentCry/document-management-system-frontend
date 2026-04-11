@@ -65,7 +65,7 @@ export function FileUploadDialog() {
   const [isCheckingConflicts, setIsCheckingConflicts] = useState(false);
   const [conflictData, setConflictData] = useState<{
     open: boolean;
-    conflicts: { id: string; name: string; can_replace: boolean }[];
+    conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
     pendingData: TUploadFileFormSchema | null;
   }>({ open: false, conflicts: [], pendingData: null });
 
@@ -129,7 +129,7 @@ export function FileUploadDialog() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (replaceItemId && fields.length >= 1) return;
 
     let newFiles = Array.from(e.dataTransfer.files);
@@ -138,7 +138,7 @@ export function FileUploadDialog() {
       if (remainingSlots <= 0) return;
       newFiles = newFiles.slice(0, remainingSlots);
     }
-    
+
     addFilesToQueue(newFiles);
   };
 
@@ -249,11 +249,10 @@ export function FileUploadDialog() {
             </DialogHeader>
             <div className="max-h-96 flex flex-col gap-6">
               <div
-                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                  replaceItemId && fields.length >= 1 
-                    ? "opacity-50 cursor-not-allowed border-muted bg-muted/20" 
-                    : "hover:bg-muted/50 cursor-pointer"
-                }`}
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${replaceItemId && fields.length >= 1
+                  ? "opacity-50 cursor-not-allowed border-muted bg-muted/20"
+                  : "hover:bg-muted/50 cursor-pointer"
+                  }`}
                 onClick={() => {
                   if (replaceItemId && fields.length >= 1) return;
                   fileInputRef.current?.click();
@@ -268,8 +267,8 @@ export function FileUploadDialog() {
               >
                 <UploadIcon className="mx-auto size-12 text-muted-foreground mb-4" />
                 <p className="text-sm font-medium mb-1">
-                  {replaceItemId && fields.length >= 1 
-                    ? "Upload limit reached" 
+                  {replaceItemId && fields.length >= 1
+                    ? "Upload limit reached"
                     : "Click to select or drag & drop"}
                 </p>
                 <p className="text-xs text-muted-foreground">

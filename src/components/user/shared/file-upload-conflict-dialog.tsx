@@ -16,13 +16,13 @@ import { Dispatch, SetStateAction } from "react";
 interface FileUploadConflictDialogProps {
   conflictData: {
     open: boolean;
-    conflicts: { id: string; name: string; can_replace: boolean }[];
+    conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
     pendingData: TUploadFileFormSchema | null;
   };
   setConflictData: Dispatch<
     SetStateAction<{
       open: boolean;
-      conflicts: { id: string; name: string; can_replace: boolean }[];
+      conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
       pendingData: TUploadFileFormSchema | null;
     }>
   >;
@@ -51,6 +51,22 @@ export function FileUploadConflictDialog({
               : "One or more files already exist. Do you want to replace them?"}
           </AlertDialogDescription>
         </AlertDialogHeader>
+        {conflictData.conflicts.some((c) => c.can_replace && c.versions_count >= 3) && (
+          <Alert variant="destructive">
+            <AlertCircle />
+            <AlertTitle>Version Limit Reached</AlertTitle>
+            <AlertDescription>
+              <p className="mb-2">The following files already have the maximum of 3 versions. If you continue, their oldest versions will be automatically deleted:</p>
+              <ul className="list-disc pl-5">
+                {conflictData.conflicts
+                  .filter((c) => c.can_replace && c.versions_count >= 3)
+                  .map((c) => (
+                    <li key={c.id}>{c.name}</li>
+                  ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        )}
         {conflictData.conflicts.some((c) => !c.can_replace) && (
           <Alert variant="destructive">
             <AlertCircle />

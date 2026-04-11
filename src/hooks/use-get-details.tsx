@@ -69,6 +69,14 @@ export function useGetDetails() {
           </span>
         );
 
+      case "document.version_deleted_limit":
+        return (
+          <span>
+            Location:{" "}
+            <span className="text-primary">{auditLog.properties.parent}</span>
+          </span>
+        );
+
       case "document.view":
         return (
           <span>

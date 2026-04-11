@@ -15,13 +15,13 @@ import { Dispatch, SetStateAction } from "react";
 interface FileUploadVersionConflictDialogProps {
   conflictData: {
     open: boolean;
-    conflicts: { id: string; name: string; can_replace: boolean }[];
+    conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
     pendingData: TUploadFileFormSchema | null;
   };
   setConflictData: Dispatch<
     SetStateAction<{
       open: boolean;
-      conflicts: { id: string; name: string; can_replace: boolean }[];
+      conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
       pendingData: TUploadFileFormSchema | null;
     }>
   >;
@@ -56,7 +56,7 @@ export function FileUploadVersionConflictDialog({
                 <li key={c.id}>{c.name}</li>
               ))}
             </ul>
-            <p className="mt-2">Please rename the file(s) before uploading, as document names must be unique within the organization unit.</p>
+            <p className="mt-2">Please rename the file before uploading, as document names must be unique within the organization unit.</p>
           </AlertDescription>
         </Alert>
         <AlertDialogFooter>

@@ -82,7 +82,7 @@ export const checkConflicts = async (conflictData: {
   organization_unit_id: string;
   file_names: string[];
 }): Promise<{
-  conflicts: { id: string; name: string; can_replace: boolean }[];
+  conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
 }> => {
   const { data } = await apiClient.post(
     "/api/documents/check-conflicts",

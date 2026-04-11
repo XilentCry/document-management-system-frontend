@@ -128,6 +128,13 @@ export type TClassificationChangedAuditLog = TBaseAuditLog & {
   };
 };
 
+export type TDocumentVersionDeletedLimitAuditLog = TBaseAuditLog & {
+  action: "document.version_deleted_limit";
+  properties: TNamedInParentProps & {
+    version_number: number;
+  };
+};
+
 export type TAuditLog =
   | TUploadedAuditLog
   | TCreatedAuditLog
@@ -142,4 +149,5 @@ export type TAuditLog =
   | TAdminReinvitedAuditLog
   | TOrganizationUnitCreatedAuditLog
   | TOrganizationUnitUpdatedAuditLog
-  | TClassificationChangedAuditLog;
+  | TClassificationChangedAuditLog
+  | TDocumentVersionDeletedLimitAuditLog;
