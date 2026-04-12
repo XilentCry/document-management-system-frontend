@@ -13,6 +13,7 @@ import {
 } from "@/schemas/folders/new-folder-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateFolder } from "@/services/folders/mutations";
+import { useCurrentUser } from "@/services/user/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useFolderStore } from "@/stores/folder-store";
 import { Field, FieldError, FieldGroup, FieldLabel } from "../../ui/field";
@@ -28,9 +29,11 @@ export default function NewFolderDialog({
   openNewFolderDialog: boolean;
   setOpenNewFolderDialog: (openNewFolderDialog: boolean) => void;
 }) {
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
   const currentParentFolderId = useFolderStore(
     (state) => state.currentParentFolderId,
   );

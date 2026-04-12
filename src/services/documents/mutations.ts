@@ -1,5 +1,6 @@
 import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { downloadDocument, downloadDocumentVersion, shareDocument, uploadDocument, updateClassification } from "./api";
 import { toast } from "sonner";
@@ -39,9 +40,11 @@ export const useShareDocument = () => {
 };
 
 export const useUploadDocument = () => {
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
   const currentParentFolderId = useFolderStore(
     (state) => state.currentParentFolderId,
   );
@@ -119,9 +122,11 @@ export const useDownloadDocumentVersion = () => {
 };
 
 export const useUpdateClassification = () => {
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
   const currentParentFolderId = useFolderStore(
     (state) => state.currentParentFolderId,
   );

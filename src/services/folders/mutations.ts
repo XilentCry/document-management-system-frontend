@@ -1,13 +1,16 @@
 import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createFolder } from "./api";
 
 export const useCreateFolder = () => {
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
   const currentParentFolderId = useFolderStore(
     (state) => state.currentParentFolderId,
   );

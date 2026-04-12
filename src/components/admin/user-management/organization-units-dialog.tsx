@@ -15,12 +15,12 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { filterTree } from "@/lib/filter-tree";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
 import { TOrganizationUnitTree } from "@/types/organization-unit-tree";
-import { filterTree } from "@/lib/filter-tree";
 import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
-import { useController, useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { Spinner } from "../../ui/spinner";
 import { OrganizationUnitTreeNode } from "./organization-unit-tree-node";
 
@@ -48,29 +48,31 @@ export function OrganizationUnitsDialog({
   isError: boolean;
   error: Error | null;
 }) {
-  const { control } = useFormContext<TUpdateUserFormSchema>();
+  const { control, setValue } = useFormContext<TUpdateUserFormSchema>();
 
-  const {
-    field: { value: selectedIds, onChange },
-  } = useController({
+  const selectedIds = useWatch({
     name: "organization_unit_ids",
     control,
-  });
+  }) ?? [];
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  if (!selectedIds) return null;
-
   const toggleOrganizationUnit = (id: string) => {
-    onChange(
+    setValue(
+      "organization_unit_ids",
       selectedIds.includes(id)
         ? selectedIds.filter((selectedId) => selectedId !== id)
         : [...selectedIds, id],
+      { shouldDirty: true, shouldValidate: true }
     );
   };
 
   const removeOrganizationUnit = (id: string) => {
-    onChange(selectedIds.filter((selectedId) => selectedId !== id));
+    setValue(
+      "organization_unit_ids",
+      selectedIds.filter((selectedId) => selectedId !== id),
+      { shouldDirty: true, shouldValidate: true }
+    );
   };
 
   const flatOrganizationUnits = flattenOrganizationUnits(organizationUnits);
@@ -82,7 +84,7 @@ export function OrganizationUnitsDialog({
 
   return (
     <>
-      {selectedOrganizationUnits.length > 0 && (
+      {selectedOrganizationUnits.length > 0 ? (
         <Card>
           <CardContent>
             <ScrollArea className="max-h-60 flex flex-col">
@@ -106,7 +108,7 @@ export function OrganizationUnitsDialog({
             </ScrollArea>
           </CardContent>
         </Card>
-      )}
+      ) : null}
 
       <Dialog>
         <DialogTrigger render={<Button variant="outline" />}>

@@ -1,6 +1,7 @@
 import { TRenameItemFormSchema } from "@/schemas/items/rename-item-form-schema";
 import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { moveItem, renameItem } from "./api";
 import { toast } from "sonner";
@@ -10,9 +11,11 @@ export const useRenameItem = (
   type: "folder" | "document",
   isInSharedWithMe: boolean,
 ) => {
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
   const currentParentFolderId = useFolderStore(
     (state) => state.currentParentFolderId,
   );
@@ -65,9 +68,11 @@ export const useRenameItem = (
 };
 
 export const useMoveItem = () => {
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
   const currentParentFolderId = useFolderStore(
     (state) => state.currentParentFolderId,
   );

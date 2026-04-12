@@ -24,6 +24,7 @@ import {
 import { useGetFolderSubfolders } from "@/services/folders/queries";
 import { useMoveItem } from "@/services/items/mutations";
 import { useGetOrganizationUnitFolders } from "@/services/organization-units/queries";
+import { useCurrentUser } from "@/services/user/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -44,9 +45,11 @@ export function MoveItemDialog({
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [currentParentFolderId, setCurrentParentFolderId] = useState<string | null>(null);
 
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
 
   const isSelectedSelfParent = item.parent_item_id === selectedFolderId;
 

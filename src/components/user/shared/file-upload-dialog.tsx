@@ -31,6 +31,7 @@ import {
 import { useUploadDocument } from "@/services/documents/mutations";
 import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { useUploadStore } from "@/stores/upload-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UploadIcon, X } from "lucide-react";
@@ -51,9 +52,11 @@ export function FileUploadDialog() {
   const clearPendingFiles = useUploadDialogStore((state) => state.clearPendingFiles);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
   const currentParentFolderId = useFolderStore(
     (state) => state.currentParentFolderId,
   );

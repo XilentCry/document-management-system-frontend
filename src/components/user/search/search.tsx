@@ -13,6 +13,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ItemGrid } from "@/components/user/shared/item-grid";
 import { useSearchOrganizationUnitItems } from "@/services/organization-units/queries";
+import { useCurrentUser } from "@/services/user/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useSearchStore } from "@/stores/search-store";
 import { useViewModeStore } from "@/stores/view-mode-store";
@@ -44,9 +45,11 @@ const filterOwnerId = filterOwnerIdStr || null;
 const filterSharedToStr = searchParams.get("shared_to");
 const filterSharedTo = filterSharedToStr || null;
 
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
   const viewMode = useViewModeStore((state) => state.viewMode);
   const setViewMode = useViewModeStore((state) => state.setViewMode);
   const setDraftSearchTerm = useSearchStore(

@@ -20,7 +20,7 @@ import {
   InputGroupText,
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TFormError } from "@/types/form-error";
 import { useGetAllOrganizationUnitsTree } from "@/services/organization-units/queries";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,6 @@ export function EditUser({
 
   const {
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting },
   } = methods;
 
@@ -66,10 +65,7 @@ export function EditUser({
     error,
     data: organizationUnits = [],
   } = useGetAllOrganizationUnitsTree();
-  const { mutateAsync: updateUserMutation } = useUpdateUser(
-    setFormErrors,
-    reset,
-  );
+  const { mutateAsync: updateUserMutation } = useUpdateUser(setFormErrors);
 
   const onSubmit: SubmitHandler<TUpdateUserFormSchema> = async (data) => {
     await updateUserMutation({ userData: data, userId: user.id });

@@ -1,11 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { inviteAdmin, reinviteAdmin, updateStatus, updateUser } from "./api";
-import { toast } from "sonner";
 import { TUpdateUserFormSchema } from "@/schemas/users/update-user-form-schema";
+import { TFormError } from "@/types/form-error";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
-import { TFormError } from "@/types/form-error";
-import { UseFormReset } from "react-hook-form";
+import { toast } from "sonner";
+import { inviteAdmin, reinviteAdmin, updateStatus, updateUser } from "./api";
 
 export const useUpdateStatus = (
   setStatus: Dispatch<SetStateAction<"pending" | "approved">>,
@@ -32,10 +31,7 @@ export const useUpdateStatus = (
   });
 };
 
-export const useUpdateUser = (
-  setFormErrors: Dispatch<SetStateAction<TFormError | null>>,
-  reset: UseFormReset<TUpdateUserFormSchema>,
-) => {
+export const useUpdateUser = (setFormErrors: Dispatch<SetStateAction<TFormError | null>>) => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -56,7 +52,6 @@ export const useUpdateUser = (
       }
 
       toast.success(data.message);
-      reset();
       queryClient.invalidateQueries({ queryKey: ["users"] });
       router.push(`/admin/user-management/view/${variables.userId}`);
     },

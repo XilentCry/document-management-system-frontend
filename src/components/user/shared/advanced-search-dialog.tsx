@@ -41,6 +41,7 @@ import { TAdvancedSearchFormSchema } from "@/schemas/items/advanced-search-form-
 import { useGetAllClassifications } from "@/services/classifications/queries";
 import { useSearchSpecificUsers } from "@/services/organization-units/queries";
 import { useSearchSharedToUsers } from "@/services/users/queries";
+import { useCurrentUser } from "@/services/user/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { TBasicUser } from "@/types/basic-user";
 import { Folder } from "lucide-react";
@@ -63,9 +64,11 @@ export function AdvancedSearchDialog({
   onSubmit,
   setDraftSearchTerm,
 }: AdvanceSearchDialogProps) {
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
 
   const [specificUserSearchTerm, setSpecificUserSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState<TBasicUser | null>(null);

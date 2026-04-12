@@ -34,6 +34,7 @@ import {
   TAdvancedSearchFormSchema,
 } from "@/schemas/items/advanced-search-form-schema";
 import { useSearchTopOrganizationUnitItems } from "@/services/organization-units/queries";
+import { useCurrentUser } from "@/services/user/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useSearchStore } from "@/stores/search-store";
 import { TFilterOwner } from "@/types/filter-owner";
@@ -70,12 +71,15 @@ export function Header() {
     }
   }, [searchOpen]);
 
-  const currentOrganizationUnitName = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitName = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitName,
   );
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
+  const currentOrganizationUnitName = storeOrganizationUnitName ?? currentUser?.currentOrganizationUnitName ?? null;
   const draftSearchTerm = useSearchStore((state) => state.draftSearchTerm);
   const debouncedSearchTerm = useDebounce(draftSearchTerm, 500);
   const setDraftSearchTerm = useSearchStore(

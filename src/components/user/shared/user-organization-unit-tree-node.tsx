@@ -9,6 +9,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { DialogClose } from "../../ui/dialog";
+import { useCurrentUser } from "@/services/user/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 
 export function UserOrganizationUnitTreeNode({
@@ -19,9 +20,11 @@ export function UserOrganizationUnitTreeNode({
   const [open, setOpen] = useState(true);
 
   const hasChildren = !!node.children?.length;
-  const currentOrganizationUnitId = useOrganizationUnitStore(
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
+  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
 
   const router = useRouter();
 

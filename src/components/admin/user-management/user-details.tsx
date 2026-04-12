@@ -163,12 +163,11 @@ export function UserDetails({
               <div className="flex flex-col gap-1">
                 <p className="font-medium">Status</p>
                 <Badge
-                  className={`${
-                    user.status === "pending"
+                  className={`${user.status === "pending"
                       ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
                       : user.status === "approved" &&
-                        "bg-green-500/15 dark:bg-green-500/10 text-green-500"
-                  }`}
+                      "bg-green-500/15 dark:bg-green-500/10 text-green-500"
+                    }`}
                 >
                   {user.status}
                 </Badge>
