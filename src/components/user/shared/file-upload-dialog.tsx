@@ -358,7 +358,7 @@ export function FileUploadDialog() {
                 Cancel
               </DialogClose>
               <Button type="submit" disabled={fields.length === 0 || isCheckingConflicts}>
-                {isCheckingConflicts ? "Checking..." : "Upload"}
+                {isCheckingConflicts ? <><Spinner />Checking...</> : "Upload"}
               </Button>
             </DialogFooter>
           </form>

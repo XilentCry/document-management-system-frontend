@@ -56,8 +56,15 @@ export async function register(
 }
 
 export async function logout(): Promise<{ message: string }> {
-  const { data } = await apiClient.post("/auth/logout");
-  return data;
+  try {
+    const { data } = await apiClient.post("/auth/logout");
+    return data;
+  } catch (error: unknown) {
+    if (isAxiosError<TErrorResponse>(error)) {
+      throw new Error(error.response?.data?.message || "Logout failed.");
+    }
+    throw error;
+  }
 }
 
 export async function resendVerificationEmail(email: string): Promise<{ message: string }> {

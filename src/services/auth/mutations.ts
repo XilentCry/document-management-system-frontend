@@ -4,7 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { login, register, resendVerificationEmail } from "./api";
+import { login, register, resendVerificationEmail, logout } from "./api";
+import { clearAllStores } from "@/stores/clear-all-stores";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -89,6 +90,28 @@ export const useResendVerificationEmail = () => {
     },
     onError: (error: Error & { code?: string }) => {
       toast.error(error.message);
+    },
+  });
+};
+
+export const useLogout = () => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error: unknown) => {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    },
+    onSettled: () => {
+      queryClient.clear();
+      clearAllStores();
+      router.replace("/");
     },
   });
 };
