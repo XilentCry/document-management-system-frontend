@@ -21,7 +21,7 @@ import {
 import { formatFileSize } from "@/lib/format-file-size";
 import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
 import {
@@ -62,7 +62,8 @@ export function ItemTable({
   setOpenDocumentViewer: Dispatch<SetStateAction<boolean>>;
   selectedDocument: TItem | null;
 }) {
-  const userId = useUserStore((state) => state.user.userId);
+  const { data: currentUser } = useCurrentUser();
+  const userId = currentUser?.id;
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);

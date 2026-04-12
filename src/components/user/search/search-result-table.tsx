@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
 import {
@@ -51,7 +51,8 @@ export function SearchResultTable({
   onFolderDoubleClick: (folderId: string) => void;
   onDocumentDoubleClick: (documentId: string) => Promise<void>;
 }) {
-  const userId = useUserStore((state) => state.user.userId);
+  const { data: currentUser } = useCurrentUser();
+  const userId = currentUser?.id;
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);

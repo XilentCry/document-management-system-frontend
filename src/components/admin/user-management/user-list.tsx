@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/pagination";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useGetAllUsers, useGetRoles, useGetStatuses } from "@/services/users/queries";
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { ChevronDown, Plus, Search } from "lucide-react";
 import { useCallback, useState } from "react";
 import { Spinner } from "../../ui/spinner";
@@ -55,7 +55,8 @@ export function UserList() {
     setPage(1);
   }, []);
 
-  const userRole = useUserStore((state) => state.user.userRole);
+  const { data: currentUser } = useCurrentUser();
+  const userRole = currentUser?.role;
 
   const {
     isLoading,

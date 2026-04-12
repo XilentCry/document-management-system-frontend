@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { createSelectors } from "./selector";
-import { persist } from "zustand/middleware";
 
 export interface RailStore {
   openRail: boolean;
@@ -29,25 +28,20 @@ const initialState = {
 };
 
 const railStore = create<RailStore>()(
-  persist(
-    immer((set) => ({
-      ...initialState,
-      setOpenRail: (openRail: boolean) => set({ openRail }),
-      setRailTab: (tab: "details" | "activity") => set({ railTab: tab }),
-      setSelectedDocumentId: (documentId: string | null) =>
-        set({ selectedDocumentId: documentId }),
-      setSelectedDocumentFileName: (fileName: string | null) =>
-        set({ selectedDocumentFileName: fileName }),
-      setSelectedFolderId: (folderId: string | null) =>
-        set({ selectedFolderId: folderId }),
-      setSelectedFolderName: (folderName: string | null) =>
-        set({ selectedFolderName: folderName }),
-      reset: () => set(initialState),
-    })),
-    {
-      name: "rail-storage",
-    },
-  ),
+  immer((set) => ({
+    ...initialState,
+    setOpenRail: (openRail: boolean) => set({ openRail }),
+    setRailTab: (tab: "details" | "activity") => set({ railTab: tab }),
+    setSelectedDocumentId: (documentId: string | null) =>
+      set({ selectedDocumentId: documentId }),
+    setSelectedDocumentFileName: (fileName: string | null) =>
+      set({ selectedDocumentFileName: fileName }),
+    setSelectedFolderId: (folderId: string | null) =>
+      set({ selectedFolderId: folderId }),
+    setSelectedFolderName: (folderName: string | null) =>
+      set({ selectedFolderName: folderName }),
+    reset: () => set(initialState),
+  })),
 );
 
 export const useRailStore = createSelectors(railStore);

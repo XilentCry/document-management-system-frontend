@@ -1,8 +1,8 @@
-import { TCurrentUser } from "./current-user";
+import { TUserSummary } from "./user-summary";
 
 type TBaseAuditLog = {
   id: string;
-  actor: TCurrentUser;
+  actor: TUserSummary;
   subject: string;
   created_at: string;
 };

@@ -1,6 +1,6 @@
-import { TCurrentUser } from "./current-user";
+import { TUserSummary } from "./user-summary";
 
 export type TUser = {
   created_at: string;
   updated_at: string;
-} & TCurrentUser;
+} & TUserSummary;

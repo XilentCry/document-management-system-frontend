@@ -1,5 +1,15 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { getAllSharedWithMe, getUserOrganizationUnits } from "./api";
+import { getAllSharedWithMe, fetchCurrentUser, getUserOrganizationUnits } from "./api";
+
+export function useCurrentUser() {
+  return useQuery({
+    queryKey: ["current-user"],
+    queryFn: fetchCurrentUser,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    retry: false,
+  });
+}
 
 export const useGetAllSharedWithMe = () => {
   const {

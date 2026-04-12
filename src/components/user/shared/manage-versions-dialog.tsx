@@ -25,7 +25,7 @@ import { Download, EllipsisVertical, Upload } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useDownloadDocumentVersion } from "@/services/documents/mutations";
 import { useUploadDialogStore } from "@/stores/upload-dialog-store";
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { VersionLimitWarningDialog } from "./version-limit-warning-dialog";
 
 export function VersionHistoryDialog({
@@ -50,8 +50,8 @@ export function VersionHistoryDialog({
   const versions = data?.pages?.flatMap((page) => page.data) ?? [];
   const maxVersionNumber = versions.length > 0 ? Math.max(...versions.map((v) => v.version_number)) : 0;
 
-  const currentUserId = useUserStore((state) => state.user.userId);
-  const isOwner = item.owner.id === currentUserId;
+  const { data: currentUser } = useCurrentUser();
+  const isOwner = item.owner.id === currentUser?.id;
 
   const { mutate: downloadDocumentVersionMutation } = useDownloadDocumentVersion();
   const openForReplacement = useUploadDialogStore((state) => state.openForReplacement);

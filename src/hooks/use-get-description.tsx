@@ -1,8 +1,9 @@
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { TAuditLog } from "@/types/audit-log";
 
 export function useGetDescription() {
-  const userId = useUserStore((state) => state.user.userId);
+  const { data: currentUser } = useCurrentUser();
+  const userId = currentUser?.id;
 
   const getDescription = (auditLog: TAuditLog) => {
     const actor =

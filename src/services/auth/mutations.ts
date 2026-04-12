@@ -1,20 +1,19 @@
+import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import type { TFormError } from "@/types/form-error";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { login, register, resendVerificationEmail } from "./api";
-import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
-import { useUserStore } from "@/stores/user-store";
 
 export const useLogin = () => {
+  const queryClient = useQueryClient();
   const setCurrentOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.setCurrentOrganizationUnitId,
   );
   const setCurrentOrganizationUnitName = useOrganizationUnitStore(
     (state) => state.setCurrentOrganizationUnitName,
   );
-  const setUser = useUserStore((state) => state.setUser);
 
   const router = useRouter();
 
@@ -22,26 +21,18 @@ export const useLogin = () => {
     mutationFn: login,
     onSuccess: (data) => {
       toast.success(data.message);
-      setUser({
-        userId: data.user.id,
-        email: data.user.email,
-        firstName: data.user.first_name,
-        middleName: data.user.middle_name,
-        lastName: data.user.last_name,
-        userRole: data.user.role,
-        lastLogin: data.lastLogin,
-        lastFailedLogin: data.lastFailedLogin,
-      });
+
+      queryClient.setQueryData(["current-user"], data.user);
 
       if (
         data.user.role === "user" &&
-        data.currentOrganizationUnitId &&
-        data.currentOrganizationUnitName
+        data.user.currentOrganizationUnitId &&
+        data.user.currentOrganizationUnitName
       ) {
-        setCurrentOrganizationUnitId(data.currentOrganizationUnitId);
-        setCurrentOrganizationUnitName(data.currentOrganizationUnitName);
+        setCurrentOrganizationUnitId(data.user.currentOrganizationUnitId);
+        setCurrentOrganizationUnitName(data.user.currentOrganizationUnitName);
         router.replace(
-          `/drive/organizational-drive/${data.currentOrganizationUnitId}`,
+          `/drive/organizational-drive/${data.user.currentOrganizationUnitId}`,
         );
       } else if (data.user.role === "admin" || data.user.role === "superuser") {
         router.replace("/admin/user-management");

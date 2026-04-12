@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/item";
 import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { TItem } from "@/types/item";
 import {
   Activity,
@@ -56,7 +56,8 @@ export function Document({
   const [openVersionHistoryDialog, setOpenVersionHistoryDialog] = useState(false);
   const [openChangeClassificationDialog, setOpenChangeClassificationDialog] = useState(false);
 
-  const userId = useUserStore((state) => state.user.userId);
+  const { data: currentUser } = useCurrentUser();
+  const userId = currentUser?.id;
 
   const {
     setSelectedDocumentId,

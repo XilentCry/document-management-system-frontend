@@ -1,5 +1,5 @@
 import { TBasicUser } from "./basic-user";
-import { TCurrentUser } from "./current-user";
+import { TUserSummary } from "./user-summary";
 import { TSharePermission } from "./share-permission";
 
 export type TItem = {
@@ -8,7 +8,7 @@ export type TItem = {
   type?: "pdf" | "folder";
   is_folder: boolean;
   parent_item_id: string | null;
-  owner: TCurrentUser;
+  owner: TUserSummary;
   organization_unit_id: string;
   classification: string;
   location: string;

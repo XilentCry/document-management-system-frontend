@@ -1,5 +1,5 @@
 import { formatFileSize } from "@/lib/format-file-size";
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { TDocumentVersion } from "@/types/document-version";
 import { TItem } from "@/types/item";
 
@@ -13,7 +13,8 @@ export function ItemDetails({
     };
   };
 }) {
-  const userId = useUserStore((state) => state.user.userId);
+  const { data: currentUser } = useCurrentUser();
+  const userId = currentUser?.id;
 
   const updatedByLabel = userId === item.updated_by.id
     ? "me"

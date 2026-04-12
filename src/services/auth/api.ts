@@ -13,10 +13,6 @@ type TErrorResponse = {
 export type TLoginResponse = {
   message: string;
   user: TCurrentUser;
-  currentOrganizationUnitId?: string;
-  currentOrganizationUnitName?: string;
-  lastLogin: string;
-  lastFailedLogin: string;
 };
 
 export async function getCsrfCookie() {

@@ -21,7 +21,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useUploadDialogStore } from "@/stores/upload-dialog-store";
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Building, FileUp, FolderPlus, Plus, UsersRound } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -39,8 +40,9 @@ export function UserSidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const lastLogin = useUserStore((state) => state.user.lastLogin);
-  const lastFailedLogin = useUserStore((state) => state.user.lastFailedLogin);
+  const { data: currentUser, isLoading } = useCurrentUser();
+  const lastLogin = currentUser?.lastLogin;
+  const lastFailedLogin = currentUser?.lastFailedLogin;
 
   return (
     <>
@@ -121,17 +123,21 @@ export function UserSidebar() {
             <SidebarMenuItem className="flex flex-col gap-2 text-sm">
               <div>
                 <p className="font-medium">Last login</p>
-                {lastLogin && (
+                {isLoading ? (
+                  <Skeleton className="h-4 w-1/2 mt-1" />
+                ) : lastLogin ? (
                   <span>{lastLogin}</span>
-                )}
+                ) : null}
               </div>
               <div>
                 <p className="font-medium">Last failed login</p>
-                {lastFailedLogin && (
+                {isLoading ? (
+                  <Skeleton className="h-4 w-1/2 mt-1" />
+                ) : lastFailedLogin ? (
                   <span>
                     {lastFailedLogin}
                   </span>
-                )}
+                ) : null}
               </div>
             </SidebarMenuItem>
           </SidebarMenu>

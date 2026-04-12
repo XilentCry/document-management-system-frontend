@@ -18,14 +18,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useReinviteAdmin } from "@/services/users/mutations";
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { TUser } from "@/types/user";
 import { Ellipsis } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function UserTable({ users }: { users: TUser[] }) {
   const router = useRouter();
-  const userRole = useUserStore((state) => state.user.userRole);
+  const { data: currentUser } = useCurrentUser();
+  const userRole = currentUser?.role;
 
   console.log(users);
 

@@ -11,7 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { viewDocument } from "@/services/documents/api";
 import { useDownloadDocument } from "@/services/documents/mutations";
 import { useGetDocumentDetails } from "@/services/documents/queries";
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { TItem } from "@/types/item";
 import {
   Download,
@@ -47,7 +47,8 @@ export function DocumentViewer({
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
-  const userId = useUserStore((state) => state.user.userId);
+  const { data: currentUser } = useCurrentUser();
+  const userId = currentUser?.id;
 
   const documentDetailsQuery = useGetDocumentDetails(document.id, openDocumentViewer);
   const documentName = documentDetailsQuery.data?.name ?? document.name;

@@ -27,7 +27,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { useUpdateStatus } from "@/services/users/mutations";
 import { useGetStatuses } from "@/services/users/queries";
-import { useUserStore } from "@/stores/user-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
 import { useRouter } from "next/navigation";
@@ -45,8 +45,9 @@ export function UserDetails({
   const [status, setStatus] = useState(user.status);
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const userId = useUserStore((state) => state.user.userId);
-  const userRole = useUserStore((state) => state.user.userRole);
+  const { data: currentUser } = useCurrentUser();
+  const userId = currentUser?.id;
+  const userRole = currentUser?.role;
 
   const isAdminViewingAdmin = userRole === "admin" && user.role === "admin";
 
