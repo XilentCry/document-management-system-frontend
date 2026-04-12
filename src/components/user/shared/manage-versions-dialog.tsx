@@ -101,7 +101,7 @@ export function VersionHistoryDialog({
                 <div className="flex flex-col">
                   {versions.map((version) => (
                     <Item variant="outline" size="xs" className="rounded-none border-t-0 border-x-0" key={version.id}>
-                      <ItemMedia variant="icon">
+                      <ItemMedia>
                         <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
                       </ItemMedia>
                       <ItemContent className="min-w-0">

@@ -282,7 +282,7 @@ export function FileUploadDialog() {
                 <ScrollArea className="flex-1 min-h-0">
                   {fields.map((field, index) => (
                     <Item key={field.id} size="xs">
-                      <ItemMedia variant="icon">
+                      <ItemMedia>
                         <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
                       </ItemMedia>
                       <ItemContent className="min-w-0">

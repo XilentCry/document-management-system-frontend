@@ -13,7 +13,6 @@ interface UploadStore {
   addUpload: (file: UploadingFile) => void;
   updateUpload: (id: string, updates: Partial<UploadingFile>) => void;
   removeUpload: (id: string) => void;
-
   clearCompleted: () => void;
   reset: () => void;
 }
@@ -37,7 +36,6 @@ export const useUploadStore = create<UploadStore>((set) => ({
     set((state) => ({
       uploadingFiles: state.uploadingFiles.filter((file) => file.id !== id),
     })),
-
 
   clearCompleted: () =>
     set(() => ({

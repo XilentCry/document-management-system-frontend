@@ -92,10 +92,10 @@ export function UploadProgress() {
       </CardHeader>
       {!isMinimized && (
         <CardContent>
-          <ScrollArea className="h-40">
+          <ScrollArea className="max-h-40 min-h-0">
             {[...uploadingFiles].reverse().map((file) => (
-              <Item key={file.id}>
-                <ItemMedia variant="icon">
+              <Item key={file.id} size="xs" className="px-0">
+                <ItemMedia>
                   <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
                 </ItemMedia>
                 <ItemContent className="min-w-0">
