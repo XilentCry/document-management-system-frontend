@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../../ui/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../../ui/field";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "../../ui/field";
 import { Input } from "../../ui/input";
 import {
   InputGroup,
@@ -100,18 +100,10 @@ export function LoginForm() {
               "Log in"
             )}
           </Button>
-        </Field>
-
-        <Field className="text-center">
-          <p className="text-sm text-muted-foreground">
+          <FieldDescription className="text-center">
             Don&apos;t have an account?{" "}
-            <Link
-              href="/register"
-              className="hover:text-primary underline underline-offset-4"
-            >
-              Register
-            </Link>
-          </p>
+            <Link href="/register">Register</Link>
+          </FieldDescription>
         </Field>
       </FieldGroup>
     </form>

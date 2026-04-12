@@ -8,12 +8,15 @@ import { Header } from "./header";
 export function VerifyEmail() {
   const searchParams = useSearchParams();
   const status = searchParams.get("status");
+  const email = searchParams.get("email");
 
   const { mutateAsync: resendVerificationEmailMutation, isPending } =
     useResendVerificationEmail();
 
   const handleResend = async () => {
-    await resendVerificationEmailMutation();
+    if (email) {
+      await resendVerificationEmailMutation(email);
+    }
   };
 
   return (
@@ -37,7 +40,7 @@ export function VerifyEmail() {
             title="Verify your email"
             description="We've sent a verification link to your email address. Please check your inbox and click the link to continue."
             onClick={handleResend}
-            isPending={isPending}
+            isPending={isPending || !email}
           />
         )}
       </div>

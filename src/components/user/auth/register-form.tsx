@@ -215,26 +215,21 @@ export function RegisterForm() {
               )}
             </Field>
           </div>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <Spinner />
-                Registering...
-              </>
-            ) : (
-              "Register"
-            )}
-          </Button>
-          <Field className="text-center">
-            <p className="text-sm text-muted-foreground">
+          <Field>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Spinner />
+                  Registering...
+                </>
+              ) : (
+                "Register"
+              )}
+            </Button>
+            <FieldDescription className="text-center">
               Already have an account?{" "}
-              <Link
-                href="/"
-                className="hover:text-primary underline underline-offset-4"
-              >
-                Log in
-              </Link>
-            </p>
+              <Link href="/">Log in</Link>
+            </FieldDescription>
           </Field>
         </FieldGroup>
       </form>

@@ -47,11 +47,13 @@ export const useLogin = () => {
         router.replace("/admin/user-management");
       }
     },
-    onError: (error: Error & { code?: string }) => {
+    onError: (error: Error & { code?: string }, variables) => {
       switch (error.code) {
-        case "EMAIL_NOT_VERIFIED":
-          router.push("/email/verify");
+        case "EMAIL_NOT_VERIFIED": {
+          const email = encodeURIComponent(variables.email);
+          router.push(`/email/verify?email=${email}`);
           break;
+        }
         case "ACCOUNT_PENDING":
           toast.error(error.message);
           break;
@@ -69,11 +71,12 @@ export const useRegister = (
 
   return useMutation({
     mutationFn: register,
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       setFormErrors(null);
       toast.success(data.message);
 
-      router.push("/email/verify");
+      const email = encodeURIComponent(variables.email);
+      router.push(`/email/verify?email=${email}`);
     },
     onError: (error: { errors: TFormError } | Error) => {
       if ("errors" in error) {
@@ -89,18 +92,12 @@ export const useResendVerificationEmail = () => {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: resendVerificationEmail,
+    mutationFn: (email: string) => resendVerificationEmail(email),
     onSuccess: (data) => {
       toast.success(data.message);
     },
     onError: (error: Error & { code?: string }) => {
-      switch (error.code) {
-        case "EMAIL_ALREADY_VERIFIED":
-          router.replace("/email/verify?status=already_verified");
-          break;
-        default:
-          toast.error(error.message);
-      }
+      toast.error(error.message);
     },
   });
 };

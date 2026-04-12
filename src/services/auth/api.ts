@@ -64,10 +64,11 @@ export async function logout(): Promise<{ message: string }> {
   return data;
 }
 
-export async function resendVerificationEmail(): Promise<{ message: string }> {
+export async function resendVerificationEmail(email: string): Promise<{ message: string }> {
   try {
     const { data } = await apiClient.post(
-      "/auth/email/verification-notification",
+      "/api/auth/email/verification-notification",
+      { email },
     );
     return data;
   } catch (error: unknown) {

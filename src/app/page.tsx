@@ -7,7 +7,7 @@ export default function LoginPage() {
       <Header />
       <div className="flex-1 flex items-center justify-center">
         <div className="w-full max-w-sm space-y-7">
-          <h1 className="text-xl font-bold text-center">Welcome back!</h1>
+          <h1 className="text-xl font-semibold text-center">Welcome back!</h1>
           <LoginForm />
         </div>
       </div>
