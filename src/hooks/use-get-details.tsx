@@ -31,10 +31,20 @@ export function useGetDetails() {
 
       case "document.edit":
         return (
-          <span>
-            Location:{" "}
-            <span className="text-primary">{auditLog.properties.parent}</span>
-          </span>
+          <div className="flex flex-col">
+            <span>
+              Location:{" "}
+              <span className="text-primary">{auditLog.properties.parent}</span>
+            </span>
+            {auditLog.properties.removed_oldest_version && (
+              <span>
+                Removed version:{" "}
+                <span className="text-primary">
+                  Version {auditLog.properties.removed_oldest_version}
+                </span>
+              </span>
+            )}
+          </div>
         );
 
       case "item.rename":
@@ -69,13 +79,6 @@ export function useGetDetails() {
           </span>
         );
 
-      case "document.version_deleted_limit":
-        return (
-          <span>
-            Location:{" "}
-            <span className="text-primary">{auditLog.properties.parent}</span>
-          </span>
-        );
 
       case "document.view":
         return (

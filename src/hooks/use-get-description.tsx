@@ -66,6 +66,12 @@ export function useGetDescription() {
             {actor} edited{" "}
             <span className="text-primary">{auditLog.properties.name}</span> in{" "}
             <span className="text-primary">{auditLog.properties.parent}</span>
+            {auditLog.properties.removed_oldest_version ? (
+              <>
+                {" "}
+                and the lowest version (Version {auditLog.properties.removed_oldest_version}) was removed
+              </>
+            ) : null}
           </>
         );
 
@@ -102,14 +108,6 @@ export function useGetDescription() {
           </>
         );
 
-      case "document.version_deleted_limit":
-        return (
-          <>
-            {actor} triggered the deletion of the oldest version (Version {auditLog.properties.version_number}) of{" "}
-            <span className="text-primary">{auditLog.properties.name}</span> in{" "}
-            <span className="text-primary">{auditLog.properties.parent}</span> due to version limits
-          </>
-        );
 
       case "document.view":
         return (

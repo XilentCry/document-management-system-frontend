@@ -24,7 +24,9 @@ export type TCreatedAuditLog = TBaseAuditLog & {
 
 export type TEditedAuditLog = TBaseAuditLog & {
   action: "document.edit";
-  properties: TNamedInParentProps;
+  properties: TNamedInParentProps & {
+    removed_oldest_version?: number;
+  };
 };
 
 export type TRenamedAuditLog = TBaseAuditLog & {
