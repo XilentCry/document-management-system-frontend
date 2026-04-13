@@ -38,7 +38,7 @@ export function AvatarDropdown() {
           </Avatar>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="w-60">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="font-normal">
             {isLoading ? (

@@ -19,11 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Item,
-  ItemContent,
-  ItemTitle
-} from "@/components/ui/item";
+import { Item, ItemContent, ItemTitle } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
 import { useUpdateStatus } from "@/services/users/mutations";
 import { useGetStatuses } from "@/services/users/queries";
@@ -80,63 +76,10 @@ export function UserDetails({
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-4">
-        <Card className="flex-1">
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-            <CardAction className="flex gap-2">
-              {!isAdminViewingAdmin && (
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    router.push(`/admin/user-management/edit/${user.id}`)
-                  }
-                >
-                  Edit
-                </Button>
-              )}
-              {user.id !== userId && !isAdminViewingAdmin && (
-                <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-                  <AlertDialogTrigger render={<Button />}>
-                    {isPending ? (
-                      <>
-                        <Spinner />
-                        Processing...
-                      </>
-                    ) : status === "approved" ? (
-                      "Unapprove"
-                    ) : (
-                      "Approve"
-                    )}
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <div className="flex flex-col gap-1">
-                        <AlertDialogTitle>
-                          {status === "approved"
-                            ? "Confirm Unapporval"
-                            : "Confirm Approval"}
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          {status === "approved"
-                            ? "Are you sure you want to unapprove this user?"
-                            : "Are you sure you want to approve this user?"}
-                        </AlertDialogDescription>
-                      </div>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter className="mt-2">
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleApprove}>
-                        Confirm
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              )}
-            </CardAction>
-          </CardHeader>
-          <CardContent className="flex gap-4">
+    <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-4">
+        <div className="flex items-start gap-4">
+          <div className="flex-1 flex text-sm">
             <div className="flex-1 flex flex-col gap-4">
               <div className="flex flex-col gap-1">
                 <p className="font-medium">First name</p>
@@ -149,6 +92,10 @@ export function UserDetails({
               <div className="flex flex-col gap-1">
                 <p className="font-medium">Role</p>
                 <Badge variant="secondary">{user.role}</Badge>
+              </div>
+              <div className="flex flex-col gap-1">
+                <p className="font-medium">Date created</p>
+                <p>{user.created_at}</p>
               </div>
             </div>
             <div className="flex-1 flex flex-col gap-4">
@@ -163,46 +110,89 @@ export function UserDetails({
               <div className="flex flex-col gap-1">
                 <p className="font-medium">Status</p>
                 <Badge
-                  className={`${user.status === "pending"
+                  className={`${
+                    user.status === "pending"
                       ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
                       : user.status === "approved" &&
-                      "bg-green-500/15 dark:bg-green-500/10 text-green-500"
-                    }`}
+                        "bg-green-500/15 dark:bg-green-500/10 text-green-500"
+                  }`}
                 >
                   {user.status}
                 </Badge>
               </div>
-            </div>
-          </CardContent>
-          <CardFooter className="gap-4 border-t">
-            <div className="flex-1">
-              <p className="font-medium">Date created</p>
-              <p>{user.created_at}</p>
-            </div>
-            <div className="flex-1">
-              <p className="font-medium">Date modified</p>
-              <p>{user.updated_at}</p>
-            </div>
-          </CardFooter>
-        </Card>
-        {user.role === "user" && (
-          <Card className="flex-1">
-            <CardHeader>
-              <CardTitle>Offices/Units</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-2">
-                {user.organizationUnits.map((organizationUnit) => (
-                  <Item key={organizationUnit.id} variant="muted">
-                    <ItemContent>
-                      <ItemTitle>{organizationUnit.name}</ItemTitle>
-                    </ItemContent>
-                  </Item>
-                ))}
+              <div className="flex flex-col gap-1">
+                <p className="font-medium">Date modified</p>
+                <p>{user.updated_at}</p>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+          </div>
+          <div className="flex-1 text-sm">
+            {user.organizationUnits.length > 0 && (
+              <div className="flex flex-col gap-1">
+                <p className="font-medium">Offices/Units</p>
+                <div className="flex flex-col gap-1">
+                  {user.organizationUnits.map((organizationUnit) => (
+                    <Item key={organizationUnit.id} variant="outline" size="xs">
+                      <ItemContent>
+                        <ItemTitle>{organizationUnit.name}</ItemTitle>
+                      </ItemContent>
+                    </Item>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex gap-2">
+          {!isAdminViewingAdmin && (
+            <Button
+              variant="outline"
+              onClick={() =>
+                router.push(`/admin/user-management/edit/${user.id}`)
+              }
+            >
+              Edit
+            </Button>
+          )}
+          {user.id !== userId && !isAdminViewingAdmin && (
+            <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+              <AlertDialogTrigger render={<Button variant={status === "approved" ? "destructive" : "default"} />}>
+                {isPending ? (
+                  <>
+                    <Spinner />
+                    Processing...
+                  </>
+                ) : status === "approved" ? (
+                  "Unapprove"
+                ) : (
+                  "Approve"
+                )}
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <div className="flex flex-col gap-1">
+                    <AlertDialogTitle>
+                      {status === "approved"
+                        ? "Confirm Unapporval"
+                        : "Confirm Approval"}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {status === "approved"
+                        ? "Are you sure you want to unapprove this user?"
+                        : "Are you sure you want to approve this user?"}
+                    </AlertDialogDescription>
+                  </div>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="mt-2">
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleApprove}>
+                    Confirm
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
       </div>
       <UserAuditLogs userId={user.id} />
     </div>

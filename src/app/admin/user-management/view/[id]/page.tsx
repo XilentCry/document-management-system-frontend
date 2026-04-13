@@ -22,7 +22,7 @@ export default function ViewUserPage() {
   const { isLoading, isError, error, data: user } = useGetUser(id);
 
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col min-w-0">
       <header className="z-10 bg-background sticky top-0 h-14 border-b flex items-center justify-between px-4">
         <Breadcrumb>
           <BreadcrumbList>

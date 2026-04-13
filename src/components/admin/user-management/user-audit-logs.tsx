@@ -1,12 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
-import { useState } from "react";
+import { AuditLogTable } from "@/components/admin/audit-logs/audit-log-table";
+import { EmptyState } from "@/components/shared/empty-state";
 import {
   Pagination,
   PaginationContent,
@@ -15,10 +8,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Spinner } from "@/components/ui/spinner";
 import { useGetUserAuditLogs } from "@/services/users/queries";
 import { Activity } from "lucide-react";
-import { EmptyState } from "@/components/shared/empty-state";
-import { AuditLogTable } from "@/components/admin/audit-logs/audit-log-table";
+import { useState } from "react";
 
 export function UserAuditLogs({ userId }: { userId: string }) {
   const [page, setPage] = useState(1);
@@ -33,11 +26,8 @@ export function UserAuditLogs({ userId }: { userId: string }) {
   } = useGetUserAuditLogs(userId, page);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Audit Logs</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="flex flex-col gap-4">
+        <h1 className="text-xl">Audit Logs</h1>
         {isLoading ? (
           <div className="flex-1 flex items-center justify-center p-8">
             <Spinner className="text-primary size-9" />
@@ -55,9 +45,7 @@ export function UserAuditLogs({ userId }: { userId: string }) {
         ) : (
           <AuditLogTable auditLogs={userAuditLogs?.data ?? []} />
         )}
-      </CardContent>
       {isSuccess && userAuditLogs?.data && userAuditLogs.data.length > 0 && (
-        <CardFooter>
           <Pagination>
             <PaginationContent>
               <PaginationItem>
@@ -100,8 +88,7 @@ export function UserAuditLogs({ userId }: { userId: string }) {
               </PaginationItem>
             </PaginationContent>
           </Pagination>
-        </CardFooter>
       )}
-    </Card>
+    </div>
   );
 }
