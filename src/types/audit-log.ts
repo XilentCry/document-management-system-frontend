@@ -5,6 +5,8 @@ type TBaseAuditLog = {
   actor: TUserSummary;
   subject: string;
   created_at: string;
+  ip_address: string | null;
+  user_agent: string | null;
 };
 
 type TNamedInParentProps = {

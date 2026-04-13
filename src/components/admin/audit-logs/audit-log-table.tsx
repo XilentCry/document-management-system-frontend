@@ -21,6 +21,8 @@ export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
           <TableHead>Actor</TableHead>
           <TableHead>Actions</TableHead>
           <TableHead>Subject</TableHead>
+          <TableHead>IP address</TableHead>
+          <TableHead>User agent</TableHead>
           <TableHead>Details</TableHead>
         </TableRow>
       </TableHeader>
@@ -38,6 +40,10 @@ export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
               {auditLog.action === "item.rename"
                 ? auditLog.properties.old_name
                 : auditLog.properties.name}
+            </TableCell>
+            <TableCell>{auditLog.ip_address ?? "N/A"}</TableCell>
+            <TableCell className="max-w-[200px] whitespace-normal">
+              {auditLog.user_agent ?? "N/A"}
             </TableCell>
             <TableCell className="whitespace-normal">
               {getDetails(auditLog)}
