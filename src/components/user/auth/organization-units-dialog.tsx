@@ -109,7 +109,7 @@ export function OrganizationUnitsDialog({
       <Dialog>
         <DialogTrigger render={<Button variant="outline" />}>
           <Plus />
-          Select your office/s or unit/s
+          Select your office(s) or unit(s)
         </DialogTrigger>
 
         <DialogContent className="w-250 max-w-250!">

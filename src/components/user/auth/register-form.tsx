@@ -152,7 +152,7 @@ export function RegisterForm() {
               error={error}
             />
             <FieldDescription>
-              Select your office/s or unit/s you are currently assigned to.
+              Select your office(s) or unit(s) you are currently assigned to.
             </FieldDescription>
             {errors.organization_unit_ids && (
               <FieldError>{errors.organization_unit_ids.message}</FieldError>
