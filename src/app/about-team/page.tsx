@@ -13,7 +13,7 @@ export default function AboutTeamPage() {
     {
       name: "AJ Saco",
       role: "Research and Documentation",
-      image: "",
+      image: "/placeholder.webp"
     },
     {
       name: "James Montealto",
@@ -41,6 +41,7 @@ export default function AboutTeamPage() {
                     alt={member.name}
                     width={460}
                     height={460}
+                    priority
                     className="aspect-square w-full rounded-sm object-cover"
                   />
                 </ItemHeader>
