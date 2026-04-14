@@ -68,7 +68,8 @@ export function AdvancedSearchDialog({
   const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
-  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
+  const currentOrganizationUnitId =
+    storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
 
   const [specificUserSearchTerm, setSpecificUserSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState<TBasicUser | null>(null);
@@ -77,7 +78,8 @@ export function AdvancedSearchDialog({
   const userAnchor = useComboboxAnchor();
 
   const [sharedToUserSearchTerm, setSharedToUserSearchTerm] = useState("");
-  const [selectedSharedToUser, setSelectedSharedToUser] = useState<TBasicUser | null>(null);
+  const [selectedSharedToUser, setSelectedSharedToUser] =
+    useState<TBasicUser | null>(null);
   const [isSharedToDropdownOpen, setIsSharedToDropdownOpen] = useState(false);
   const debouncedSharedToSearchTerm = useDebounce(sharedToUserSearchTerm);
   const sharedToAnchor = useComboboxAnchor();
@@ -107,10 +109,7 @@ export function AdvancedSearchDialog({
     isError: isSharedToUsersError,
     error: sharedToUsersError,
     sharedToUsers: sharedToUsers = [],
-  } = useSearchSharedToUsers(
-    debouncedSharedToSearchTerm,
-    open,
-  );
+  } = useSearchSharedToUsers(debouncedSharedToSearchTerm, open);
 
   const {
     handleSubmit,
@@ -170,8 +169,23 @@ export function AdvancedSearchDialog({
                           <SelectTrigger className="w-full">
                             <SelectValue>
                               {field.value === null && <p>Any</p>}
-                              {field.value === "folder" && <p>Folder</p>}
-                              {field.value === "pdf" && <p>PDF</p>}
+                              {field.value === "folder" && (
+                                <div className="flex items-center gap-2">
+                                  <Folder />
+                                  Folders
+                                </div>
+                              )}
+                              {field.value === "pdf" && (
+                                <div className="flex items-center gap-2">
+                                  <Image
+                                    src="/pdf.svg"
+                                    alt="PDF"
+                                    width={16}
+                                    height={16}
+                                  />
+                                  PDFs
+                                </div>
+                              )}
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent>
@@ -181,12 +195,21 @@ export function AdvancedSearchDialog({
                                 Any
                               </SelectItem>
                               <SelectItem value="folder">
-                                <Folder />
-                                Folder
+                                <div className="flex items-center gap-2">
+                                  <Folder />
+                                  Folders
+                                </div>
                               </SelectItem>
                               <SelectItem value="pdf">
-                                <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
-                                PDF
+                                <div className="flex items-center gap-2">
+                                  <Image
+                                    src="/pdf.svg"
+                                    alt="PDF"
+                                    width={16}
+                                    height={16}
+                                  />
+                                  PDFs
+                                </div>
                               </SelectItem>
                             </SelectGroup>
                           </SelectContent>
@@ -267,7 +290,10 @@ export function AdvancedSearchDialog({
                               multiple
                               value={selectedUser ? [selectedUser] : []}
                               onValueChange={(users) => {
-                                const user = users.length > 0 ? users[users.length - 1] : null;
+                                const user =
+                                  users.length > 0
+                                    ? users[users.length - 1]
+                                    : null;
                                 setSelectedUser(user);
                                 field.onChange(user ? user.id : null);
                                 if (user) setSpecificUserSearchTerm("");
@@ -286,11 +312,19 @@ export function AdvancedSearchDialog({
                               }
                               open={isUserDropdownOpen}
                               onOpenChange={(isOpen) => {
-                                if (isOpen && (specificUserSearchTerm.trim().length === 0 || selectedUser)) return;
+                                if (
+                                  isOpen &&
+                                  (specificUserSearchTerm.trim().length === 0 ||
+                                    selectedUser)
+                                )
+                                  return;
                                 setIsUserDropdownOpen(isOpen);
                               }}
                             >
-                              <ComboboxChips ref={userAnchor} className="w-full">
+                              <ComboboxChips
+                                ref={userAnchor}
+                                className="w-full"
+                              >
                                 <ComboboxValue>
                                   {selectedUser && (
                                     <ComboboxChip key={selectedUser.id}>
@@ -307,17 +341,26 @@ export function AdvancedSearchDialog({
                                   }
                                 />
                               </ComboboxChips>
-                              <ComboboxContent anchor={userAnchor} className="w-(--anchor-width)">
-                                {specificUserSearchTerm.trim().length === 0 ? null : isSpecificUsersLoading || isSpecificUsersFetching ? (
+                              <ComboboxContent
+                                anchor={userAnchor}
+                                className="w-(--anchor-width)"
+                              >
+                                {specificUserSearchTerm.trim().length ===
+                                0 ? null : isSpecificUsersLoading ||
+                                  isSpecificUsersFetching ? (
                                   <div className="flex items-center justify-center p-4">
                                     <Spinner className="text-primary size-5" />
                                   </div>
-                                ) : isSpecificUsersError && specificUsersError ? (
+                                ) : isSpecificUsersError &&
+                                  specificUsersError ? (
                                   <div className="flex items-center justify-center p-4">
-                                    <p className="text-destructive text-sm">{specificUsersError.message}</p>
+                                    <p className="text-destructive text-sm">
+                                      {specificUsersError.message}
+                                    </p>
                                   </div>
                                 ) : specificUsers.length === 0 ? (
-                                  specificUserSearchTerm === debouncedSpecificUserSearchTerm ? (
+                                  specificUserSearchTerm ===
+                                  debouncedSpecificUserSearchTerm ? (
                                     <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
                                       No users found.
                                     </div>
@@ -325,13 +368,12 @@ export function AdvancedSearchDialog({
                                 ) : (
                                   <ComboboxList>
                                     {specificUsers.map((user) => (
-                                      <ComboboxItem
-                                        key={user.id}
-                                        value={user}
-                                      >
+                                      <ComboboxItem key={user.id} value={user}>
                                         <div className="min-w-0">
                                           <p className="truncate font-medium">
-                                            {user.first_name} {user.middle_name ?? ""} {user.last_name}
+                                            {user.first_name}{" "}
+                                            {user.middle_name ?? ""}{" "}
+                                            {user.last_name}
                                           </p>
                                           <p className="truncate text-muted-foreground text-xs">
                                             {user.email}
@@ -367,9 +409,7 @@ export function AdvancedSearchDialog({
                           <Select
                             value={field.value ?? "any"}
                             onValueChange={(value) => {
-                              field.onChange(
-                                value === "any" ? null : value,
-                              );
+                              field.onChange(value === "any" ? null : value);
                             }}
                           >
                             <SelectTrigger className="w-full">
@@ -377,8 +417,8 @@ export function AdvancedSearchDialog({
                                 <p>
                                   {field.value != null
                                     ? classifications.find(
-                                      (c) => c.id === field.value,
-                                    )?.name
+                                        (c) => c.id === field.value,
+                                      )?.name
                                     : "Any"}
                                 </p>
                               </SelectValue>
@@ -452,9 +492,7 @@ export function AdvancedSearchDialog({
             </Field>
             <Field>
               <div className="flex items-center gap-4">
-                <FieldLabel className="w-30">
-                  Shared to
-                </FieldLabel>
+                <FieldLabel className="w-30">Shared to</FieldLabel>
                 <div className="flex-1 flex flex-col gap-1 w-full relative">
                   <div className="flex-1">
                     <Controller
@@ -465,9 +503,12 @@ export function AdvancedSearchDialog({
                           filter={null}
                           items={sharedToUsers}
                           multiple
-                          value={selectedSharedToUser ? [selectedSharedToUser] : []}
+                          value={
+                            selectedSharedToUser ? [selectedSharedToUser] : []
+                          }
                           onValueChange={(users) => {
-                            const user = users.length > 0 ? users[users.length - 1] : null;
+                            const user =
+                              users.length > 0 ? users[users.length - 1] : null;
                             setSelectedSharedToUser(user);
                             field.onChange(user ? user.id : null);
                             if (user) setSharedToUserSearchTerm("");
@@ -475,7 +516,10 @@ export function AdvancedSearchDialog({
                           inputValue={sharedToUserSearchTerm}
                           onInputValueChange={(val) => {
                             setSharedToUserSearchTerm(val);
-                            if (val.trim().length > 0 && !selectedSharedToUser) {
+                            if (
+                              val.trim().length > 0 &&
+                              !selectedSharedToUser
+                            ) {
                               setIsSharedToDropdownOpen(true);
                             } else {
                               setIsSharedToDropdownOpen(false);
@@ -486,11 +530,19 @@ export function AdvancedSearchDialog({
                           }
                           open={isSharedToDropdownOpen}
                           onOpenChange={(isOpen) => {
-                            if (isOpen && (sharedToUserSearchTerm.trim().length === 0 || selectedSharedToUser)) return;
+                            if (
+                              isOpen &&
+                              (sharedToUserSearchTerm.trim().length === 0 ||
+                                selectedSharedToUser)
+                            )
+                              return;
                             setIsSharedToDropdownOpen(isOpen);
                           }}
                         >
-                          <ComboboxChips ref={sharedToAnchor} className="w-full">
+                          <ComboboxChips
+                            ref={sharedToAnchor}
+                            className="w-full"
+                          >
                             <ComboboxValue>
                               {selectedSharedToUser && (
                                 <ComboboxChip key={selectedSharedToUser.id}>
@@ -503,21 +555,31 @@ export function AdvancedSearchDialog({
                             <ComboboxChipsInput
                               readOnly={!!selectedSharedToUser}
                               placeholder={
-                                selectedSharedToUser ? "" : "Enter name or email"
+                                selectedSharedToUser
+                                  ? ""
+                                  : "Enter name or email"
                               }
                             />
                           </ComboboxChips>
-                          <ComboboxContent anchor={sharedToAnchor} className="w-(--anchor-width)">
-                            {sharedToUserSearchTerm.trim().length === 0 ? null : isSharedToUsersLoading || isSharedToUsersFetching ? (
+                          <ComboboxContent
+                            anchor={sharedToAnchor}
+                            className="w-(--anchor-width)"
+                          >
+                            {sharedToUserSearchTerm.trim().length ===
+                            0 ? null : isSharedToUsersLoading ||
+                              isSharedToUsersFetching ? (
                               <div className="flex items-center justify-center p-4">
                                 <Spinner className="text-primary size-5" />
                               </div>
                             ) : isSharedToUsersError && sharedToUsersError ? (
                               <div className="flex items-center justify-center p-4">
-                                <p className="text-destructive text-sm">{sharedToUsersError.message}</p>
+                                <p className="text-destructive text-sm">
+                                  {sharedToUsersError.message}
+                                </p>
                               </div>
                             ) : sharedToUsers.length === 0 ? (
-                              sharedToUserSearchTerm === debouncedSharedToSearchTerm ? (
+                              sharedToUserSearchTerm ===
+                              debouncedSharedToSearchTerm ? (
                                 <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
                                   No users found.
                                 </div>
@@ -525,13 +587,12 @@ export function AdvancedSearchDialog({
                             ) : (
                               <ComboboxList>
                                 {sharedToUsers.map((user) => (
-                                  <ComboboxItem
-                                    key={user.id}
-                                    value={user}
-                                  >
+                                  <ComboboxItem key={user.id} value={user}>
                                     <div className="min-w-0">
                                       <p className="truncate font-medium">
-                                        {user.first_name} {user.middle_name ?? ""} {user.last_name}
+                                        {user.first_name}{" "}
+                                        {user.middle_name ?? ""}{" "}
+                                        {user.last_name}
                                       </p>
                                       <p className="truncate text-muted-foreground text-xs">
                                         {user.email}
@@ -554,11 +615,7 @@ export function AdvancedSearchDialog({
             </Field>
           </FieldGroup>
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleReset}
-            >
+            <Button type="button" variant="outline" onClick={handleReset}>
               Reset
             </Button>
             <Button type="submit" disabled={isSubmitting}>
