@@ -2,7 +2,7 @@ import z from "zod";
 
 export const advancedSearchFormSchema = z
   .object({
-    type: z.enum(["file", "folder"]).nullable(),
+    type: z.enum(["pdf", "folder"]).nullable(),
     owner: z.enum(["me", "not_me", "user"]).nullable(),
     owner_id: z.string().uuid("Invalid owner id.").nullable(),
     classification: z

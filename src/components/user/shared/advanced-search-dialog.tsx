@@ -171,7 +171,7 @@ export function AdvancedSearchDialog({
                             <SelectValue>
                               {field.value === null && <p>Any</p>}
                               {field.value === "folder" && <p>Folder</p>}
-                              {field.value === "file" && <p>File</p>}
+                              {field.value === "pdf" && <p>PDF</p>}
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent>
@@ -184,9 +184,9 @@ export function AdvancedSearchDialog({
                                 <Folder />
                                 Folder
                               </SelectItem>
-                              <SelectItem value="file">
+                              <SelectItem value="pdf">
                                 <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
-                                File
+                                PDF
                               </SelectItem>
                             </SelectGroup>
                           </SelectContent>

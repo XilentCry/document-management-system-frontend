@@ -30,7 +30,7 @@ export function Search() {
   const searchTerm = searchParams.get("q");
   const filterTypeParam = searchParams.get("type");
   const filterType: TFilterType =
-    filterTypeParam === "file" || filterTypeParam === "folder"
+    filterTypeParam === "pdf" || filterTypeParam === "folder"
       ? filterTypeParam
       : null;
   const filterClassificationStr = searchParams.get("classification");

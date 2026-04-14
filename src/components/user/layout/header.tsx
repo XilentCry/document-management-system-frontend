@@ -91,7 +91,7 @@ export function Header() {
 
   const filterTypeParam = searchParams.get("type");
   const filterType: TFilterType =
-    filterTypeParam === "file" || filterTypeParam === "folder"
+    filterTypeParam === "pdf" || filterTypeParam === "folder"
       ? filterTypeParam
       : null;
   const filterClassification = searchParams.get("classification");

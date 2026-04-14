@@ -1,1 +1,1 @@
-export type TFilterType = "file" | "folder" | null;
+export type TFilterType = "pdf" | "folder" | null;
