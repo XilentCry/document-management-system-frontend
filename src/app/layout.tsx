@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Document Management System",
+  title: "NORSU Document Management System",
   description: "A secure and efficient document management system for Negros Oriental State University (NORSU).",
 };
 
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={cn("font-sans", inter.variable)} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-w-[1024px]`}
       >
         <Providers>{children}</Providers>
       </body>
