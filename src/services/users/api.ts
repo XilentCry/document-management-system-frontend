@@ -41,10 +41,10 @@ export async function getAllUsers(
 
 export async function updateStatus(
   userId: string,
-  statusId: string,
+  status: string,
 ): Promise<{ message: string }> {
   const { data } = await apiClient.patch(`/api/users/${userId}/status`, {
-    status_id: statusId,
+    status,
   });
   return { message: data.message };
 }
@@ -106,7 +106,7 @@ export async function getRoles(): Promise<{ roles: { id: string; name: string }[
   return data;
 }
 
-export async function getStatuses(): Promise<{ statuses: { id: string; name: string }[] }> {
+export async function getStatuses(): Promise<{ statuses: { value: string; label: string }[] }> {
   const { data } = await apiClient.get("/api/users/statuses");
   return data;
 }

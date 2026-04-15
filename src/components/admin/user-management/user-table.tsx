@@ -22,13 +22,13 @@ import { useCurrentUser } from "@/services/user/queries";
 import { TUser } from "@/types/user";
 import { Ellipsis } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { getStatusBadgeClass } from "@/lib/get-status-badge-class";
+
 
 export function UserTable({ users }: { users: TUser[] }) {
   const router = useRouter();
   const { data: currentUser } = useCurrentUser();
   const userRole = currentUser?.role;
-
-  console.log(users);
 
   const { mutateAsync: reinviteAdminMutation, isPending } = useReinviteAdmin();
 
@@ -60,13 +60,7 @@ export function UserTable({ users }: { users: TUser[] }) {
               <Badge variant="secondary">{user.role}</Badge>
             </TableCell>
             <TableCell>
-              <Badge
-                className={`${user.status === "pending"
-                  ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
-                  : user.status === "approved" &&
-                  "bg-green-500/15 dark:bg-green-500/10 text-green-500"
-                  }`}
-              >
+              <Badge className={getStatusBadgeClass(user.status)}>
                 {user.status}
               </Badge>
             </TableCell>

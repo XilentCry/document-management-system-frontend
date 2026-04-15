@@ -5,21 +5,23 @@ import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { inviteAdmin, reinviteAdmin, updateStatus, updateUser } from "./api";
+import { TUserStatus } from "@/types/user-status";
+
 
 export const useUpdateStatus = (
-  setStatus: Dispatch<SetStateAction<"pending" | "approved">>,
+  setStatus: Dispatch<SetStateAction<TUserStatus>>,
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
       userId,
-      statusId,
+      status,
     }: {
       userId: string;
-      statusId: string;
-      nextStatus: "pending" | "approved";
-    }) => updateStatus(userId, statusId),
+      status: string;
+      nextStatus: TUserStatus;
+    }) => updateStatus(userId, status),
     onSuccess: (data, variables) => {
       toast.success(data.message);
       setStatus(variables.nextStatus);

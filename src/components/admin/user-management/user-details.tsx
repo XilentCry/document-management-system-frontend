@@ -7,7 +7,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Item, ItemContent, ItemTitle } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
 import { useUpdateStatus } from "@/services/users/mutations";
@@ -26,10 +31,14 @@ import { useGetStatuses } from "@/services/users/queries";
 import { useCurrentUser } from "@/services/user/queries";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
+import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { UserAuditLogs } from "./user-audit-logs";
+import { TUserStatus } from "@/types/user-status";
+import { getStatusBadgeClass } from "@/lib/get-status-badge-class";
+
 
 export function UserDetails({
   user,
@@ -38,8 +47,9 @@ export function UserDetails({
     organizationUnits: TOrganizationUnitBase[];
   };
 }) {
-  const [status, setStatus] = useState(user.status);
+  const [status, setStatus] = useState<TUserStatus>(user.status);
   const [isOpen, setIsOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<TUserStatus | null>(null);
   const router = useRouter();
   const { data: currentUser } = useCurrentUser();
   const userId = currentUser?.id;
@@ -52,27 +62,24 @@ export function UserDetails({
 
   const { data: statusesData } = useGetStatuses();
 
-  const handleApprove = async () => {
+  const handleStatusChange = (newStatus: TUserStatus) => {
+    if (newStatus === status) return;
+    setPendingStatus(newStatus);
+    setIsOpen(true);
+  };
+
+  const handleConfirmStatusChange = async () => {
     setIsOpen(false);
 
-    if (!statusesData?.statuses?.length) {
-      toast.error("Statuses are still loading. Please try again.");
-      return;
-    }
+    if (!pendingStatus) return;
 
-    const nextStatus: "pending" | "approved" =
-      status === "approved" ? "pending" : "approved";
+    await updateStatusMutation({
+      userId: user.id,
+      status: pendingStatus,
+      nextStatus: pendingStatus,
+    });
 
-    const statusId = statusesData?.statuses?.find(
-      (s) => s.name.toLowerCase() === nextStatus,
-    )?.id;
-
-    if (!statusId) {
-      toast.error("Could not resolve status id. Please try again.");
-      return;
-    }
-
-    await updateStatusMutation({ userId: user.id, statusId, nextStatus });
+    setPendingStatus(null);
   };
 
   return (
@@ -109,15 +116,8 @@ export function UserDetails({
               </div>
               <div className="flex flex-col gap-1">
                 <p className="font-medium">Status</p>
-                <Badge
-                  className={`${
-                    user.status === "pending"
-                      ? "bg-amber-500/15 dark:bg-amber-500/10 text-amber-500"
-                      : user.status === "approved" &&
-                        "bg-green-500/15 dark:bg-green-500/10 text-green-500"
-                  }`}
-                >
-                  {user.status}
+                <Badge className={getStatusBadgeClass(status)}>
+                  {status}
                 </Badge>
               </div>
               <div className="flex flex-col gap-1">
@@ -126,22 +126,20 @@ export function UserDetails({
               </div>
             </div>
           </div>
-          <div className="flex-1 text-sm">
-            {user.organizationUnits.length > 0 && (
+          {user.organizationUnits.length > 0 && (<div className="flex-1 text-sm">
+            <div className="flex flex-col gap-1">
+              <p className="font-medium">Offices/Units</p>
               <div className="flex flex-col gap-1">
-                <p className="font-medium">Offices/Units</p>
-                <div className="flex flex-col gap-1">
-                  {user.organizationUnits.map((organizationUnit) => (
-                    <Item key={organizationUnit.id} variant="outline" size="xs">
-                      <ItemContent>
-                        <ItemTitle>{organizationUnit.name}</ItemTitle>
-                      </ItemContent>
-                    </Item>
-                  ))}
-                </div>
+                {user.organizationUnits.map((organizationUnit) => (
+                  <Item key={organizationUnit.id} variant="outline" size="xs">
+                    <ItemContent>
+                      <ItemTitle>{organizationUnit.name}</ItemTitle>
+                    </ItemContent>
+                  </Item>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          </div>)}
         </div>
         <div className="flex gap-2">
           {!isAdminViewingAdmin && (
@@ -155,45 +153,67 @@ export function UserDetails({
             </Button>
           )}
           {user.id !== userId && !isAdminViewingAdmin && (
-            <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-              <AlertDialogTrigger render={<Button variant={status === "approved" ? "destructive" : "default"} />}>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    disabled={isPending}
+                  />
+                }
+              >
                 {isPending ? (
                   <>
                     <Spinner />
-                    Processing...
+                    Updating...
                   </>
-                ) : status === "approved" ? (
-                  "Unapprove"
                 ) : (
-                  "Approve"
+                  <>
+                    Change Status
+                    <ChevronDown />
+                  </>
                 )}
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <div className="flex flex-col gap-1">
-                    <AlertDialogTitle>
-                      {status === "approved"
-                        ? "Confirm Unapporval"
-                        : "Confirm Approval"}
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {status === "approved"
-                        ? "Are you sure you want to unapprove this user?"
-                        : "Are you sure you want to approve this user?"}
-                    </AlertDialogDescription>
-                  </div>
-                </AlertDialogHeader>
-                <AlertDialogFooter className="mt-2">
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleApprove}>
-                    Confirm
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {statusesData?.statuses
+                  .filter((s) => s.value !== status)
+                  .map((s) => (
+                    <DropdownMenuItem
+                      key={s.value}
+                      onClick={() => handleStatusChange(s.value as TUserStatus)}
+                    >
+                      <span className="capitalize">{s.label}</span>
+                    </DropdownMenuItem>
+                  ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
         </div>
       </div>
+
+      <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="flex flex-col gap-1">
+              <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to change this user&apos;s status to{" "}
+                <span className="font-semibold capitalize">
+                  {pendingStatus}
+                </span>
+                ?
+              </AlertDialogDescription>
+            </div>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-2">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmStatusChange}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <UserAuditLogs userId={user.id} />
     </div>
   );

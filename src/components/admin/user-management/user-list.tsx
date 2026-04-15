@@ -110,11 +110,11 @@ export function UserList() {
             <DropdownMenuContent>
               {statusesData?.statuses.map((status) => (
                 <DropdownMenuCheckboxItem
-                  key={status.id}
-                  checked={selectedStatuses.includes(status.name)}
-                  onCheckedChange={() => toggleFilter(setSelectedStatuses, status.name)}
+                  key={status.value}
+                  checked={selectedStatuses.includes(status.value)}
+                  onCheckedChange={() => toggleFilter(setSelectedStatuses, status.value)}
                 >
-                  <span className="capitalize">{status.name}</span>
+                  <span className="capitalize">{status.label}</span>
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuContent>
