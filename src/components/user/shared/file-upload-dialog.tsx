@@ -34,12 +34,17 @@ import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useCurrentUser } from "@/services/user/queries";
 import { useUploadStore } from "@/stores/upload-store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UploadIcon, X } from "lucide-react";
+import { UploadIcon, X, Info } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useUploadDialogStore } from "@/stores/upload-dialog-store";
 import { useGetAllClassifications } from "@/services/classifications/queries";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { checkConflicts } from "@/services/documents/api";
 import { FileUploadConflictDialog } from "./file-upload-conflict-dialog";
 import { FileUploadVersionConflictDialog } from "./file-upload-version-conflict-dialog";
@@ -49,14 +54,17 @@ export function FileUploadDialog() {
   const setIsOpen = useUploadDialogStore((state) => state.setIsOpen);
   const pendingFiles = useUploadDialogStore((state) => state.pendingFiles);
   const replaceItemId = useUploadDialogStore((state) => state.replaceItemId);
-  const clearPendingFiles = useUploadDialogStore((state) => state.clearPendingFiles);
+  const clearPendingFiles = useUploadDialogStore(
+    (state) => state.clearPendingFiles,
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: currentUser } = useCurrentUser();
   const storeOrganizationUnitId = useOrganizationUnitStore(
     (state) => state.currentOrganizationUnitId,
   );
-  const currentOrganizationUnitId = storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
+  const currentOrganizationUnitId =
+    storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
   const currentParentFolderId = useFolderStore(
     (state) => state.currentParentFolderId,
   );
@@ -68,7 +76,12 @@ export function FileUploadDialog() {
   const [isCheckingConflicts, setIsCheckingConflicts] = useState(false);
   const [conflictData, setConflictData] = useState<{
     open: boolean;
-    conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
+    conflicts: {
+      id: string;
+      name: string;
+      can_replace: boolean;
+      versions_count: number;
+    }[];
     pendingData: TUploadFileFormSchema | null;
   }>({ open: false, conflicts: [], pendingData: null });
 
@@ -96,24 +109,36 @@ export function FileUploadDialog() {
     name: "documents",
   });
 
-  const addFilesToQueue = useCallback((files: File[]) => {
-    files.forEach((file) => {
-      append({
-        organization_unit_id: currentOrganizationUnitId!,
-        classification_id: classifications[0]?.id ?? "",
-        folder_id: currentParentFolderId,
-        file,
+  const addFilesToQueue = useCallback(
+    (files: File[]) => {
+      files.forEach((file) => {
+        append({
+          organization_unit_id: currentOrganizationUnitId!,
+          classification_id: classifications[0]?.id ?? "",
+          folder_id: currentParentFolderId,
+          file,
+        });
       });
-    });
-  }, [append, currentOrganizationUnitId, classifications, currentParentFolderId]);
+    },
+    [append, currentOrganizationUnitId, classifications, currentParentFolderId],
+  );
 
   useEffect(() => {
     if (isOpen && pendingFiles.length > 0 && isClassificationsSuccess) {
-      const filesToAdd = replaceItemId ? pendingFiles.slice(0, 1) : pendingFiles;
+      const filesToAdd = replaceItemId
+        ? pendingFiles.slice(0, 1)
+        : pendingFiles;
       addFilesToQueue(filesToAdd);
       clearPendingFiles();
     }
-  }, [isOpen, pendingFiles, isClassificationsSuccess, clearPendingFiles, addFilesToQueue, replaceItemId]);
+  }, [
+    isOpen,
+    pendingFiles,
+    isClassificationsSuccess,
+    clearPendingFiles,
+    addFilesToQueue,
+    replaceItemId,
+  ]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newFiles = Array.from(e.target.files ?? []);
@@ -181,11 +206,15 @@ export function FileUploadDialog() {
 
       let actualConflicts = res.conflicts || [];
       if (replaceItemId) {
-        actualConflicts = actualConflicts.filter(c => c.id !== replaceItemId);
+        actualConflicts = actualConflicts.filter((c) => c.id !== replaceItemId);
       }
 
       if (actualConflicts.length > 0) {
-        setConflictData({ open: true, conflicts: actualConflicts, pendingData: data });
+        setConflictData({
+          open: true,
+          conflicts: actualConflicts,
+          pendingData: data,
+        });
         setIsCheckingConflicts(false);
         return;
       }
@@ -230,7 +259,10 @@ export function FileUploadDialog() {
             return null;
           }
         }
-        return { ...doc, replace_item_id: replaceItemId || doc.replace_item_id };
+        return {
+          ...doc,
+          replace_item_id: replaceItemId || doc.replace_item_id,
+        };
       })
       .filter(Boolean) as TSingleFile[];
 
@@ -248,14 +280,17 @@ export function FileUploadDialog() {
             className="flex flex-col gap-6 min-w-0"
           >
             <DialogHeader>
-              <DialogTitle>{replaceItemId ? 'Upload New Version' : 'Upload file'}</DialogTitle>
+              <DialogTitle>
+                {replaceItemId ? "Upload New Version" : "Upload file"}
+              </DialogTitle>
             </DialogHeader>
             <div className="max-h-96 flex flex-col gap-6">
               <div
-                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${replaceItemId && fields.length >= 1
-                  ? "opacity-50 cursor-not-allowed border-muted bg-muted/20"
-                  : "hover:bg-muted/50 cursor-pointer"
-                  }`}
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                  replaceItemId && fields.length >= 1
+                    ? "opacity-50 cursor-not-allowed border-muted bg-muted/20"
+                    : "hover:bg-muted/50 cursor-pointer"
+                }`}
                 onClick={() => {
                   if (replaceItemId && fields.length >= 1) return;
                   fileInputRef.current?.click();
@@ -283,57 +318,77 @@ export function FileUploadDialog() {
                   {fields.map((field, index) => (
                     <Item key={field.id} size="xs">
                       <ItemMedia>
-                        <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
+                        <Image
+                          src="/pdf.svg"
+                          alt="PDF"
+                          width={16}
+                          height={16}
+                        />
                       </ItemMedia>
                       <ItemContent className="min-w-0">
                         <ItemTitle className="block w-auto truncate">
                           {field.file.name}
                         </ItemTitle>
                       </ItemContent>
-                      <ItemActions>
+                      <ItemActions className="items-center gap-2">
                         <Controller
                           control={control}
                           name={`documents.${index}.classification_id`}
-                          render={({ field }) => (
-                            <Select
-                              value={field.value}
-                              onValueChange={(value) =>
-                                field.onChange(value)
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue>
-                                  {
-                                    classifications.find(
-                                      (c) => c.id === field.value,
-                                    )?.name
+                          render={({ field }) => {
+                            const selectedClassification = classifications.find(
+                              (c) => c.id === field.value,
+                            );
+
+                            return (
+                              <div className="flex items-center gap-2">
+                                <Select
+                                  value={field.value}
+                                  onValueChange={(value) =>
+                                    field.onChange(value)
                                   }
-                                </SelectValue>
-                              </SelectTrigger>
-                              <SelectContent>
-                                {isClassificationsLoading ? (
-                                  <div className="flex items-center justify-center p-4">
-                                    <Spinner className="text-primary size-5" />
-                                  </div>
-                                ) : isClassificationsError && classificationsError ? (
-                                  <div className="flex items-center justify-center p-4">
-                                    <p className="text-destructive text-sm">
-                                      {classificationsError.message}
-                                    </p>
-                                  </div>
-                                ) : (
-                                  classifications.map((classification) => (
-                                    <SelectItem
-                                      key={classification.id}
-                                      value={classification.id}
-                                    >
-                                      {classification.name}
-                                    </SelectItem>
-                                  ))
-                                )}
-                              </SelectContent>
-                            </Select>
-                          )}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue>
+                                      {selectedClassification?.name}
+                                    </SelectValue>
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {isClassificationsLoading ? (
+                                      <div className="flex items-center justify-center p-4">
+                                        <Spinner className="text-primary size-5" />
+                                      </div>
+                                    ) : isClassificationsError &&
+                                      classificationsError ? (
+                                      <div className="flex items-center justify-center p-4">
+                                        <p className="text-destructive text-sm">
+                                          {classificationsError.message}
+                                        </p>
+                                      </div>
+                                    ) : (
+                                      classifications.map((classification) => (
+                                        <SelectItem
+                                          key={classification.id}
+                                          value={classification.id}
+                                        >
+                                          {classification.name}
+                                        </SelectItem>
+                                      ))
+                                    )}
+                                  </SelectContent>
+                                </Select>
+                                {selectedClassification?.description ? (
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <Info className="size-4" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      {selectedClassification.description}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                ) : null}
+                              </div>
+                            );
+                          }}
                         />
                         <Button
                           variant="ghost"
@@ -360,8 +415,18 @@ export function FileUploadDialog() {
               <DialogClose render={<Button variant="outline" />}>
                 Cancel
               </DialogClose>
-              <Button type="submit" disabled={fields.length === 0 || isCheckingConflicts}>
-                {isCheckingConflicts ? <><Spinner />Checking...</> : "Upload"}
+              <Button
+                type="submit"
+                disabled={fields.length === 0 || isCheckingConflicts}
+              >
+                {isCheckingConflicts ? (
+                  <>
+                    <Spinner />
+                    Checking...
+                  </>
+                ) : (
+                  "Upload"
+                )}
               </Button>
             </DialogFooter>
           </form>

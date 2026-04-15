@@ -26,6 +26,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Info } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import {
   shareDocumentFormSchema,
@@ -193,7 +199,9 @@ export function ShareDocumentDialog({
                           />
                         </ComboboxChips>
                         <ComboboxContent anchor={anchor}>
-                          {searchTerm.trim().length === 0 ? null : isLoadingShareableUsers || isFetchingShareableUsers ? (
+                          {searchTerm.trim().length ===
+                          0 ? null : isLoadingShareableUsers ||
+                            isFetchingShareableUsers ? (
                             <div className="flex items-center justify-center p-4">
                               <Spinner className="text-primary size-5" />
                             </div>
@@ -240,35 +248,56 @@ export function ShareDocumentDialog({
                   <Controller
                     name="share_role_id"
                     control={control}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value || undefined}
-                        onValueChange={(value) => field.onChange(value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a role">
-                            {shareRoles.find((role) => role.id === field.value)?.name}
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                          {isLoadingShareRoles ? (
-                            <div className="p-4 flex items-center justify-center">
-                              <Spinner className="text-primary size-5" />
-                            </div>
-                          ) : isShareRolesError && shareRolesError ? (
-                            <div className="p-4 text-center text-sm text-destructive">
-                              {shareRolesError.message}
-                            </div>
-                          ) : (
-                            shareRoles.map((shareRole) => (
-                              <SelectItem key={shareRole.id} value={shareRole.id}>
-                                {shareRole.name}
-                              </SelectItem>
-                            ))
-                          )}
-                        </SelectContent>
-                      </Select>
-                    )}
+                    render={({ field }) => {
+                      const selectedShareRole = shareRoles.find(
+                        (role) => role.id === field.value,
+                      );
+
+                      return (
+                        <div className="flex items-center gap-2">
+                          <Select
+                            value={field.value || undefined}
+                            onValueChange={(value) => field.onChange(value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a role">
+                                {selectedShareRole?.name}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                              {isLoadingShareRoles ? (
+                                <div className="p-4 flex items-center justify-center">
+                                  <Spinner className="text-primary size-5" />
+                                </div>
+                              ) : isShareRolesError && shareRolesError ? (
+                                <div className="p-4 text-center text-sm text-destructive">
+                                  {shareRolesError.message}
+                                </div>
+                              ) : (
+                                shareRoles.map((shareRole) => (
+                                  <SelectItem
+                                    key={shareRole.id}
+                                    value={shareRole.id}
+                                  >
+                                    {shareRole.name}
+                                  </SelectItem>
+                                ))
+                              )}
+                            </SelectContent>
+                          </Select>
+                          {selectedShareRole?.description ? (
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="size-4" />
+                              </TooltipTrigger>
+                              <TooltipContent side="top">
+                                {selectedShareRole.description}
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : null}
+                        </div>
+                      );
+                    }}
                   />
                 )}
               </div>

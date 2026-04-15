@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactNode, useState } from "react";
 import { Toaster } from "./components/ui/sonner";
 import { ThemeProvider } from "./components/shared/theme-provider";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -26,7 +27,7 @@ export default function Providers({ children }: { children: ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
       </ThemeProvider>
       <Toaster />
       <ReactQueryDevtools />
