@@ -99,6 +99,14 @@ export function UserList() {
                   <span className="capitalize">{role.name}</span>
                 </DropdownMenuCheckboxItem>
               ))}
+              {userRole === "superuser" && !rolesData?.roles.some((r) => r.name === "superuser") && (
+                <DropdownMenuCheckboxItem
+                  checked={selectedRoles.includes("superuser")}
+                  onCheckedChange={() => toggleFilter(setSelectedRoles, "superuser")}
+                >
+                  <span className="capitalize">Superuser</span>
+                </DropdownMenuCheckboxItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
 
