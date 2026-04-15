@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getAllUsers, getUser, getRoles, getStatuses, getUserAuditLogs, searchSharedToUsers } from "./api";
+import { getAllUsers, getUser, getRoles, getUserAuditLogs, searchSharedToUsers } from "./api";
 
 export const useGetAllUsers = (
   page: number,
@@ -38,14 +38,6 @@ export const useGetRoles = () => {
   return useQuery({
     queryKey: ["roles"],
     queryFn: getRoles,
-    staleTime: 60 * 1000 * 5, // 5 minutes
-  });
-};
-
-export const useGetStatuses = () => {
-  return useQuery({
-    queryKey: ["statuses"],
-    queryFn: getStatuses,
     staleTime: 60 * 1000 * 5, // 5 minutes
   });
 };

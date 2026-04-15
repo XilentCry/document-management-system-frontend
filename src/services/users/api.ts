@@ -106,11 +106,6 @@ export async function getRoles(): Promise<{ roles: { id: string; name: string }[
   return data;
 }
 
-export async function getStatuses(): Promise<{ statuses: { value: string; label: string }[] }> {
-  const { data } = await apiClient.get("/api/users/statuses");
-  return data;
-}
-
 export async function getUserAuditLogs(
   userId: string | string,
   page: number,

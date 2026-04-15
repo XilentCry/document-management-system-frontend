@@ -1,13 +1,4 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ConfirmStatusChangeDialog } from "./confirm-status-change-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +18,7 @@ import {
 import { Item, ItemContent, ItemTitle } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
 import { useUpdateStatus } from "@/services/users/mutations";
-import { useGetStatuses } from "@/services/users/queries";
+import { USER_STATUS } from "@/lib/constants";
 import { useCurrentUser } from "@/services/user/queries";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
@@ -60,7 +51,6 @@ export function UserDetails({
   const { mutateAsync: updateStatusMutation, isPending } =
     useUpdateStatus(setStatus);
 
-  const { data: statusesData } = useGetStatuses();
 
   const handleStatusChange = (newStatus: TUserStatus) => {
     if (newStatus === status) return;
@@ -175,12 +165,12 @@ export function UserDetails({
                 )}
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                {statusesData?.statuses
-                  .filter((s) => s.value !== status)
+                {USER_STATUS
+                  .filter((s) => s.value !== status && s.value !== "pending")
                   .map((s) => (
                     <DropdownMenuItem
                       key={s.value}
-                      onClick={() => handleStatusChange(s.value as TUserStatus)}
+                      onClick={() => handleStatusChange(s.value)}
                     >
                       <span className="capitalize">{s.label}</span>
                     </DropdownMenuItem>
@@ -191,28 +181,12 @@ export function UserDetails({
         </div>
       </div>
 
-      <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="flex flex-col gap-1">
-              <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to change this user&apos;s status to{" "}
-                <span className="font-semibold capitalize">
-                  {pendingStatus}
-                </span>
-                ?
-              </AlertDialogDescription>
-            </div>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="mt-2">
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmStatusChange}>
-              Confirm
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmStatusChangeDialog
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        pendingStatus={pendingStatus}
+        handleConfirmStatusChange={handleConfirmStatusChange}
+      />
 
       <UserAuditLogs userId={user.id} />
     </div>
