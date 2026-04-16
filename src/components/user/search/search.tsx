@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { EmptyState } from "@/components/shared/empty-state";
-import { ItemGrid } from "@/components/user/shared/item-grid";
+import { SearchGrid } from "./search-grid";
 import { useSearchOrganizationUnitItems } from "@/services/organization-units/queries";
 import { useCurrentUser } from "@/services/user/queries";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
@@ -23,6 +23,11 @@ import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { SearchResultList } from "./search-result-list";
 import { TFilterOwner } from "@/types/filter-owner";
+import { TItem } from "@/types/item";
+import { useState } from "react";
+import { DocumentViewer } from "../shared/document-viewer";
+import { SharedDocumentViewer } from "../shared-with-me/shared-document-viewer";
+import { TSharedWithMe } from "@/types/shared-with-me";
 
 export function Search() {
   const searchParams = useSearchParams();
@@ -55,6 +60,14 @@ const filterSharedTo = filterSharedToStr || null;
   const setDraftSearchTerm = useSearchStore(
     (state) => state.setDraftSearchTerm,
   );
+
+  const [openDocumentViewer, setOpenDocumentViewer] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<TItem | null>(null);
+
+  const handleDocumentDoubleClick = async (document: TItem) => {
+    setSelectedDocument(document);
+    setOpenDocumentViewer(true);
+  };
 
   useEffect(() => {
     if (searchTerm) {
@@ -139,7 +152,13 @@ const filterSharedTo = filterSharedToStr || null;
             hasNextPage && !isFetchingNextPage && fetchNextPage()
           }
         >
-          <SearchResultList data={organizationUnitItems} />
+          <SearchResultList
+            data={organizationUnitItems}
+            onDocumentDoubleClick={handleDocumentDoubleClick}
+            openDocumentViewer={openDocumentViewer}
+            setOpenDocumentViewer={setOpenDocumentViewer}
+            selectedDocument={selectedDocument}
+          />
           {isFetchingNextPage && (
             <div className="py-4 flex items-center justify-center">
               <Spinner className="text-primary size-9" />
@@ -152,7 +171,10 @@ const filterSharedTo = filterSharedToStr || null;
             hasNextPage && !isFetchingNextPage && fetchNextPage()
           }
         >
-          <ItemGrid data={organizationUnitItems} />
+          <SearchGrid
+            data={organizationUnitItems}
+            onDocumentDoubleClick={handleDocumentDoubleClick}
+          />
           {isFetchingNextPage && (
             <div className="py-4 flex items-center justify-center">
               <Spinner className="text-primary size-9" />
@@ -171,6 +193,28 @@ const filterSharedTo = filterSharedToStr || null;
             Retry
           </Button>
         </div>
+      )}
+      {openDocumentViewer && selectedDocument && (
+        selectedDocument.share_permissions ? (
+          <SharedDocumentViewer
+            openDocumentViewer={openDocumentViewer}
+            setOpenDocumentViewer={setOpenDocumentViewer}
+            sharedDocument={{
+              id: selectedDocument.id,
+              item: selectedDocument,
+              share_permissions: selectedDocument.share_permissions,
+              shared_by: selectedDocument.owner,
+              created_at: selectedDocument.created_at ?? "",
+              raw_created_at: selectedDocument.updated_at,
+            } as TSharedWithMe}
+          />
+        ) : (
+          <DocumentViewer
+            openDocumentViewer={openDocumentViewer}
+            setOpenDocumentViewer={setOpenDocumentViewer}
+            document={selectedDocument}
+          />
+        )
       )}
     </div>
   );
