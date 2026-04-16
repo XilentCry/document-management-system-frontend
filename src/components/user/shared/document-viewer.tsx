@@ -149,18 +149,17 @@ export function DocumentViewer({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              {isOwner && (
-                <>
-                  {document.classification === "protected" ? (
-                    <Button onClick={() => setOpenShareDialog(true)}>
-                      <UserRoundPlus />
-                      Share
-                    </Button>
-                  ) : document.classification === "public" ? <Button onClick={() => copyLink(document.id)}>
-                    <Link2 />
-                    Copy Link
-                  </Button> : null}
-                </>
+              {isOwner && document.classification === "protected" && (
+                <Button onClick={() => setOpenShareDialog(true)}>
+                  <UserRoundPlus />
+                  Share
+                </Button>
+              )}
+              {document.classification === "public" && (
+                <Button onClick={() => copyLink(document.id)}>
+                  <Link2 />
+                  Copy Link
+                </Button>
               )}
             </div>
           </header>

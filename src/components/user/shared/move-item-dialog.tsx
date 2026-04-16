@@ -301,7 +301,7 @@ export function MoveItemDialog({
               {isSubmitting ? (
                 <>
                   <Spinner />
-                  Moving
+                  Moving...
                 </>
               ) : (
                 "Move"
