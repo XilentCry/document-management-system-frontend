@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useDownloadDocument } from "@/services/documents/mutations";
+
 import { useRailStore } from "@/stores/rail-store";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
@@ -26,25 +26,32 @@ import { TSharedWithMe } from "@/types/shared-with-me";
 import {
   Activity,
   CircleAlert,
-  Download,
+
   EllipsisVertical,
   Info,
   PencilLine,
   UserRoundPlus
 } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
 import { MoveItemDialog } from "../shared/move-item-dialog";
 import { RenameItemDialog } from "../shared/rename-item-dialog";
 import { ShareDocumentDialog } from "../shared/share-document-dialog";
 import { groupItemsByRelativeDate } from "@/lib/date-grouping";
+import { SharedDocumentViewer } from "./shared-document-viewer";
 
 export function SharedDocumentTable({
   data,
   onDocumentDoubleClick,
+  openDocumentViewer,
+  setOpenDocumentViewer,
+  selectedDocument,
 }: {
   data: TCursorPaginate<TSharedWithMe>["data"];
-  onDocumentDoubleClick: (documentId: string) => Promise<void>;
+  onDocumentDoubleClick: (document: TSharedWithMe) => Promise<void>;
+  openDocumentViewer: boolean;
+  setOpenDocumentViewer: Dispatch<SetStateAction<boolean>>;
+  selectedDocument: TSharedWithMe | null;
 }) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
@@ -61,11 +68,7 @@ export function SharedDocumentTable({
     setOpenRail,
   } = useRailStore();
 
-  const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
-  const handleDownload = (id: string, fileName: string) => {
-    downloadDocumentMutation({ id, fileName });
-  };
 
   const groupedData = groupItemsByRelativeDate(data, (item) => item.raw_created_at);
 
@@ -103,7 +106,7 @@ export function SharedDocumentTable({
                   if (
                     !sharedDocument.share_permissions.some(
                       (share_permissions) =>
-                        share_permissions.name === "can_view",
+                        share_permissions.name === "document:view",
                     )
                   ) {
                     toast.error(
@@ -112,7 +115,7 @@ export function SharedDocumentTable({
                     return;
                   }
 
-                  onDocumentDoubleClick(sharedDocument.item.id);
+                  onDocumentDoubleClick(sharedDocument);
                 }}
               >
                 <TableCell>
@@ -137,25 +140,10 @@ export function SharedDocumentTable({
                       <EllipsisVertical className="size-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-72">
+
                       {sharedDocument.share_permissions.some(
                         (sharePermission) =>
-                          sharePermission.name === "can_download",
-                      ) && (
-                          <DropdownMenuItem
-                            onClick={() =>
-                              handleDownload(
-                                sharedDocument.item.id,
-                                sharedDocument.item.name,
-                              )
-                            }
-                          >
-                            <Download />
-                            Download
-                          </DropdownMenuItem>
-                        )}
-                      {sharedDocument.share_permissions.some(
-                        (sharePermission) =>
-                          sharePermission.name === "can_rename",
+                          sharePermission.name === "document:rename",
                       ) && (
                           <DropdownMenuItem
                             onClick={() => {
@@ -168,7 +156,7 @@ export function SharedDocumentTable({
                           </DropdownMenuItem>
                         )}
                       {sharedDocument.share_permissions.some(
-                        (sharePermission) => sharePermission.name === "can_share",
+                        (sharePermission) => sharePermission.name === "document:share",
                       ) && (
                           <DropdownMenuItem
                             onClick={() => {
@@ -250,6 +238,14 @@ export function SharedDocumentTable({
           item={selectedItem}
           openShareDialog={openShareDialog}
           setOpenShareDialog={setOpenShareDialog}
+        />
+      )}
+
+      {selectedDocument && (
+        <SharedDocumentViewer
+          openDocumentViewer={openDocumentViewer}
+          setOpenDocumentViewer={setOpenDocumentViewer}
+          sharedDocument={selectedDocument}
         />
       )}
     </>

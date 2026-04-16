@@ -1,10 +1,10 @@
-import { viewDocument } from "@/services/documents/api";
 import { useRailStore } from "@/stores/rail-store";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TSharedWithMe } from "@/types/shared-with-me";
-import { toast } from "sonner";
+import { useState } from "react";
 import { groupItemsByRelativeDate } from "@/lib/date-grouping";
 import { SharedDocument } from "./shared-document";
+import { SharedDocumentViewer } from "./shared-document-viewer";
 
 export function SharedDocumentGrid({
   data,
@@ -12,23 +12,12 @@ export function SharedDocumentGrid({
   data: TCursorPaginate<TSharedWithMe>["data"];
 }) {
   const { openRail } = useRailStore();
+  const [openDocumentViewer, setOpenDocumentViewer] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<TSharedWithMe | null>(null);
 
-  const handleDocumentDoubleClick = async (documentId: string) => {
-    try {
-      const url = await viewDocument(documentId);
-      const newWindow = window.open(url);
-
-      if (newWindow) {
-        newWindow.addEventListener("load", () => URL.revokeObjectURL(url));
-      } else {
-        URL.revokeObjectURL(url);
-        toast.error("Please allow popups for this site.");
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
-    }
+  const handleDocumentDoubleClick = async (document: TSharedWithMe) => {
+    setSelectedDocument(document);
+    setOpenDocumentViewer(true);
   };
 
   const groupedData = groupItemsByRelativeDate(data, (item) => item.raw_created_at);
@@ -44,14 +33,20 @@ export function SharedDocumentGrid({
                 key={sharedDocument.id}
                 item={sharedDocument.item}
                 sharePermissions={sharedDocument.share_permissions}
-                onDoubleClick={() =>
-                  handleDocumentDoubleClick(sharedDocument.item.id)
-                }
+                onDoubleClick={() => handleDocumentDoubleClick(sharedDocument)}
               />
             ))}
           </div>
         </div>
       ))}
+
+      {openDocumentViewer && selectedDocument && (
+        <SharedDocumentViewer
+          openDocumentViewer={openDocumentViewer}
+          setOpenDocumentViewer={setOpenDocumentViewer}
+          sharedDocument={selectedDocument}
+        />
+      )}
     </div>
   );
 }

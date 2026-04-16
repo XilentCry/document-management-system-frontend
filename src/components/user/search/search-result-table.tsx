@@ -109,7 +109,7 @@ export function SearchResultTable({
                   } else {
                     if (
                       item.share_permissions !== null &&
-                      !item.share_permissions.some((p) => p.name === "can_view")
+                      !item.share_permissions.some((p) => p.name === "document:view")
                     ) {
                       toast.error(
                         "You do not have permission to view this document.",
@@ -215,18 +215,9 @@ export function SearchResultTable({
                         </>
                       ) : (
                         <>
+
                           {item.share_permissions.some(
-                            (p) => p.name === "can_download",
-                          ) && (
-                              <DropdownMenuItem
-                                onClick={() => handleDownload(item.id, item.name)}
-                              >
-                                <Download />
-                                Download
-                              </DropdownMenuItem>
-                            )}
-                          {item.share_permissions.some(
-                            (p) => p.name === "can_rename",
+                            (p) => p.name === "document:rename",
                           ) && (
                               <DropdownMenuItem
                                 onClick={() => {
@@ -239,7 +230,7 @@ export function SearchResultTable({
                               </DropdownMenuItem>
                             )}
                           {item.share_permissions.some(
-                            (p) => p.name === "can_share",
+                            (p) => p.name === "document:share",
                           ) && (
                               <DropdownMenuItem
                                 onClick={() => {

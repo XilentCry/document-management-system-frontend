@@ -18,14 +18,14 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-import { useDownloadDocument } from "@/services/documents/mutations";
+
 import { useRailStore } from "@/stores/rail-store";
 import { TItem } from "@/types/item";
 import { TSharePermission } from "@/types/share-permission";
 import {
   Activity,
   CircleAlert,
-  Download,
+
   EllipsisVertical,
   Info,
   PencilLine,
@@ -44,7 +44,7 @@ export function SharedDocument({
 }: {
   item: TItem;
   sharePermissions: TSharePermission[];
-  onDoubleClick: (documentId: string) => Promise<void>;
+  onDoubleClick: () => Promise<void>;
 }) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
@@ -59,14 +59,7 @@ export function SharedDocument({
     setOpenRail,
   } = useRailStore();
 
-  const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
-  const handleDownload = () => {
-    downloadDocumentMutation({
-      id: item.id,
-      fileName: item.name,
-    });
-  };
 
   return (
     <>
@@ -82,14 +75,14 @@ export function SharedDocument({
         onDoubleClick={() => {
           if (
             !sharePermissions.some(
-              (sharePermission) => sharePermission.name === "can_view",
+              (sharePermission) => sharePermission.name === "document:view",
             )
           ) {
             toast.error("You do not have permission to view this document.");
             return;
           }
 
-          onDoubleClick(item.id);
+          onDoubleClick();
         }}
       >
         <ItemMedia>
@@ -112,14 +105,7 @@ export function SharedDocument({
               <EllipsisVertical className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-72">
-              {sharePermissions.some(
-                (sharePermission) => sharePermission.name === "can_download",
-              ) && (
-                  <DropdownMenuItem onClick={handleDownload}>
-                    <Download />
-                    Download
-                  </DropdownMenuItem>
-                )}
+
               {sharePermissions.some(
                 (sharePermission) => sharePermission.name === "can_rename",
               ) && (
