@@ -106,6 +106,22 @@ export const useMoveItem = () => {
         });
       }
 
+      if (variables.moveData.parent_folder_id) {
+        queryClient.invalidateQueries({
+          queryKey: ["folder", variables.moveData.parent_folder_id, "items"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["folder", variables.moveData.parent_folder_id, "subfolders"],
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["organization-unit", currentOrganizationUnitId, "folders"],
+        });
+      }
+
       queryClient.invalidateQueries({
         queryKey: ["item", variables.id, "activities"],
       });

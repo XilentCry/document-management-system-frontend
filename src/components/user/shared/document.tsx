@@ -58,6 +58,7 @@ export function Document({
 
   const { data: currentUser } = useCurrentUser();
   const userId = currentUser?.id;
+  const isOwner = item.owner.id === userId;
 
   const {
     setSelectedDocumentId,
@@ -116,12 +117,12 @@ export function Document({
                 <Download />
                 Download
               </DropdownMenuItem>
-              <DropdownMenuItem disabled={item.owner.id !== userId} onClick={() => setOpenRenameItemDialog(true)}>
+              <DropdownMenuItem disabled={!isOwner} onClick={() => setOpenRenameItemDialog(true)}>
                 <PencilLine />
                 Rename
               </DropdownMenuItem>
               <DropdownMenuItem
-                disabled={item.owner.id !== userId}
+                disabled={!isOwner}
                 onClick={() => setOpenChangeClassificationDialog(true)}
               >
                 <Shield />
@@ -129,7 +130,7 @@ export function Document({
               </DropdownMenuItem>
               {item.classification === "protected" ? (
                 <DropdownMenuItem
-                  disabled={item.owner.id !== userId}
+                  disabled={!isOwner}
                   onClick={() => setOpenShareDialog(true)}
                 >
                   <UserRoundPlus />
@@ -141,7 +142,7 @@ export function Document({
                   Copy Link
                 </DropdownMenuItem>
               ) : null}
-              <DropdownMenuItem disabled={item.owner.id !== userId} onClick={() => setOpenMoveItemDialog(true)}>
+              <DropdownMenuItem disabled={!isOwner} onClick={() => setOpenMoveItemDialog(true)}>
                 <FolderInput />
                 Move
               </DropdownMenuItem>
@@ -180,7 +181,7 @@ export function Document({
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setOpenVersionHistoryDialog(true)}>
                       <History />
-                      {item.owner.id !== userId ? "Version history" : "Manage versions"}
+                      {!isOwner ? "Version history" : "Manage versions"}
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>

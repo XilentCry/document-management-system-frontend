@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +17,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Image from "next/image";
 
+import { groupItemsByRelativeDate } from "@/lib/date-grouping";
+import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
@@ -30,19 +32,15 @@ import {
   Download,
 
   EllipsisVertical,
-  FolderInput,
   Info,
   PencilLine,
   UserRoundPlus
 } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
-import { MoveItemDialog } from "../shared/move-item-dialog";
 import { RenameItemDialog } from "../shared/rename-item-dialog";
 import { ShareDocumentDialog } from "../shared/share-document-dialog";
-import { groupItemsByRelativeDate } from "@/lib/date-grouping";
 import { SharedDocumentViewer } from "./shared-document-viewer";
-import { useDownloadDocument } from "@/services/documents/mutations";
 
 export function SharedDocumentTable({
   data,
@@ -58,7 +56,6 @@ export function SharedDocumentTable({
   selectedDocument: TSharedWithMe | null;
 }) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
-  const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TItem | null>(null);
   const [openShareDialog, setOpenShareDialog] = useState(false);
 
@@ -104,31 +101,40 @@ export function SharedDocumentTable({
                 {groupData.group}
               </TableCell>
             </TableRow>,
-            ...groupData.items.map((sharedDocument) => (
-              <TableRow
-                key={sharedDocument.item.id}
-                onClick={() => {
-                  setSelectedDocumentId(sharedDocument.item.id);
-                  setSelectedDocumentFileName(sharedDocument.item.name);
-                  setSelectedFolderId(null);
-                  setSelectedFolderName(null);
-                }}
-                onDoubleClick={() => {
-                  if (
-                    !sharedDocument.share_permissions.some(
-                      (share_permissions) =>
-                        share_permissions.name === "document:view",
-                    )
-                  ) {
-                    toast.error(
-                      "You do not have permission to view this document.",
-                    );
-                    return;
-                  }
+            ...groupData.items.map((sharedDocument) => {
+              const canView = sharedDocument.share_permissions.some(
+                (p) => p.name === "document:view",
+              );
+              const canDownload = sharedDocument.share_permissions.some(
+                (p) => p.name === "document:download",
+              );
+              const canRename = sharedDocument.share_permissions.some(
+                (p) => p.name === "document:rename",
+              );
+              const canShare = sharedDocument.share_permissions.some(
+                (p) => p.name === "document:share",
+              );
 
-                  onDocumentDoubleClick(sharedDocument);
-                }}
-              >
+              return (
+                <TableRow
+                  key={sharedDocument.item.id}
+                  onClick={() => {
+                    setSelectedDocumentId(sharedDocument.item.id);
+                    setSelectedDocumentFileName(sharedDocument.item.name);
+                    setSelectedFolderId(null);
+                    setSelectedFolderName(null);
+                  }}
+                  onDoubleClick={() => {
+                    if (!canView) {
+                      toast.error(
+                        "You do not have permission to view this document.",
+                      );
+                      return;
+                    }
+
+                    onDocumentDoubleClick(sharedDocument);
+                  }}
+                >
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
@@ -151,22 +157,20 @@ export function SharedDocumentTable({
                       <EllipsisVertical className="size-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-72">
-                      <DropdownMenuItem disabled={
-                        !sharedDocument.share_permissions.some(
-                          (sharePermission) =>
-                            sharePermission.name === "document:download",
-                        )
-                      } onClick={() => handleDownload(sharedDocument.item.id, sharedDocument.item.name)}>
+                      <DropdownMenuItem
+                        disabled={!canDownload}
+                        onClick={() =>
+                          handleDownload(
+                            sharedDocument.item.id,
+                            sharedDocument.item.name,
+                          )
+                        }
+                      >
                         <Download />
                         Download
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        disabled={
-                          !sharedDocument.share_permissions.some(
-                            (sharePermission) =>
-                              sharePermission.name === "document:rename",
-                          )
-                        }
+                        disabled={!canRename}
                         onClick={() => {
                           setSelectedItem(sharedDocument.item);
                           setOpenRenameItemDialog(true);
@@ -176,12 +180,7 @@ export function SharedDocumentTable({
                         Rename
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        disabled={
-                          !sharedDocument.share_permissions.some(
-                            (sharePermission) =>
-                              sharePermission.name === "document:share",
-                          )
-                        }
+                        disabled={!canShare}
                         onClick={() => {
                           setSelectedItem(sharedDocument.item);
                           setOpenShareDialog(true);
@@ -189,18 +188,6 @@ export function SharedDocumentTable({
                       >
                         <UserRoundPlus />
                         Share
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        disabled={
-                          !sharedDocument.share_permissions.some(
-                            (sharePermission) =>
-                              sharePermission.name === "document:move",
-                          )
-                        }
-                        onClick={() => setOpenMoveItemDialog(true)}
-                      >
-                        <FolderInput />
-                        Move
                       </DropdownMenuItem>
                       <DropdownMenuSub>
                         <DropdownMenuSubTrigger>
@@ -246,8 +233,9 @@ export function SharedDocumentTable({
                   </DropdownMenu>
                 </TableCell>
               </TableRow>
-            ))
-          ])}
+            );
+          })
+        ])}
         </TableBody>
       </Table>
 
@@ -256,14 +244,6 @@ export function SharedDocumentTable({
           item={selectedItem}
           openRenameItemDialog={openRenameItemDialog}
           setOpenRenameItemDialog={setOpenRenameItemDialog}
-        />
-      )}
-
-      {selectedItem && (
-        <MoveItemDialog
-          item={selectedItem}
-          openMoveItemDialog={openMoveItemDialog}
-          setOpenMoveItemDialog={setOpenMoveItemDialog}
         />
       )}
 

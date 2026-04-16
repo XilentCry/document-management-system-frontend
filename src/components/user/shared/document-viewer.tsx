@@ -52,6 +52,7 @@ export function DocumentViewer({
 
   const { data: currentUser } = useCurrentUser();
   const userId = currentUser?.id;
+  const isOwner = document.owner.id === userId;
 
   const documentDetailsQuery = useGetDocumentDetails(document.id, openDocumentViewer);
   const documentName = documentDetailsQuery.data?.name ?? document.name;
@@ -121,21 +122,21 @@ export function DocumentViewer({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-72">
                     <DropdownMenuItem
-                      disabled={document.owner.id !== userId}
+                      disabled={!isOwner}
                       onClick={() => setOpenRenameItemDialog(true)}
                     >
                       <PencilLine />
                       Rename
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      disabled={document.owner.id !== userId}
+                      disabled={!isOwner}
                       onClick={() => setOpenChangeClassificationDialog(true)}
                     >
                       <Shield />
                       Change classification
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      disabled={document.owner.id !== userId}
+                      disabled={!isOwner}
                       onClick={() => setOpenMoveItemDialog(true)}
                     >
                       <FolderInput />
@@ -148,7 +149,7 @@ export function DocumentViewer({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              {document.owner.id === userId && (
+              {isOwner && (
                 <>
                   {document.classification === "protected" ? (
                     <Button onClick={() => setOpenShareDialog(true)}>

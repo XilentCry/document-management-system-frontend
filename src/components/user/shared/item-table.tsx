@@ -102,47 +102,50 @@ export function ItemTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((item) => (
-            <TableRow
-              key={item.id}
-              onClick={() => {
-                if (item.is_folder) {
-                  setSelectedFolderId(item.id);
-                  setSelectedFolderName(item.name);
-                  setSelectedDocumentId(null);
-                  setSelectedDocumentFileName(null);
-                } else {
-                  setSelectedDocumentId(item.id);
-                  setSelectedDocumentFileName(item.name);
-                  setSelectedFolderId(null);
-                  setSelectedFolderName(null);
-                }
-              }}
-              onDoubleClick={() => {
-                if (item.is_folder) {
-                  onFolderDoubleClick(item.id);
-                } else {
-                  onDocumentDoubleClick(item);
-                }
-              }}
-            >
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  {item.is_folder ? (
-                    <Folder className="size-4" />
-                  ) : (
-                    <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
-                  )}
-                  {item.name}
-                </div>
-              </TableCell>
-              {!openRail && (
+          {data.map((item) => {
+            const isOwner = item.owner.id === userId;
+
+            return (
+              <TableRow
+                key={item.id}
+                onClick={() => {
+                  if (item.is_folder) {
+                    setSelectedFolderId(item.id);
+                    setSelectedFolderName(item.name);
+                    setSelectedDocumentId(null);
+                    setSelectedDocumentFileName(null);
+                  } else {
+                    setSelectedDocumentId(item.id);
+                    setSelectedDocumentFileName(item.name);
+                    setSelectedFolderId(null);
+                    setSelectedFolderName(null);
+                  }
+                }}
+                onDoubleClick={() => {
+                  if (item.is_folder) {
+                    onFolderDoubleClick(item.id);
+                  } else {
+                    onDocumentDoubleClick(item);
+                  }
+                }}
+              >
                 <TableCell>
-                  {userId === item.owner.id
-                    ? "me"
-                    : `${item.owner.first_name} ${item.owner.middle_name ?? ""} ${item.owner.last_name}`}
+                  <div className="flex items-center gap-2">
+                    {item.is_folder ? (
+                      <Folder className="size-4" />
+                    ) : (
+                      <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
+                    )}
+                    {item.name}
+                  </div>
                 </TableCell>
-              )}
+                {!openRail && (
+                  <TableCell>
+                    {isOwner
+                      ? "me"
+                      : `${item.owner.first_name} ${item.owner.middle_name ?? ""} ${item.owner.last_name}`}
+                  </TableCell>
+                )}
               <TableCell>{item.updated_at}</TableCell>
               {!openRail && (
                 <TableCell>{item.classification ?? <>&mdash;</>}</TableCell>
@@ -180,7 +183,7 @@ export function ItemTable({
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem
-                      disabled={item.owner.id !== userId}
+                      disabled={!isOwner}
                       onClick={() => {
                         setSelectedItem(item);
                         setOpenRenameItemDialog(true);
@@ -191,7 +194,7 @@ export function ItemTable({
                     </DropdownMenuItem>
                     {!item.is_folder && (
                       <DropdownMenuItem
-                        disabled={item.owner.id !== userId}
+                        disabled={!isOwner}
                         onClick={() => {
                           setSelectedItem(item);
                           setOpenChangeClassificationDialog(true);
@@ -205,7 +208,7 @@ export function ItemTable({
                       <>
                         {item.classification === "protected" ? (
                           <DropdownMenuItem
-                            disabled={item.owner.id !== userId}
+                            disabled={!isOwner}
                             onClick={() => {
                               setSelectedItem(item);
                               setOpenShareDialog(true);
@@ -225,7 +228,7 @@ export function ItemTable({
                       </>
                     )}
                     <DropdownMenuItem
-                      disabled={item.owner.id !== userId}
+                      disabled={!isOwner}
                       onClick={() => {
                         setSelectedItem(item);
                         setOpenMoveItemDialog(true);
@@ -283,25 +286,26 @@ export function ItemTable({
                             <Activity />
                             Activity
                           </DropdownMenuItem>
-                          {!item.is_folder && (
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setSelectedItem(item);
-                                setOpenVersionHistoryDialog(true);
-                              }}
-                            >
-                              <History />
-                              {item.owner.id !== userId ? "Version history" : "Manage versions"}
-                            </DropdownMenuItem>
-                          )}
+                            {!item.is_folder && (
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedItem(item);
+                                  setOpenVersionHistoryDialog(true);
+                                }}
+                              >
+                                <History />
+                                {!isOwner ? "Version history" : "Manage versions"}
+                              </DropdownMenuItem>
+                            )}
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>
                   </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
 

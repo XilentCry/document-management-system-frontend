@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +17,9 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
+import Image from "next/image";
 
+import { useDownloadDocument } from "@/services/documents/mutations";
 import { useRailStore } from "@/stores/rail-store";
 import { TItem } from "@/types/item";
 import { TSharePermission } from "@/types/share-permission";
@@ -29,17 +30,14 @@ import {
   Download,
 
   EllipsisVertical,
-  FolderInput,
   Info,
   PencilLine,
   UserRoundPlus
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { MoveItemDialog } from "../shared/move-item-dialog";
 import { RenameItemDialog } from "../shared/rename-item-dialog";
 import { ShareDocumentDialog } from "../shared/share-document-dialog";
-import { useDownloadDocument } from "@/services/documents/mutations";
 
 export function SharedDocument({
   item,
@@ -50,8 +48,14 @@ export function SharedDocument({
   sharePermissions: TSharePermission[];
   onDoubleClick: () => Promise<void>;
 }) {
+  const canView = sharePermissions.some((p) => p.name === "document:view");
+  const canDownload = sharePermissions.some(
+    (p) => p.name === "document:download",
+  );
+  const canRename = sharePermissions.some((p) => p.name === "document:rename");
+  const canShare = sharePermissions.some((p) => p.name === "document:share");
+
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
-  const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [openShareDialog, setOpenShareDialog] = useState(false);
 
   const {
@@ -84,11 +88,7 @@ export function SharedDocument({
           setSelectedFolderName(null);
         }}
         onDoubleClick={() => {
-          if (
-            !sharePermissions.some(
-              (sharePermission) => sharePermission.name === "document:view",
-            )
-          ) {
+          if (!canView) {
             toast.error("You do not have permission to view this document.");
             return;
           }
@@ -116,50 +116,23 @@ export function SharedDocument({
               <EllipsisVertical className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-72">
-              <DropdownMenuItem disabled={
-                !sharePermissions.some(
-                  (sharePermission) =>
-                    sharePermission.name === "document:download",
-                )
-              } onClick={handleDownload}>
+              <DropdownMenuItem disabled={!canDownload} onClick={handleDownload}>
                 <Download />
                 Download
               </DropdownMenuItem>
               <DropdownMenuItem
-                disabled={
-                  !sharePermissions.some(
-                    (sharePermission) =>
-                      sharePermission.name === "document:rename",
-                  )
-                }
+                disabled={!canRename}
                 onClick={() => setOpenRenameItemDialog(true)}
               >
                 <PencilLine />
                 Rename
               </DropdownMenuItem>
               <DropdownMenuItem
-                disabled={
-                  !sharePermissions.some(
-                    (sharePermission) =>
-                      sharePermission.name === "document:share",
-                  )
-                }
+                disabled={!canShare}
                 onClick={() => setOpenShareDialog(true)}
               >
                 <UserRoundPlus />
                 Share
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                disabled={
-                  !sharePermissions.some(
-                    (sharePermission) =>
-                      sharePermission.name === "document:move",
-                  )
-                }
-                onClick={() => setOpenMoveItemDialog(true)}
-              >
-                <FolderInput />
-                Move
               </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
@@ -209,12 +182,6 @@ export function SharedDocument({
         item={item}
         openRenameItemDialog={openRenameItemDialog}
         setOpenRenameItemDialog={setOpenRenameItemDialog}
-      />
-
-      <MoveItemDialog
-        item={item}
-        openMoveItemDialog={openMoveItemDialog}
-        setOpenMoveItemDialog={setOpenMoveItemDialog}
       />
 
       <ShareDocumentDialog

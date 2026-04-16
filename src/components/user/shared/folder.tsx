@@ -17,6 +17,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { useRailStore } from "@/stores/rail-store";
+import { useCurrentUser } from "@/services/user/queries";
 import { TItem } from "@/types/item";
 import {
   Activity,
@@ -40,6 +41,10 @@ export function Folder({
 }) {
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
+
+  const { data: currentUser } = useCurrentUser();
+  const userId = currentUser?.id;
+  const isOwner = item.owner.id === userId;
 
   const {
     setSelectedDocumentId,
@@ -83,11 +88,17 @@ export function Folder({
               <EllipsisVertical className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-72">
-              <DropdownMenuItem onClick={() => setOpenRenameItemDialog(true)}>
+              <DropdownMenuItem
+                disabled={!isOwner}
+                onClick={() => setOpenRenameItemDialog(true)}
+              >
                 <PencilLine />
                 Rename
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setOpenMoveItemDialog(true)}>
+              <DropdownMenuItem
+                disabled={!isOwner}
+                onClick={() => setOpenMoveItemDialog(true)}
+              >
                 <FolderInput />
                 Move
               </DropdownMenuItem>

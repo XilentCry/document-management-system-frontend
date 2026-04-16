@@ -1,22 +1,21 @@
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 import { Spinner } from "@/components/ui/spinner";
 import { viewDocument } from "@/services/documents/api";
 
+import { useDownloadDocument } from "@/services/documents/mutations";
 import { useGetDocumentDetails } from "@/services/documents/queries";
 import { TSharedWithMe } from "@/types/shared-with-me";
 import {
-
   Download,
   EllipsisVertical,
-  FolderInput,
   Info,
   PencilLine,
   UserRoundPlus,
@@ -27,8 +26,6 @@ import { DocumentViewerRail } from "../shared/document-viewer-rail";
 import { PdfDisplay } from "../shared/pdf-display";
 import { RenameItemDialog } from "../shared/rename-item-dialog";
 import { ShareDocumentDialog } from "../shared/share-document-dialog";
-import { useDownloadDocument } from "@/services/documents/mutations";
-import { MoveItemDialog } from "../shared/move-item-dialog";
 
 export function SharedDocumentViewer({
   openDocumentViewer,
@@ -39,7 +36,16 @@ export function SharedDocumentViewer({
   setOpenDocumentViewer: Dispatch<SetStateAction<boolean>>;
   sharedDocument: TSharedWithMe;
 }) {
-  const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
+  const canDownload = sharedDocument.share_permissions.some(
+    (p) => p.name === "document:download",
+  );
+  const canRename = sharedDocument.share_permissions.some(
+    (p) => p.name === "document:rename",
+  );
+  const canShare = sharedDocument.share_permissions.some(
+    (p) => p.name === "document:share",
+  );
+
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openShareDialog, setOpenShareDialog] = useState(false);
   const [openViewerRail, setOpenViewerRail] = useState(false);
@@ -103,12 +109,13 @@ export function SharedDocumentViewer({
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
-                  disabled={
-                    !sharedDocument.share_permissions.some(
-                      (sharePermission) =>
-                        sharePermission.name === "document:download",
-                    )}
-                  onClick={() => handleDownload(sharedDocument.item.id, sharedDocument.item.name)}
+                  disabled={!canDownload}
+                  onClick={() =>
+                    handleDownload(
+                      sharedDocument.item.id,
+                      sharedDocument.item.name,
+                    )
+                  }
                 >
                   <Download />
                 </Button>
@@ -120,26 +127,11 @@ export function SharedDocumentViewer({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-72">
                     <DropdownMenuItem
-                      disabled={
-                        !sharedDocument.share_permissions.some(
-                          (sharePermission) =>
-                            sharePermission.name === "document:rename",
-                        )}
+                      disabled={!canRename}
                       onClick={() => setOpenRenameItemDialog(true)}
                     >
                       <PencilLine />
                       Rename
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      disabled={
-                        !sharedDocument.share_permissions.some(
-                          (sharePermission) =>
-                            sharePermission.name === "document:move",
-                        )}
-                      onClick={() => setOpenMoveItemDialog(true)}
-                    >
-                      <FolderInput />
-                      Move
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setOpenViewerRail(true)}>
                       <Info />
@@ -148,14 +140,12 @@ export function SharedDocumentViewer({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              {sharedDocument.share_permissions.some(
-                (sharePermission) =>
-                  sharePermission.name === "document:share",
-              )
-                && <Button onClick={() => setOpenShareDialog(true)}>
+              {canShare && (
+                <Button onClick={() => setOpenShareDialog(true)}>
                   <UserRoundPlus />
                   Share
-                </Button>}
+                </Button>
+              )}
             </div>
           </header>
           <div className="flex-1 min-h-0 flex">
@@ -187,18 +177,6 @@ export function SharedDocumentViewer({
         item={sharedDocument.item}
         openRenameItemDialog={openRenameItemDialog}
         setOpenRenameItemDialog={setOpenRenameItemDialog}
-      />
-
-      <MoveItemDialog
-        item={sharedDocument.item}
-        openMoveItemDialog={openMoveItemDialog}
-        setOpenMoveItemDialog={setOpenMoveItemDialog}
-      />
-
-      <ShareDocumentDialog
-        item={sharedDocument.item}
-        openShareDialog={openShareDialog}
-        setOpenShareDialog={setOpenShareDialog}
       />
 
       <ShareDocumentDialog
