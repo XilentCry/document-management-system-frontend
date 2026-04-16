@@ -20,6 +20,7 @@ import {
   Info,
   Link2,
   PencilLine,
+  Shield,
   UserRoundPlus,
   X
 } from "lucide-react";
@@ -30,6 +31,7 @@ import { PdfDisplay } from "./pdf-display";
 import { RenameItemDialog } from "./rename-item-dialog";
 import { ShareDocumentDialog } from "./share-document-dialog";
 import { useCopyLink } from "@/hooks/use-copy-link";
+import { ChangeClassificationDialog } from "./change-classification-dialog";
 
 export function DocumentViewer({
   openDocumentViewer,
@@ -40,6 +42,7 @@ export function DocumentViewer({
   setOpenDocumentViewer: Dispatch<SetStateAction<boolean>>;
   document: TItem;
 }) {
+  const [openChangeClassificationDialog, setOpenChangeClassificationDialog] = useState(false);
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [openShareDialog, setOpenShareDialog] = useState(false);
@@ -104,7 +107,10 @@ export function DocumentViewer({
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon" onClick={handleDownload}>
+                <Button
+                  variant="ghost"
+                  onClick={handleDownload}
+                >
                   <Download />
                 </Button>
                 <DropdownMenu>
@@ -115,12 +121,21 @@ export function DocumentViewer({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-72">
                     <DropdownMenuItem
+                      disabled={document.owner.id !== userId}
                       onClick={() => setOpenRenameItemDialog(true)}
                     >
                       <PencilLine />
                       Rename
                     </DropdownMenuItem>
                     <DropdownMenuItem
+                      disabled={document.owner.id !== userId}
+                      onClick={() => setOpenChangeClassificationDialog(true)}
+                    >
+                      <Shield />
+                      Change classification
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      disabled={document.owner.id !== userId}
                       onClick={() => setOpenMoveItemDialog(true)}
                     >
                       <FolderInput />
@@ -189,6 +204,12 @@ export function DocumentViewer({
         item={document}
         openShareDialog={openShareDialog}
         setOpenShareDialog={setOpenShareDialog}
+      />
+
+      <ChangeClassificationDialog
+        item={document}
+        openChangeClassificationDialog={openChangeClassificationDialog}
+        setOpenChangeClassificationDialog={setOpenChangeClassificationDialog}
       />
     </>
   );

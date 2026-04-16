@@ -20,7 +20,7 @@ import {
   InputGroupText,
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TFormError } from "@/types/form-error";
 import { useGetAllOrganizationUnitsTree } from "@/services/organization-units/queries";
 import { Button } from "@/components/ui/button";

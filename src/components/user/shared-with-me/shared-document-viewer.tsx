@@ -14,7 +14,9 @@ import { useGetDocumentDetails } from "@/services/documents/queries";
 import { TSharedWithMe } from "@/types/shared-with-me";
 import {
 
+  Download,
   EllipsisVertical,
+  FolderInput,
   Info,
   PencilLine,
   UserRoundPlus,
@@ -25,6 +27,8 @@ import { DocumentViewerRail } from "../shared/document-viewer-rail";
 import { PdfDisplay } from "../shared/pdf-display";
 import { RenameItemDialog } from "../shared/rename-item-dialog";
 import { ShareDocumentDialog } from "../shared/share-document-dialog";
+import { useDownloadDocument } from "@/services/documents/mutations";
+import { MoveItemDialog } from "../shared/move-item-dialog";
 
 export function SharedDocumentViewer({
   openDocumentViewer,
@@ -35,6 +39,7 @@ export function SharedDocumentViewer({
   setOpenDocumentViewer: Dispatch<SetStateAction<boolean>>;
   sharedDocument: TSharedWithMe;
 }) {
+  const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
   const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
   const [openShareDialog, setOpenShareDialog] = useState(false);
   const [openViewerRail, setOpenViewerRail] = useState(false);
@@ -46,8 +51,6 @@ export function SharedDocumentViewer({
     openDocumentViewer
   );
   const documentName = documentDetailsQuery.data?.name ?? sharedDocument.item.name;
-
-
 
   useEffect(() => {
     if (!openDocumentViewer) return;
@@ -67,9 +70,14 @@ export function SharedDocumentViewer({
     };
   }, [openDocumentViewer, sharedDocument.item.id]);
 
+  const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
-
-  const sharePermissions = sharedDocument.share_permissions;
+  const handleDownload = (id: string, name: string) => {
+    downloadDocumentMutation({
+      id,
+      fileName: name,
+    });
+  };
 
   return (
     <>
@@ -93,42 +101,61 @@ export function SharedDocumentViewer({
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                {sharePermissions.some((p) => p.name === "document:rename") ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      render={<Button variant="ghost" size="icon" />}
-                    >
-                      <EllipsisVertical />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-72">
-                      <DropdownMenuItem
-                        onClick={() => setOpenRenameItemDialog(true)}
-                      >
-                        <PencilLine />
-                        Rename
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setOpenViewerRail(true)}>
-                        <Info />
-                        Details
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setOpenViewerRail(true)}
+                <Button
+                  variant="ghost"
+                  disabled={
+                    !sharedDocument.share_permissions.some(
+                      (sharePermission) =>
+                        sharePermission.name === "document:download",
+                    )}
+                  onClick={() => handleDownload(sharedDocument.item.id, sharedDocument.item.name)}
+                >
+                  <Download />
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={<Button variant="ghost" size="icon" />}
                   >
-                    <Info />
-                  </Button>
-                )}
+                    <EllipsisVertical />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-72">
+                    <DropdownMenuItem
+                      disabled={
+                        !sharedDocument.share_permissions.some(
+                          (sharePermission) =>
+                            sharePermission.name === "document:rename",
+                        )}
+                      onClick={() => setOpenRenameItemDialog(true)}
+                    >
+                      <PencilLine />
+                      Rename
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      disabled={
+                        !sharedDocument.share_permissions.some(
+                          (sharePermission) =>
+                            sharePermission.name === "document:move",
+                        )}
+                      onClick={() => setOpenMoveItemDialog(true)}
+                    >
+                      <FolderInput />
+                      Move
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setOpenViewerRail(true)}>
+                      <Info />
+                      Details
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
-              {sharePermissions.some((p) => p.name === "document:share") && (
-                <Button onClick={() => setOpenShareDialog(true)}>
+              {sharedDocument.share_permissions.some(
+                (sharePermission) =>
+                  sharePermission.name === "document:share",
+              )
+                && <Button onClick={() => setOpenShareDialog(true)}>
                   <UserRoundPlus />
                   Share
-                </Button>
-              )}
+                </Button>}
             </div>
           </header>
           <div className="flex-1 min-h-0 flex">
@@ -160,6 +187,18 @@ export function SharedDocumentViewer({
         item={sharedDocument.item}
         openRenameItemDialog={openRenameItemDialog}
         setOpenRenameItemDialog={setOpenRenameItemDialog}
+      />
+
+      <MoveItemDialog
+        item={sharedDocument.item}
+        openMoveItemDialog={openMoveItemDialog}
+        setOpenMoveItemDialog={setOpenMoveItemDialog}
+      />
+
+      <ShareDocumentDialog
+        item={sharedDocument.item}
+        openShareDialog={openShareDialog}
+        setOpenShareDialog={setOpenShareDialog}
       />
 
       <ShareDocumentDialog

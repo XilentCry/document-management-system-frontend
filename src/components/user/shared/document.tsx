@@ -116,32 +116,32 @@ export function Document({
                 <Download />
                 Download
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setOpenRenameItemDialog(true)}>
+              <DropdownMenuItem disabled={item.owner.id !== userId} onClick={() => setOpenRenameItemDialog(true)}>
                 <PencilLine />
                 Rename
               </DropdownMenuItem>
-              {item.owner.id === userId && (
-                <DropdownMenuItem onClick={() => setOpenChangeClassificationDialog(true)}>
-                  <Shield />
-                  Change classification
+              <DropdownMenuItem
+                disabled={item.owner.id !== userId}
+                onClick={() => setOpenChangeClassificationDialog(true)}
+              >
+                <Shield />
+                Change classification
+              </DropdownMenuItem>
+              {item.classification === "protected" ? (
+                <DropdownMenuItem
+                  disabled={item.owner.id !== userId}
+                  onClick={() => setOpenShareDialog(true)}
+                >
+                  <UserRoundPlus />
+                  Share
                 </DropdownMenuItem>
-              )}
-              {item.owner.id === userId && (
-                <>
-                  {item.classification === "protected" ? (
-                    <DropdownMenuItem onClick={() => setOpenShareDialog(true)}>
-                      <UserRoundPlus />
-                      Share
-                    </DropdownMenuItem>
-                  ) : item.classification === "public" ? (
-                    <DropdownMenuItem onClick={() => copyLink(item.id)}>
-                      <Link2 />
-                      Copy Link
-                    </DropdownMenuItem>
-                  ) : null}
-                </>
-              )}
-              <DropdownMenuItem onClick={() => setOpenMoveItemDialog(true)}>
+              ) : item.classification === "public" ? (
+                <DropdownMenuItem onClick={() => copyLink(item.id)}>
+                  <Link2 />
+                  Copy Link
+                </DropdownMenuItem>
+              ) : null}
+              <DropdownMenuItem disabled={item.owner.id !== userId} onClick={() => setOpenMoveItemDialog(true)}>
                 <FolderInput />
                 Move
               </DropdownMenuItem>
@@ -180,7 +180,7 @@ export function Document({
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setOpenVersionHistoryDialog(true)}>
                       <History />
-                      Manage versions
+                      {item.owner.id !== userId ? "Version history" : "Manage versions"}
                     </DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>

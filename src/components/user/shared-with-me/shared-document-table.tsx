@@ -27,7 +27,10 @@ import {
   Activity,
   CircleAlert,
 
+  Download,
+
   EllipsisVertical,
+  FolderInput,
   Info,
   PencilLine,
   UserRoundPlus
@@ -39,6 +42,7 @@ import { RenameItemDialog } from "../shared/rename-item-dialog";
 import { ShareDocumentDialog } from "../shared/share-document-dialog";
 import { groupItemsByRelativeDate } from "@/lib/date-grouping";
 import { SharedDocumentViewer } from "./shared-document-viewer";
+import { useDownloadDocument } from "@/services/documents/mutations";
 
 export function SharedDocumentTable({
   data,
@@ -68,7 +72,14 @@ export function SharedDocumentTable({
     setOpenRail,
   } = useRailStore();
 
+  const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
+  const handleDownload = (id: string, name: string) => {
+    downloadDocumentMutation({
+      id,
+      fileName: name,
+    });
+  };
 
   const groupedData = groupItemsByRelativeDate(data, (item) => item.raw_created_at);
 
@@ -140,34 +151,57 @@ export function SharedDocumentTable({
                       <EllipsisVertical className="size-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-72">
-
-                      {sharedDocument.share_permissions.some(
-                        (sharePermission) =>
-                          sharePermission.name === "document:rename",
-                      ) && (
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedItem(sharedDocument.item);
-                              setOpenRenameItemDialog(true);
-                            }}
-                          >
-                            <PencilLine />
-                            Rename
-                          </DropdownMenuItem>
-                        )}
-                      {sharedDocument.share_permissions.some(
-                        (sharePermission) => sharePermission.name === "document:share",
-                      ) && (
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedItem(sharedDocument.item);
-                              setOpenShareDialog(true);
-                            }}
-                          >
-                            <UserRoundPlus />
-                            Share
-                          </DropdownMenuItem>
-                        )}
+                      <DropdownMenuItem disabled={
+                        !sharedDocument.share_permissions.some(
+                          (sharePermission) =>
+                            sharePermission.name === "document:download",
+                        )
+                      } onClick={() => handleDownload(sharedDocument.item.id, sharedDocument.item.name)}>
+                        <Download />
+                        Download
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        disabled={
+                          !sharedDocument.share_permissions.some(
+                            (sharePermission) =>
+                              sharePermission.name === "document:rename",
+                          )
+                        }
+                        onClick={() => {
+                          setSelectedItem(sharedDocument.item);
+                          setOpenRenameItemDialog(true);
+                        }}
+                      >
+                        <PencilLine />
+                        Rename
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        disabled={
+                          !sharedDocument.share_permissions.some(
+                            (sharePermission) =>
+                              sharePermission.name === "document:share",
+                          )
+                        }
+                        onClick={() => {
+                          setSelectedItem(sharedDocument.item);
+                          setOpenShareDialog(true);
+                        }}
+                      >
+                        <UserRoundPlus />
+                        Share
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        disabled={
+                          !sharedDocument.share_permissions.some(
+                            (sharePermission) =>
+                              sharePermission.name === "document:move",
+                          )
+                        }
+                        onClick={() => setOpenMoveItemDialog(true)}
+                      >
+                        <FolderInput />
+                        Move
+                      </DropdownMenuItem>
                       <DropdownMenuSub>
                         <DropdownMenuSubTrigger>
                           <CircleAlert />
@@ -217,7 +251,7 @@ export function SharedDocumentTable({
         </TableBody>
       </Table>
 
-      {openRenameItemDialog && selectedItem && (
+      {selectedItem && (
         <RenameItemDialog
           item={selectedItem}
           openRenameItemDialog={openRenameItemDialog}
@@ -225,7 +259,7 @@ export function SharedDocumentTable({
         />
       )}
 
-      {openMoveItemDialog && selectedItem && (
+      {selectedItem && (
         <MoveItemDialog
           item={selectedItem}
           openMoveItemDialog={openMoveItemDialog}
@@ -233,7 +267,7 @@ export function SharedDocumentTable({
         />
       )}
 
-      {openShareDialog && selectedItem && (
+      {selectedItem && (
         <ShareDocumentDialog
           item={selectedItem}
           openShareDialog={openShareDialog}

@@ -180,6 +180,7 @@ export function ItemTable({
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem
+                      disabled={item.owner.id !== userId}
                       onClick={() => {
                         setSelectedItem(item);
                         setOpenRenameItemDialog(true);
@@ -188,8 +189,9 @@ export function ItemTable({
                       <PencilLine />
                       Rename
                     </DropdownMenuItem>
-                    {!item.is_folder && item.owner.id === userId && (
+                    {!item.is_folder && (
                       <DropdownMenuItem
+                        disabled={item.owner.id !== userId}
                         onClick={() => {
                           setSelectedItem(item);
                           setOpenChangeClassificationDialog(true);
@@ -199,10 +201,11 @@ export function ItemTable({
                         Change classification
                       </DropdownMenuItem>
                     )}
-                    {!item.is_folder && item.owner.id === userId && (
+                    {!item.is_folder && (
                       <>
                         {item.classification === "protected" ? (
                           <DropdownMenuItem
+                            disabled={item.owner.id !== userId}
                             onClick={() => {
                               setSelectedItem(item);
                               setOpenShareDialog(true);
@@ -222,6 +225,7 @@ export function ItemTable({
                       </>
                     )}
                     <DropdownMenuItem
+                      disabled={item.owner.id !== userId}
                       onClick={() => {
                         setSelectedItem(item);
                         setOpenMoveItemDialog(true);
@@ -287,7 +291,7 @@ export function ItemTable({
                               }}
                             >
                               <History />
-                              Manage versions
+                              {item.owner.id !== userId ? "Version history" : "Manage versions"}
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuSubContent>

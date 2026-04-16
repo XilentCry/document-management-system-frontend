@@ -101,33 +101,32 @@ export function ShareDocumentDialog({
     }
   }, [isSubmitSuccessful, setOpenShareDialog]);
 
-  const handleOpenChange = (open: boolean) => {
-    if (!open && selectedUsers.length > 0) {
-      setShowDiscardAlert(true);
-      return;
-    }
-
-    if (!open) {
+  useEffect(() => {
+    if (openShareDialog) {
       reset({ share_with: [] });
       setSelectedUsers([]);
       setSearchTerm("");
     }
-    setOpenShareDialog(open);
-  };
-
-  const handleDiscard = () => {
-    reset({ share_with: [] });
-    setSelectedUsers([]);
-    setSearchTerm("");
-    setShowDiscardAlert(false);
-    setOpenShareDialog(false);
-  };
+  }, [openShareDialog, reset]);
 
   useEffect(() => {
     if (shareRoles.length > 0 && shareRoleId === undefined) {
       setValue("share_role_id", shareRoles[0].id, { shouldValidate: true });
     }
   }, [shareRoles, shareRoleId, setValue]);
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open && selectedUsers.length > 0) {
+      setShowDiscardAlert(true);
+      return;
+    }
+    setOpenShareDialog(open);
+  };
+
+  const handleDiscard = () => {
+    setShowDiscardAlert(false);
+    setOpenShareDialog(false);
+  };
 
   const { mutateAsync: shareItemMutation } = useShareDocument();
 
@@ -200,8 +199,8 @@ export function ShareDocumentDialog({
                         </ComboboxChips>
                         <ComboboxContent anchor={anchor}>
                           {searchTerm.trim().length ===
-                          0 ? null : isLoadingShareableUsers ||
-                            isFetchingShareableUsers ? (
+                            0 ? null : isLoadingShareableUsers ||
+                              isFetchingShareableUsers ? (
                             <div className="flex items-center justify-center p-4">
                               <Spinner className="text-primary size-5" />
                             </div>

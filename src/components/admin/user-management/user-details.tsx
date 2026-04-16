@@ -1,14 +1,5 @@
-import { ConfirmStatusChangeDialog } from "./confirm-status-change-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,18 +8,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Item, ItemContent, ItemTitle } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
-import { useUpdateStatus } from "@/services/users/mutations";
 import { USER_STATUS } from "@/lib/constants";
+import { getStatusBadgeClass } from "@/lib/get-status-badge-class";
 import { useCurrentUser } from "@/services/user/queries";
+import { useUpdateStatus } from "@/services/users/mutations";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
 import { TUser } from "@/types/user";
+import { TUserStatus } from "@/types/user-status";
 import { ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
+import { ConfirmStatusChangeDialog } from "./confirm-status-change-dialog";
 import { UserAuditLogs } from "./user-audit-logs";
-import { TUserStatus } from "@/types/user-status";
-import { getStatusBadgeClass } from "@/lib/get-status-badge-class";
 
 
 export function UserDetails({

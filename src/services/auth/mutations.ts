@@ -1,11 +1,11 @@
+import { clearAllStores } from "@/stores/clear-all-stores";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import type { TFormError } from "@/types/form-error";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
-import { login, register, resendVerificationEmail, logout } from "./api";
-import { clearAllStores } from "@/stores/clear-all-stores";
+import { login, logout, register, resendVerificationEmail } from "./api";
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -81,8 +81,6 @@ export const useRegister = (
 };
 
 export const useResendVerificationEmail = () => {
-  const router = useRouter();
-
   return useMutation({
     mutationFn: (email: string) => resendVerificationEmail(email),
     onSuccess: (data) => {

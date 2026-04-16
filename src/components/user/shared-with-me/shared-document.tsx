@@ -26,7 +26,10 @@ import {
   Activity,
   CircleAlert,
 
+  Download,
+
   EllipsisVertical,
+  FolderInput,
   Info,
   PencilLine,
   UserRoundPlus
@@ -36,6 +39,7 @@ import { toast } from "sonner";
 import { MoveItemDialog } from "../shared/move-item-dialog";
 import { RenameItemDialog } from "../shared/rename-item-dialog";
 import { ShareDocumentDialog } from "../shared/share-document-dialog";
+import { useDownloadDocument } from "@/services/documents/mutations";
 
 export function SharedDocument({
   item,
@@ -59,7 +63,14 @@ export function SharedDocument({
     setOpenRail,
   } = useRailStore();
 
+  const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
+  const handleDownload = () => {
+    downloadDocumentMutation({
+      id: item.id,
+      fileName: item.name,
+    });
+  };
 
   return (
     <>
@@ -105,23 +116,51 @@ export function SharedDocument({
               <EllipsisVertical className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-72">
-
-              {sharePermissions.some(
-                (sharePermission) => sharePermission.name === "can_rename",
-              ) && (
-                  <DropdownMenuItem onClick={() => setOpenRenameItemDialog(true)}>
-                    <PencilLine />
-                    Rename
-                  </DropdownMenuItem>
-                )}
-              {sharePermissions.some(
-                (sharePermission) => sharePermission.name === "can_share",
-              ) && (
-                  <DropdownMenuItem onClick={() => setOpenShareDialog(true)}>
-                    <UserRoundPlus />
-                    Share
-                  </DropdownMenuItem>
-                )}
+              <DropdownMenuItem disabled={
+                !sharePermissions.some(
+                  (sharePermission) =>
+                    sharePermission.name === "document:download",
+                )
+              } onClick={handleDownload}>
+                <Download />
+                Download
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={
+                  !sharePermissions.some(
+                    (sharePermission) =>
+                      sharePermission.name === "document:rename",
+                  )
+                }
+                onClick={() => setOpenRenameItemDialog(true)}
+              >
+                <PencilLine />
+                Rename
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={
+                  !sharePermissions.some(
+                    (sharePermission) =>
+                      sharePermission.name === "document:share",
+                  )
+                }
+                onClick={() => setOpenShareDialog(true)}
+              >
+                <UserRoundPlus />
+                Share
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={
+                  !sharePermissions.some(
+                    (sharePermission) =>
+                      sharePermission.name === "document:move",
+                  )
+                }
+                onClick={() => setOpenMoveItemDialog(true)}
+              >
+                <FolderInput />
+                Move
+              </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <CircleAlert />

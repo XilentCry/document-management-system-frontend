@@ -7,25 +7,23 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Spinner } from "@/components/ui/spinner";
 import {
   Item,
-  ItemActions,
   ItemContent,
   ItemDescription,
   ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item"
-import { useGetDocumentVersions } from "@/services/documents/queries";
-import { TItem } from "@/types/item";
-import { Dispatch, SetStateAction, useState } from "react";
-import Image from "next/image";
-import { Download, EllipsisVertical, Upload } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+  ItemTitle
+} from "@/components/ui/item";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Spinner } from "@/components/ui/spinner";
 import { useDownloadDocumentVersion } from "@/services/documents/mutations";
-import { useUploadDialogStore } from "@/stores/upload-dialog-store";
+import { useGetDocumentVersions } from "@/services/documents/queries";
 import { useCurrentUser } from "@/services/user/queries";
+import { useUploadDialogStore } from "@/stores/upload-dialog-store";
+import { TItem } from "@/types/item";
+import { Download, Upload } from "lucide-react";
+import Image from "next/image";
+import { Dispatch, SetStateAction, useState } from "react";
 import { VersionLimitWarningDialog } from "./version-limit-warning-dialog";
 
 export function VersionHistoryDialog({
@@ -79,7 +77,7 @@ export function VersionHistoryDialog({
       <Dialog open={openVersionHistoryDialog} onOpenChange={setOpenVersionHistoryDialog}>
         <DialogContent className="w-150 max-w-150!">
           <DialogHeader>
-            <DialogTitle>Manage versions</DialogTitle>
+            <DialogTitle>{isOwner ? "Manage versions" : "Version history"}</DialogTitle>
           </DialogHeader>
           <div className="h-96 flex flex-col gap-4">
             {isOwner && (
@@ -115,27 +113,13 @@ export function VersionHistoryDialog({
                         </ItemDescription>
                       </ItemContent>
                       {isOwner && (
-                        <ItemActions>
-                          <DropdownMenu modal={false}>
-                            <DropdownMenuTrigger
-                              render={
-                                <Button
-                                  variant="outline"
-                                  size="icon-sm"
-                                  className="border-none bg-transparent hover:bg-input/50"
-                                />
-                              }
-                            >
-                              <EllipsisVertical className="size-4" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-72">
-                              <DropdownMenuItem onClick={() => handleDownload(version.id)}>
-                                <Download />
-                                Download
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </ItemActions>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          onClick={() => handleDownload(version.id)}
+                        >
+                          <Download />
+                        </Button>
                       )}
                     </Item>
                   ))}
