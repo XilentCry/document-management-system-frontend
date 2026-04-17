@@ -115,6 +115,7 @@ export default function SharedWithMePage() {
         <div className="py-4 flex-1 flex flex-col items-center justify-center gap-4">
           <p className="text-destructive text-sm">{error.message}</p>
           <Button
+            variant="outline"
             onClick={() =>
               hasNextPage && !isFetchingNextPage && fetchNextPage()
             }

@@ -28,6 +28,7 @@ export const useGetItemActivities = (
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isFetchNextPageError,
   } = useInfiniteQuery({
     queryKey: ["item", id, "activities"],
     queryFn: ({ pageParam }) => getItemActivities({ id, pageParam }),
@@ -40,6 +41,7 @@ export const useGetItemActivities = (
     isLoading,
     isError,
     error,
+    isFetchNextPageError,
     data,
     fetchNextPage,
     hasNextPage,

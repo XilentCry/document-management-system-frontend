@@ -43,6 +43,7 @@ export function VersionHistoryDialog({
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isFetchNextPageError,
   } = useGetDocumentVersions(item.id, openVersionHistoryDialog);
 
   const versions = data?.pages?.flatMap((page) => page.data) ?? [];
@@ -130,9 +131,23 @@ export function VersionHistoryDialog({
                   <p className="text-destructive text-sm">{error.message}</p>
                 </div>
               )}
+              {isFetchNextPageError && error && (
+                <div className="py-4 flex flex-col items-center justify-center gap-4">
+                  <p className="text-destructive text-sm">{error.message}</p>
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      hasNextPage && !isFetchingNextPage && fetchNextPage()
+                    }
+                  >
+                    Retry
+                  </Button>
+                </div>
+              )}
               {hasNextPage && (
                 <div className="flex justify-center mt-4 mb-4">
                   <Button
+                    variant="outline"
                     onClick={() => fetchNextPage()}
                     disabled={isFetchingNextPage}
                   >

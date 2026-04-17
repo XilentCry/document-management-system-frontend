@@ -61,6 +61,7 @@ export function MoveItemDialog({
     fetchNextPage: fetchNextOrganizationUnitFolders,
     hasNextPage: hasNextOrganizationUnitFolders,
     isFetchingNextPage: isFetchingNextOrganizationUnitFolders,
+    isFetchNextPageError: isOrganizationUnitFoldersFetchNextPageError,
   } = useGetOrganizationUnitFolders(
     currentOrganizationUnitId,
     currentParentFolderId,
@@ -75,6 +76,7 @@ export function MoveItemDialog({
     fetchNextPage: fetchNextFolderSubfolders,
     hasNextPage: hasNextFolderSubfolders,
     isFetchingNextPage: isFetchingNextFolderSubfolders,
+    isFetchNextPageError: isFolderSubfoldersFetchNextPageError,
   } = useGetFolderSubfolders(currentParentFolderId, openMoveItemDialog);
 
   const isLoading = currentParentFolderId
@@ -86,6 +88,9 @@ export function MoveItemDialog({
   const error = currentParentFolderId
     ? folderSubfoldersError
     : organizationUnitFoldersError;
+  const isFetchNextPageError = currentParentFolderId
+    ? isFolderSubfoldersFetchNextPageError
+    : isOrganizationUnitFoldersFetchNextPageError;
 
   const folders = currentParentFolderId
     ? (folderSubfoldersData?.pages?.flatMap((page) => page.data) ?? [])
@@ -267,9 +272,24 @@ export function MoveItemDialog({
                   <p className="text-destructive text-sm">{error.message}</p>
                 </div>
               )}
+              {isFetchNextPageError && error && (
+                <div className="py-4 flex flex-col items-center justify-center gap-4">
+                  <p className="text-destructive text-sm">{error.message}</p>
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      hasNextPage && !isFetchingNextPage && fetchNextPage()
+                    }
+                  >
+                    Retry
+                  </Button>
+                </div>
+              )}
               {hasNextPage && (
                 <div className="flex justify-center mt-4">
                   <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => fetchNextPage()}
                     disabled={isFetchingNextPage}
                   >

@@ -1,9 +1,42 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   getDocumentDetails,
+  getDocumentShares,
   getDocumentVersions,
   getPublicDocumentDetails,
 } from "./api";
+
+export const useGetDocumentShares = (documentId: string, enabled: boolean = true) => {
+  const {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["document", documentId, "shares"],
+    queryFn: ({ pageParam }) => getDocumentShares({ id: documentId, pageParam }),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
+    enabled: !!documentId && enabled,
+  });
+
+  return {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
+};
 
 export const useGetDocumentVersions = (id: string, enabled: boolean = true) => {
   const {

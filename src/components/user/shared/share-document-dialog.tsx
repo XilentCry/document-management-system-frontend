@@ -26,18 +26,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { ShareItemRow } from "./share-item-row";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Info } from "lucide-react";
+import { Info, X } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import {
   shareDocumentFormSchema,
   TShareDocumentFormSchema,
 } from "@/schemas/documents/share-document-form-schema";
-import { useShareDocument } from "@/services/documents/mutations";
+import { useShareDocument, useUpdateDocumentShareRole, useRemoveDocumentShare } from "@/services/documents/mutations";
 import { useGetShareableUsers } from "@/services/items/queries";
 import { useGetAllShareRoles } from "@/services/share-roles/queries";
 import { TBasicUser } from "@/types/basic-user";
@@ -46,6 +47,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { DiscardChangesAlertDialog } from "./discard-changes-alert-dialog";
+import { Trash2, User } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { useGetDocumentShares } from "@/services/documents/queries";
+import { useCurrentUser } from "@/services/user/queries";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item"
 
 export function ShareDocumentDialog({
   item,
@@ -60,6 +75,8 @@ export function ShareDocumentDialog({
   const debouncedSearchTerm = useDebounce(searchTerm);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showDiscardAlert, setShowDiscardAlert] = useState(false);
+  const { data: currentUser } = useCurrentUser();
+  const isOwner = currentUser?.id === item.owner.id;
 
   const anchor = useComboboxAnchor();
 
@@ -130,6 +147,17 @@ export function ShareDocumentDialog({
 
   const { mutateAsync: shareItemMutation } = useShareDocument();
 
+  const {
+    data: activeSharesData,
+    isLoading: isLoadingActiveShares,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchNextPageError,
+  } = useGetDocumentShares(item.id, openShareDialog);
+
+  const activeShares = activeSharesData?.pages.flatMap((page) => page.data) ?? [];
+
   const onSubmit: SubmitHandler<TShareDocumentFormSchema> = async (data) => {
     await shareItemMutation({
       id: item.id,
@@ -148,7 +176,7 @@ export function ShareDocumentDialog({
             <DialogHeader>
               <DialogTitle>Share &quot;{item.name}&quot;</DialogTitle>
             </DialogHeader>
-            <div className="max-h-96 flex flex-col gap-6">
+            <div className="max-h-96 flex flex-col gap-4">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   <Controller
@@ -300,6 +328,78 @@ export function ShareDocumentDialog({
                   />
                 )}
               </div>
+
+              <div className="flex flex-col gap-4">
+                <h3 className="text-sm font-medium">People with access</h3>
+                {isLoadingActiveShares ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Spinner className="text-primary size-9" />
+                  </div>
+                ) : (
+                  <ScrollArea className="max-h-52">
+                    <div className="flex flex-col gap-4">
+                      <Item size="xs">
+                        <ItemContent className="min-w-0">
+                          <ItemTitle className="block w-auto truncate">{item.owner.first_name} {item.owner.middle_name ?? ""} {item.owner.last_name}</ItemTitle>
+                          <ItemDescription>{item.owner.email}</ItemDescription>
+                        </ItemContent>
+                        <ItemActions>
+                          <p className="text-muted-foreground">Owner</p>
+                        </ItemActions>
+                      </Item>
+                    </div>
+
+                    {activeShares.map((share) => (
+                      <ShareItemRow
+                        key={share.id}
+                        share={share}
+                        item={item}
+                        shareRoles={shareRoles}
+                        isOwner={isOwner}
+                      />
+                    ))}
+
+                    {isFetchNextPageError && (
+                      <div className="py-4 flex flex-col items-center justify-center gap-4">
+                        <p className="text-destructive text-sm text-center px-4">
+                          Failed to load more users. Please try again.
+                        </p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            hasNextPage && !isFetchingNextPage && fetchNextPage()
+                          }
+                        >
+                          Retry
+                        </Button>
+                      </div>
+                    )}
+
+                    {hasNextPage && (
+                      <div className="flex justify-center mt-4 pb-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => fetchNextPage()}
+                          disabled={isFetchingNextPage}
+                        >
+                          {isFetchingNextPage ? (
+                            <>
+                              <Spinner />
+                              Loading more...
+                            </>
+                          ) : (
+                            "Load more"
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                  </ScrollArea>
+                )}
+              </div>
             </div>
             <DialogFooter>
               <DialogClose render={<Button variant="outline" />}>
@@ -321,7 +421,7 @@ export function ShareDocumentDialog({
             </DialogFooter>
           </form>
         </DialogContent>
-      </Dialog>
+      </Dialog >
 
       <DiscardChangesAlertDialog
         showDiscardAlert={showDiscardAlert}

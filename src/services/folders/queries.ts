@@ -42,6 +42,7 @@ export const useGetFolderSubfolders = (id: string | null, enabled: boolean = tru
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isFetchNextPageError,
   } = useInfiniteQuery({
     queryKey: ["folder", id, "subfolders"],
     queryFn: ({ pageParam }) => getFolderSubfolders({ id, pageParam }),
@@ -54,6 +55,7 @@ export const useGetFolderSubfolders = (id: string | null, enabled: boolean = tru
     isLoading,
     isError,
     error,
+    isFetchNextPageError,
     isSuccess,
     data,
     fetchNextPage,

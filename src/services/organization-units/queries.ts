@@ -172,6 +172,7 @@ export const useGetOrganizationUnitFolders = (
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isFetchNextPageError,
   } = useInfiniteQuery({
     queryKey: ["organization-unit", organizationUnitId, "folders"],
     queryFn: ({ pageParam }) =>
@@ -185,6 +186,7 @@ export const useGetOrganizationUnitFolders = (
     isLoading,
     isError,
     error,
+    isFetchNextPageError,
     isSuccess,
     data,
     fetchNextPage,

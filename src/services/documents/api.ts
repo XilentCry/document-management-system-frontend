@@ -5,6 +5,20 @@ import { TChangeClassificationFormSchema } from "@/schemas/documents/change-clas
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TDocumentVersion } from "@/types/document-version";
 import { TItem } from "@/types/item";
+import { TDocumentShare } from "@/types/document-share";
+
+export const getDocumentShares = async ({
+  id,
+  pageParam,
+}: {
+  id: string;
+  pageParam: string | null;
+}): Promise<TCursorPaginate<TDocumentShare>> => {
+  const { data } = await apiClient.get(`/api/documents/${id}/shares`, {
+    params: { cursor: pageParam },
+  });
+  return data;
+};
 
 export const getDocumentVersions = async ({
   id,
@@ -161,5 +175,21 @@ export const updateClassification = async (
     `/api/documents/${id}/classification`,
     classificationData,
   );
+  return data;
+};
+
+export const updateDocumentShareRole = async (
+  shareId: string,
+  shareRoleId: string,
+) => {
+  const { data } = await apiClient.patch(
+    `/api/documents/shares/${shareId}/role`,
+    { share_role_id: shareRoleId },
+  );
+  return data;
+};
+
+export const removeDocumentShare = async (shareId: string) => {
+  const { data } = await apiClient.delete(`/api/documents/shares/${shareId}`);
   return data;
 };

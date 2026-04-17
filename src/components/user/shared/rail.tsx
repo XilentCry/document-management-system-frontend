@@ -79,6 +79,7 @@ export function Rail() {
     fetchNextPage: fetchNextItemActivityPage,
     hasNextPage: hasNextItemActivityPage,
     isFetchingNextPage: isFetchingNextItemActivityPage,
+    isFetchNextPageError,
   } = useGetItemActivities(activitySubjectId, openRail && railTab === "activity");
 
   const itemActivities =
@@ -153,9 +154,25 @@ export function Rail() {
                     </p>
                   </div>
                 )}
+                {isFetchNextPageError && itemActivityError && (
+                  <div className="py-4 flex flex-col items-center justify-center gap-4">
+                    <p className="text-destructive text-sm">
+                      {itemActivityError.message}
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                         hasNextItemActivityPage && !isFetchingNextItemActivityPage && fetchNextItemActivityPage()
+                      }
+                    >
+                      Retry
+                    </Button>
+                  </div>
+                )}
                 {hasNextItemActivityPage && (
                   <div className="flex justify-center mt-4">
                     <Button
+                      variant="outline"
                       onClick={() => fetchNextItemActivityPage()}
                       disabled={isFetchingNextItemActivityPage}
                     >

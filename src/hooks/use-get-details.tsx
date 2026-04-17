@@ -13,6 +13,26 @@ export function useGetDetails() {
           </span>
         );
 
+      case "document.update_share_role":
+        return (
+          <span>
+            Shared role of{" "}
+            <span className="text-primary">{auditLog.properties.shared_with}</span>{" "}
+            updated from{" "}
+            <span className="text-primary capitalize">{auditLog.properties.old_role}</span>{" "}
+            to{" "}
+            <span className="text-primary capitalize">{auditLog.properties.new_role}</span>
+          </span>
+        );
+
+      case "document.remove_share":
+        return (
+          <span>
+            Removed access for:{" "}
+            <span className="text-primary">{auditLog.properties.removed_user}</span>
+          </span>
+        );
+
       case "document.upload":
         return (
           <span>
