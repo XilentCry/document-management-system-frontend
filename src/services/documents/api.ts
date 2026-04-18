@@ -2,10 +2,12 @@ import apiClient from "@/lib/api-client";
 import { TShareDocumentFormSchema } from "@/schemas/documents/share-document-form-schema";
 import { TSingleFile } from "@/schemas/documents/upload-file-form-schema";
 import { TChangeClassificationFormSchema } from "@/schemas/documents/change-classification-form-schema";
+import { TTrashDocumentFormSchema } from "@/schemas/documents/trash-document-form-schema";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TDocumentVersion } from "@/types/document-version";
 import { TItem } from "@/types/item";
 import { TDocumentShare } from "@/types/document-share";
+import { TTrashedItem } from "@/types/trash-item";
 
 export const getDocumentShares = async ({
   id,
@@ -191,5 +193,21 @@ export const updateDocumentShareRole = async (
 
 export const removeDocumentShare = async (shareId: string) => {
   const { data } = await apiClient.delete(`/api/documents/shares/${shareId}`);
+  return data;
+};
+
+export const trashDocument = async (id: string, trashData: TTrashDocumentFormSchema) => {
+  const { data } = await apiClient.patch(`/api/documents/${id}/trash`, trashData);
+  return data;
+};
+
+export const getTrashedDocuments = async ({
+  pageParam,
+}: {
+  pageParam: string | null;
+}): Promise<TCursorPaginate<TTrashedItem>> => {
+  const { data } = await apiClient.get("/api/user/trash", {
+    params: { cursor: pageParam },
+  });
   return data;
 };

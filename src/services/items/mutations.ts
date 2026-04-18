@@ -3,7 +3,7 @@ import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useCurrentUser } from "@/services/user/queries";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { moveItem, renameItem } from "./api";
+import { forceDeleteItem, moveItem, renameItem, restoreItem } from "./api";
 import { toast } from "sonner";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 
@@ -125,6 +125,41 @@ export const useMoveItem = () => {
       queryClient.invalidateQueries({
         queryKey: ["item", variables.id, "activities"],
       });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useRestoreItem = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: restoreItem,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["documents", "trash"] });
+      queryClient.invalidateQueries({ queryKey: ["organization-unit"] });
+      queryClient.invalidateQueries({ queryKey: ["folder"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useForceDeleteItem = (
+  setIsDeleteDialogOpen?: (isOpen: boolean) => void,
+  setItemToDelete?: (item: any | null) => void
+) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: forceDeleteItem,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["documents", "trash"] });
+      setIsDeleteDialogOpen?.(false);
+      setItemToDelete?.(null);
     },
     onError: (error) => {
       toast.error(error.message);

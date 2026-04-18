@@ -44,3 +44,13 @@ export async function moveItem(
   const { data } = await apiClient.patch(`/api/items/${id}/move`, moveData);
   return data;
 }
+
+export async function restoreItem(id: string): Promise<{ message: string }> {
+  const { data } = await apiClient.patch(`/api/documents/${id}/restore`);
+  return data;
+}
+
+export async function forceDeleteItem(id: string): Promise<{ message: string }> {
+  const { data } = await apiClient.delete(`/api/documents/${id}/force-delete`);
+  return data;
+}

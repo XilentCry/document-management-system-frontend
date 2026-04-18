@@ -5,6 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuPortal,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -36,7 +37,8 @@ import {
   UserRoundPlus,
   Info,
   Link2,
-  Shield
+  Shield,
+  Trash2
 } from "lucide-react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
@@ -46,6 +48,7 @@ import { DocumentViewer } from "./document-viewer";
 import { VersionHistoryDialog } from "./manage-versions-dialog";
 import { useCopyLink } from "@/hooks/use-copy-link";
 import { ChangeClassificationDialog } from "./change-classification-dialog";
+import { TrashDocumentDialog } from "./trash-document-dialog";
 
 export function ItemTable({
   data,
@@ -70,6 +73,7 @@ export function ItemTable({
   const [openShareDialog, setOpenShareDialog] = useState(false);
   const [openVersionHistoryDialog, setOpenVersionHistoryDialog] = useState(false);
   const [openChangeClassificationDialog, setOpenChangeClassificationDialog] = useState(false);
+  const [openTrashDialog, setOpenTrashDialog] = useState(false);
 
   const {
     setSelectedDocumentId,
@@ -146,146 +150,147 @@ export function ItemTable({
                       : `${item.owner.first_name} ${item.owner.middle_name ?? ""} ${item.owner.last_name}`}
                   </TableCell>
                 )}
-              <TableCell>{item.updated_at}</TableCell>
-              {!openRail && (
-                <TableCell>{item.classification ?? <>&mdash;</>}</TableCell>
-              )}
-              {!openRail && (
-                <TableCell>
-                  {item?.current_version?.file_size ? (
-                    formatFileSize(item.current_version.file_size)
-                  ) : (
-                    <>&mdash;</>
-                  )}
-                </TableCell>
-              )}
-
-              <TableCell className="text-right">
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={
-                      <Button
-                        variant="outline"
-                        size="icon-sm"
-                        className="border-none bg-transparent hover:bg-input/50"
-                      />
-                    }
-                  >
-                    <EllipsisVertical className="size-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-72">
-                    {!item.is_folder && (
-                      <DropdownMenuItem
-                        onClick={() => handleDownload(item.id, item.name)}
-                      >
-                        <Download />
-                        Download
-                      </DropdownMenuItem>
+                <TableCell>{item.updated_at}</TableCell>
+                {!openRail && (
+                  <TableCell>{item.classification ?? <>&mdash;</>}</TableCell>
+                )}
+                {!openRail && (
+                  <TableCell>
+                    {item?.current_version?.file_size ? (
+                      formatFileSize(item.current_version.file_size)
+                    ) : (
+                      <>&mdash;</>
                     )}
-                    <DropdownMenuItem
-                      disabled={!isOwner}
-                      onClick={() => {
-                        setSelectedItem(item);
-                        setOpenRenameItemDialog(true);
-                      }}
+                  </TableCell>
+                )}
+
+                <TableCell className="text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button
+                          variant="outline"
+                          size="icon-sm"
+                          className="border-none bg-transparent hover:bg-input/50"
+                        />
+                      }
                     >
-                      <PencilLine />
-                      Rename
-                    </DropdownMenuItem>
-                    {!item.is_folder && (
+                      <EllipsisVertical className="size-4" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-72">
+                      {!item.is_folder && (
+                        <DropdownMenuItem
+                          onClick={() => handleDownload(item.id, item.name)}
+                        >
+                          <Download />
+                          Download
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem
                         disabled={!isOwner}
                         onClick={() => {
                           setSelectedItem(item);
-                          setOpenChangeClassificationDialog(true);
+                          setOpenRenameItemDialog(true);
                         }}
                       >
-                        <Shield />
-                        Change classification
+                        <PencilLine />
+                        Rename
                       </DropdownMenuItem>
-                    )}
-                    {!item.is_folder && (
-                      <>
-                        {item.classification === "protected" ? (
-                          <DropdownMenuItem
-                            disabled={!isOwner}
-                            onClick={() => {
-                              setSelectedItem(item);
-                              setOpenShareDialog(true);
-                            }}
-                          >
-                            <UserRoundPlus />
-                            Share
-                          </DropdownMenuItem>
-                        ) : item.classification === "public" ? (
-                          <DropdownMenuItem
-                            onClick={() => copyLink(item.id)}
-                          >
-                            <Link2 />
-                            Copy Link
-                          </DropdownMenuItem>
-                        ) : null}
-                      </>
-                    )}
-                    <DropdownMenuItem
-                      disabled={!isOwner}
-                      onClick={() => {
-                        setSelectedItem(item);
-                        setOpenMoveItemDialog(true);
-                      }}
-                    >
-                      <FolderInput />
-                      Move
-                    </DropdownMenuItem>
-                    <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>
-                        <CircleAlert />
-                        {item.is_folder ? "Folder" : "File"} information
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent className="w-72">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              if (item.is_folder) {
-                                setSelectedFolderId(item.id);
-                                setSelectedFolderName(item.name);
-                                setSelectedDocumentId(null);
-                                setSelectedDocumentFileName(null);
-                              } else {
-                                setSelectedDocumentId(item.id);
-                                setSelectedDocumentFileName(item.name);
-                                setSelectedFolderId(null);
-                                setSelectedFolderName(null);
-                              }
+                      <DropdownMenuSeparator />
+                      {!item.is_folder && (
+                        <DropdownMenuItem
+                          disabled={!isOwner}
+                          onClick={() => {
+                            setSelectedItem(item);
+                            setOpenChangeClassificationDialog(true);
+                          }}
+                        >
+                          <Shield />
+                          Change classification
+                        </DropdownMenuItem>
+                      )}
+                      {!item.is_folder && (
+                        <>
+                          {item.classification === "protected" ? (
+                            <DropdownMenuItem
+                              disabled={!isOwner}
+                              onClick={() => {
+                                setSelectedItem(item);
+                                setOpenShareDialog(true);
+                              }}
+                            >
+                              <UserRoundPlus />
+                              Share
+                            </DropdownMenuItem>
+                          ) : item.classification === "public" ? (
+                            <DropdownMenuItem
+                              onClick={() => copyLink(item.id)}
+                            >
+                              <Link2 />
+                              Copy Link
+                            </DropdownMenuItem>
+                          ) : null}
+                        </>
+                      )}
+                      <DropdownMenuItem
+                        disabled={!isOwner}
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setOpenMoveItemDialog(true);
+                        }}
+                      >
+                        <FolderInput />
+                        Move
+                      </DropdownMenuItem>
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                          <CircleAlert />
+                          {item.is_folder ? "Folder" : "File"} information
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent className="w-72">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                if (item.is_folder) {
+                                  setSelectedFolderId(item.id);
+                                  setSelectedFolderName(item.name);
+                                  setSelectedDocumentId(null);
+                                  setSelectedDocumentFileName(null);
+                                } else {
+                                  setSelectedDocumentId(item.id);
+                                  setSelectedDocumentFileName(item.name);
+                                  setSelectedFolderId(null);
+                                  setSelectedFolderName(null);
+                                }
 
-                              setRailTab("details");
-                              setOpenRail(true);
-                            }}
-                          >
-                            <Info />
-                            Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              if (item.is_folder) {
-                                setSelectedFolderId(item.id);
-                                setSelectedFolderName(item.name);
-                                setSelectedDocumentId(null);
-                                setSelectedDocumentFileName(null);
-                              } else {
-                                setSelectedDocumentId(item.id);
-                                setSelectedDocumentFileName(item.name);
-                                setSelectedFolderId(null);
-                                setSelectedFolderName(null);
-                              }
+                                setRailTab("details");
+                                setOpenRail(true);
+                              }}
+                            >
+                              <Info />
+                              Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                if (item.is_folder) {
+                                  setSelectedFolderId(item.id);
+                                  setSelectedFolderName(item.name);
+                                  setSelectedDocumentId(null);
+                                  setSelectedDocumentFileName(null);
+                                } else {
+                                  setSelectedDocumentId(item.id);
+                                  setSelectedDocumentFileName(item.name);
+                                  setSelectedFolderId(null);
+                                  setSelectedFolderName(null);
+                                }
 
-                              setRailTab("activity");
-                              setOpenRail(true);
-                            }}
-                          >
-                            <Activity />
-                            Activity
-                          </DropdownMenuItem>
+                                setRailTab("activity");
+                                setOpenRail(true);
+                              }}
+                            >
+                              <Activity />
+                              Activity
+                            </DropdownMenuItem>
                             {!item.is_folder && (
                               <DropdownMenuItem
                                 onClick={() => {
@@ -297,10 +302,21 @@ export function ItemTable({
                                 {!isOwner ? "Version history" : "Manage versions"}
                               </DropdownMenuItem>
                             )}
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                  </DropdownMenuContent>
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        disabled={!isOwner}
+                        onClick={() => {
+                          setSelectedItem(item);
+                          setOpenTrashDialog(true);
+                        }}
+                      >
+                        <Trash2 />
+                        Move to trash
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
               </TableRow>
@@ -346,6 +362,14 @@ export function ItemTable({
           item={selectedItem}
           openChangeClassificationDialog={openChangeClassificationDialog}
           setOpenChangeClassificationDialog={setOpenChangeClassificationDialog}
+        />
+      )}
+
+      {selectedItem && (
+        <TrashDocumentDialog
+          item={selectedItem}
+          openTrashDialog={openTrashDialog}
+          setOpenTrashDialog={setOpenTrashDialog}
         />
       )}
 

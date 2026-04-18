@@ -1,6 +1,5 @@
 import { TBasicUser } from "./basic-user";
 import { TUserSummary } from "./user-summary";
-import { TSharePermission } from "./share-permission";
 
 export type TItem = {
   id: string;
@@ -18,7 +17,6 @@ export type TItem = {
     file_size: number;
     file_path: string;
   } | null;
-  share_permissions: TSharePermission[] | null;
   created_at?: string;
   updated_at: string;
   updated_by: TBasicUser;

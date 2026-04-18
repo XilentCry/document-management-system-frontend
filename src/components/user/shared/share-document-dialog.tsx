@@ -19,6 +19,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle
+} from "@/components/ui/item";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -26,41 +34,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { ShareItemRow } from "./share-item-row";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Info, X } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import {
   shareDocumentFormSchema,
   TShareDocumentFormSchema,
 } from "@/schemas/documents/share-document-form-schema";
-import { useShareDocument, useUpdateDocumentShareRole, useRemoveDocumentShare } from "@/services/documents/mutations";
+import { useShareDocument } from "@/services/documents/mutations";
+import { useGetDocumentShares } from "@/services/documents/queries";
 import { useGetShareableUsers } from "@/services/items/queries";
 import { useGetAllShareRoles } from "@/services/share-roles/queries";
+import { useCurrentUser } from "@/services/user/queries";
 import { TBasicUser } from "@/types/basic-user";
 import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Info } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { DiscardChangesAlertDialog } from "./discard-changes-alert-dialog";
-import { Trash2, User } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { useGetDocumentShares } from "@/services/documents/queries";
-import { useCurrentUser } from "@/services/user/queries";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item"
+import { ShareItemRow } from "./share-item-row";
 
 export function ShareDocumentDialog({
   item,
@@ -118,11 +114,19 @@ export function ShareDocumentDialog({
     }
   }, [isSubmitSuccessful, setOpenShareDialog]);
 
+  const [prevOpenShareDialog, setPrevOpenShareDialog] = useState(openShareDialog);
+
+  if (openShareDialog !== prevOpenShareDialog) {
+    setPrevOpenShareDialog(openShareDialog);
+    if (openShareDialog) {
+      setSelectedUsers([]);
+      setSearchTerm("");
+    }
+  }
+
   useEffect(() => {
     if (openShareDialog) {
       reset({ share_with: [] });
-      setSelectedUsers([]);
-      setSearchTerm("");
     }
   }, [openShareDialog, reset]);
 

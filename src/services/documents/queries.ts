@@ -4,6 +4,7 @@ import {
   getDocumentShares,
   getDocumentVersions,
   getPublicDocumentDetails,
+  getTrashedDocuments,
 } from "./api";
 
 export const useGetDocumentShares = (documentId: string, enabled: boolean = true) => {
@@ -91,4 +92,35 @@ export const useGetPublicDocumentDetails = (id: string) => {
   });
 
   return { isLoading, isError, error, data };
+};
+
+export const useGetTrashedDocuments = () => {
+  const {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["documents", "trash"],
+    queryFn: ({ pageParam }) => getTrashedDocuments({ pageParam }),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
+  });
+
+  return {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
 };

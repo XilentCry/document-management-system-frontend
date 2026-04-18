@@ -2,10 +2,11 @@ import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useCurrentUser } from "@/services/user/queries";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { downloadDocument, downloadDocumentVersion, shareDocument, uploadDocument, updateClassification, updateDocumentShareRole, removeDocumentShare } from "./api";
+import { downloadDocument, downloadDocumentVersion, shareDocument, uploadDocument, updateClassification, updateDocumentShareRole, removeDocumentShare, trashDocument } from "./api";
 import { toast } from "sonner";
 import { TShareDocumentFormSchema } from "@/schemas/documents/share-document-form-schema";
 import { TChangeClassificationFormSchema } from "@/schemas/documents/change-classification-form-schema";
+import { TTrashDocumentFormSchema } from "@/schemas/documents/trash-document-form-schema";
 import { TDocumentShare } from "@/types/document-share";
 import { TShareRole } from "@/types/share-role";
 
@@ -217,7 +218,7 @@ export const useUpdateDocumentShareRole = () => {
       // Return a context object with the snapshotted value
       return { previousShares };
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       toast.success(data.message);
     },
     onError: (error, variables, context) => {
@@ -250,7 +251,6 @@ export const useRemoveDocumentShare = () => {
   return useMutation({
     mutationFn: ({
       shareId,
-      documentId,
     }: {
       shareId: string;
       documentId: string;
@@ -294,6 +294,46 @@ export const useRemoveDocumentShare = () => {
       queryClient.invalidateQueries({
         queryKey: ["item", variables.documentId, "activities"],
       });
+    },
+  });
+};
+
+export const useTrashDocument = () => {
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
+    (state) => state.currentOrganizationUnitId,
+  );
+  const currentOrganizationUnitId =
+    storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
+  const currentParentFolderId = useFolderStore(
+    (state) => state.currentParentFolderId,
+  );
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      trashData,
+    }: {
+      id: string;
+      trashData: TTrashDocumentFormSchema;
+    }) => trashDocument(id, trashData),
+    onSuccess: (data) => {
+      toast.success(data.message);
+
+      if (currentParentFolderId) {
+        queryClient.invalidateQueries({
+          queryKey: ["folder", currentParentFolderId, "items"],
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
+        });
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 };

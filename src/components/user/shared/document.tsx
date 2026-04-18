@@ -5,6 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuPortal,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -33,7 +34,8 @@ import {
   UserRoundPlus,
   Info,
   History,
-  Shield
+  Shield,
+  Trash2
 } from "lucide-react";
 import { useState } from "react";
 import { MoveItemDialog } from "./move-item-dialog";
@@ -42,6 +44,7 @@ import { ShareDocumentDialog } from "./share-document-dialog";
 import { useCopyLink } from "@/hooks/use-copy-link";
 import { VersionHistoryDialog } from "./manage-versions-dialog";
 import { ChangeClassificationDialog } from "./change-classification-dialog";
+import { TrashDocumentDialog } from "./trash-document-dialog";
 
 export function Document({
   item,
@@ -55,6 +58,7 @@ export function Document({
   const [openShareDialog, setOpenShareDialog] = useState(false);
   const [openVersionHistoryDialog, setOpenVersionHistoryDialog] = useState(false);
   const [openChangeClassificationDialog, setOpenChangeClassificationDialog] = useState(false);
+  const [openTrashDialog, setOpenTrashDialog] = useState(false);
 
   const { data: currentUser } = useCurrentUser();
   const userId = currentUser?.id;
@@ -121,6 +125,7 @@ export function Document({
                 <PencilLine />
                 Rename
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 disabled={!isOwner}
                 onClick={() => setOpenChangeClassificationDialog(true)}
@@ -186,6 +191,11 @@ export function Document({
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem disabled={!isOwner} onClick={() => setOpenTrashDialog(true)}>
+                <Trash2 />
+                Move to trash
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </ItemActions>
@@ -222,6 +232,12 @@ export function Document({
         item={item}
         openChangeClassificationDialog={openChangeClassificationDialog}
         setOpenChangeClassificationDialog={setOpenChangeClassificationDialog}
+      />
+
+      <TrashDocumentDialog
+        item={item}
+        openTrashDialog={openTrashDialog}
+        setOpenTrashDialog={setOpenTrashDialog}
       />
     </>
   );

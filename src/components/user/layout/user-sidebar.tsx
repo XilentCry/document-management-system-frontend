@@ -23,7 +23,7 @@ import {
 import { useUploadDialogStore } from "@/stores/upload-dialog-store";
 import { useCurrentUser } from "@/services/user/queries";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Building, FileUp, FolderPlus, Plus, UsersRound } from "lucide-react";
+import { Building, FileUp, FolderPlus, Plus, Trash2, UsersRound } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -112,6 +112,15 @@ export function UserSidebar() {
                   >
                     <UsersRound />
                     Shared with me
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={pathname.startsWith("/drive/trash")}
+                    onClick={() => router.push("/drive/trash")}
+                  >
+                    <Trash2 />
+                    Trash
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
