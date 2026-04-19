@@ -27,6 +27,10 @@ export function TrashItemDetails({
             <p className="font-medium">File size</p>
             <p>{formatFileSize(item.current_version.file_size)}</p>
           </div>
+          <div>
+            <p className="font-medium">Version number</p>
+            <p>{item.current_version.version_number}</p>
+          </div>
         </>
       )}
       {item.classification && (
@@ -52,6 +56,10 @@ export function TrashItemDetails({
       <div>
         <p className="font-medium">Date created</p>
         <p>{item.created_at}</p>
+      </div>
+      <div>
+        <p className="font-medium">Date deleted</p>
+        <p>{item.deleted_at}</p>
       </div>
     </>
   );

@@ -49,6 +49,8 @@ import { checkConflicts } from "@/services/documents/api";
 import { FileUploadConflictDialog } from "./file-upload-conflict-dialog";
 import { FileUploadVersionConflictDialog } from "./file-upload-version-conflict-dialog";
 
+const MAX_FILES = 5;
+
 export function FileUploadDialog() {
   const isOpen = useUploadDialogStore((state) => state.isOpen);
   const setIsOpen = useUploadDialogStore((state) => state.setIsOpen);
@@ -125,9 +127,8 @@ export function FileUploadDialog() {
 
   useEffect(() => {
     if (isOpen && pendingFiles.length > 0 && isClassificationsSuccess) {
-      const filesToAdd = replaceItemId
-        ? pendingFiles.slice(0, 1)
-        : pendingFiles;
+      const limit = replaceItemId ? 1 : MAX_FILES;
+      const filesToAdd = pendingFiles.slice(0, Math.max(0, limit - fields.length));
       addFilesToQueue(filesToAdd);
       clearPendingFiles();
     }
@@ -138,15 +139,17 @@ export function FileUploadDialog() {
     clearPendingFiles,
     addFilesToQueue,
     replaceItemId,
+    fields.length,
   ]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newFiles = Array.from(e.target.files ?? []);
-    if (replaceItemId) {
-      const remainingSlots = 1 - fields.length;
-      if (remainingSlots <= 0) return;
-      newFiles = newFiles.slice(0, remainingSlots);
-    }
+    const limit = replaceItemId ? 1 : MAX_FILES;
+    const remainingSlots = limit - fields.length;
+
+    if (remainingSlots <= 0) return;
+
+    newFiles = newFiles.slice(0, remainingSlots);
     addFilesToQueue(newFiles);
 
     if (fileInputRef.current) {
@@ -158,14 +161,12 @@ export function FileUploadDialog() {
     e.preventDefault();
     e.stopPropagation();
 
-    if (replaceItemId && fields.length >= 1) return;
+    const limit = replaceItemId ? 1 : MAX_FILES;
+    if (fields.length >= limit) return;
 
     let newFiles = Array.from(e.dataTransfer.files);
-    if (replaceItemId) {
-      const remainingSlots = 1 - fields.length;
-      if (remainingSlots <= 0) return;
-      newFiles = newFiles.slice(0, remainingSlots);
-    }
+    const remainingSlots = limit - fields.length;
+    newFiles = newFiles.slice(0, remainingSlots);
 
     addFilesToQueue(newFiles);
   };
@@ -287,17 +288,17 @@ export function FileUploadDialog() {
             <div className="max-h-96 flex flex-col gap-6">
               <div
                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                  replaceItemId && fields.length >= 1
+                  fields.length >= (replaceItemId ? 1 : MAX_FILES)
                     ? "opacity-50 cursor-not-allowed border-muted bg-muted/20"
                     : "hover:bg-muted/50 cursor-pointer"
                 }`}
                 onClick={() => {
-                  if (replaceItemId && fields.length >= 1) return;
+                  if (fields.length >= (replaceItemId ? 1 : MAX_FILES)) return;
                   fileInputRef.current?.click();
                 }}
                 onDragOver={(e) => {
                   e.preventDefault();
-                  if (replaceItemId && fields.length >= 1) {
+                  if (fields.length >= (replaceItemId ? 1 : MAX_FILES)) {
                     e.dataTransfer.dropEffect = "none";
                   }
                 }}
@@ -305,12 +306,13 @@ export function FileUploadDialog() {
               >
                 <UploadIcon className="mx-auto size-12 text-muted-foreground mb-4" />
                 <p className="text-sm font-medium mb-1">
-                  {replaceItemId && fields.length >= 1
+                  {fields.length >= (replaceItemId ? 1 : MAX_FILES)
                     ? "Upload limit reached"
                     : "Click to select or drag & drop"}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  PDF files only, up to 10MB
+                  PDF files only, up to 10MB, max{" "}
+                  {replaceItemId ? "1 file" : `${MAX_FILES} files`}
                 </p>
               </div>
               {fields.length > 0 && (

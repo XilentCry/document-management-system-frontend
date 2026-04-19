@@ -3,7 +3,6 @@ import { TItem } from "@/types/item";
 import { useRouter } from "next/navigation";
 import { Document } from "../shared/document";
 import { Folder } from "../shared/folder";
-import { SharedDocument } from "../shared-with-me/shared-document";
 
 export function SearchGrid({
   data,
@@ -34,26 +33,13 @@ export function SearchGrid({
         ))}
       </div>
       <div className={`grid ${openRail ? "grid-cols-2" : "grid-cols-4"} gap-4`}>
-        {documents.map((document) => {
-          if (document.share_permissions) {
-            return (
-              <SharedDocument
-                key={document.id}
-                item={document}
-                sharePermissions={document.share_permissions}
-                onDoubleClick={() => onDocumentDoubleClick(document)}
-              />
-            );
-          }
-
-          return (
-            <Document
-              key={document.id}
-              item={document}
-              onDoubleClick={onDocumentDoubleClick}
-            />
-          );
-        })}
+        {documents.map((document) => (
+          <Document
+            key={document.id}
+            item={document}
+            onDoubleClick={onDocumentDoubleClick}
+          />
+        ))}
       </div>
     </div>
   );

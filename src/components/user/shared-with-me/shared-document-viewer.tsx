@@ -1,31 +1,14 @@
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Image from "next/image";
-
 import { Spinner } from "@/components/ui/spinner";
 import { viewDocument } from "@/services/documents/api";
-
-import { useDownloadDocument } from "@/services/documents/mutations";
 import { useGetDocumentDetails } from "@/services/documents/queries";
 import { TSharedWithMe } from "@/types/shared-with-me";
-import {
-  Download,
-  EllipsisVertical,
-  Info,
-  PencilLine,
-  UserRoundPlus,
-  X
-} from "lucide-react";
+import { X } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { DocumentViewerRail } from "../shared/document-viewer-rail";
 import { PdfDisplay } from "../shared/pdf-display";
-import { RenameItemDialog } from "../shared/rename-item-dialog";
-import { ShareDocumentDialog } from "../shared/share-document-dialog";
+import { ItemActionDropdown } from "../shared/item-action-dropdown";
 
 export function SharedDocumentViewer({
   openDocumentViewer,
@@ -36,27 +19,16 @@ export function SharedDocumentViewer({
   setOpenDocumentViewer: Dispatch<SetStateAction<boolean>>;
   sharedDocument: TSharedWithMe;
 }) {
-  const canDownload = sharedDocument.share_permissions.some(
-    (p) => p.name === "document:download",
-  );
-  const canRename = sharedDocument.share_permissions.some(
-    (p) => p.name === "document:rename",
-  );
-  const canShare = sharedDocument.share_permissions.some(
-    (p) => p.name === "document:share",
-  );
-
-  const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
-  const [openShareDialog, setOpenShareDialog] = useState(false);
   const [openViewerRail, setOpenViewerRail] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
   const documentDetailsQuery = useGetDocumentDetails(
     sharedDocument.item.id,
-    openDocumentViewer
+    openDocumentViewer,
   );
-  const documentName = documentDetailsQuery.data?.name ?? sharedDocument.item.name;
+  const documentName =
+    documentDetailsQuery.data?.name ?? sharedDocument.item.name;
 
   useEffect(() => {
     if (!openDocumentViewer) return;
@@ -76,15 +48,6 @@ export function SharedDocumentViewer({
     };
   }, [openDocumentViewer, sharedDocument.item.id]);
 
-  const { mutate: downloadDocumentMutation } = useDownloadDocument();
-
-  const handleDownload = (id: string, name: string) => {
-    downloadDocumentMutation({
-      id,
-      fileName: name,
-    });
-  };
-
   return (
     <>
       {openDocumentViewer && (
@@ -99,53 +62,24 @@ export function SharedDocumentViewer({
                 <X />
               </Button>
               <div className="flex items-center gap-4">
-                <Image src="/pdf.svg" alt="PDF" width={16} height={16} priority />
+                <Image
+                  src="/pdf.svg"
+                  alt="PDF"
+                  width={16}
+                  height={16}
+                  priority
+                />
                 <span className="text-sm leading-snug font-medium">
                   {documentName}
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  disabled={!canDownload}
-                  onClick={() =>
-                    handleDownload(
-                      sharedDocument.item.id,
-                      sharedDocument.item.name,
-                    )
-                  }
-                >
-                  <Download />
-                </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={<Button variant="ghost" size="icon" />}
-                  >
-                    <EllipsisVertical />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-72">
-                    <DropdownMenuItem
-                      disabled={!canRename}
-                      onClick={() => setOpenRenameItemDialog(true)}
-                    >
-                      <PencilLine />
-                      Rename
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setOpenViewerRail(true)}>
-                      <Info />
-                      Details
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              {canShare && (
-                <Button onClick={() => setOpenShareDialog(true)}>
-                  <UserRoundPlus />
-                  Share
-                </Button>
-              )}
+            <div className="flex items-center gap-2">
+              <ItemActionDropdown
+                item={sharedDocument.item}
+                variant="viewer"
+                onDetails={() => setOpenViewerRail(true)}
+              />
             </div>
           </header>
           <div className="flex-1 min-h-0 flex">
@@ -172,18 +106,6 @@ export function SharedDocumentViewer({
           </div>
         </div>
       )}
-
-      <RenameItemDialog
-        item={sharedDocument.item}
-        openRenameItemDialog={openRenameItemDialog}
-        setOpenRenameItemDialog={setOpenRenameItemDialog}
-      />
-
-      <ShareDocumentDialog
-        item={sharedDocument.item}
-        openShareDialog={openShareDialog}
-        setOpenShareDialog={setOpenShareDialog}
-      />
     </>
   );
 }

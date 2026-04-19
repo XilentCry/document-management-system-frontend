@@ -29,7 +29,6 @@ import { useForceDeleteItem, useRestoreItem } from "@/services/items/mutations";
 import { useRailStore } from "@/stores/rail-store";
 import { TTrashedItem } from "@/types/trash-item";
 import {
-  AlertTriangle,
   EllipsisVertical,
   History,
   Trash2
@@ -121,7 +120,7 @@ export function TrashDocument({
                 Delete Permanently?
               </AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete <span className="font-semibold text-foreground">"{trashedItem.name}"</span> forever?
+                Are you sure you want to delete <span className="font-semibold text-foreground">&quot;{trashedItem.name}&quot;</span> forever?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

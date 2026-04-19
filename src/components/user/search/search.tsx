@@ -26,8 +26,6 @@ import { TFilterOwner } from "@/types/filter-owner";
 import { TItem } from "@/types/item";
 import { useState } from "react";
 import { DocumentViewer } from "../shared/document-viewer";
-import { SharedDocumentViewer } from "../shared-with-me/shared-document-viewer";
-import { TSharedWithMe } from "@/types/shared-with-me";
 
 export function Search() {
   const searchParams = useSearchParams();
@@ -196,26 +194,11 @@ const filterSharedTo = filterSharedToStr || null;
         </div>
       )}
       {openDocumentViewer && selectedDocument && (
-        selectedDocument.share_permissions ? (
-          <SharedDocumentViewer
-            openDocumentViewer={openDocumentViewer}
-            setOpenDocumentViewer={setOpenDocumentViewer}
-            sharedDocument={{
-              id: selectedDocument.id,
-              item: selectedDocument,
-              share_permissions: selectedDocument.share_permissions,
-              shared_by: selectedDocument.owner,
-              created_at: selectedDocument.created_at ?? "",
-              raw_created_at: selectedDocument.updated_at,
-            } as TSharedWithMe}
-          />
-        ) : (
-          <DocumentViewer
-            openDocumentViewer={openDocumentViewer}
-            setOpenDocumentViewer={setOpenDocumentViewer}
-            document={selectedDocument}
-          />
-        )
+        <DocumentViewer
+          openDocumentViewer={openDocumentViewer}
+          setOpenDocumentViewer={setOpenDocumentViewer}
+          document={selectedDocument}
+        />
       )}
     </div>
   );

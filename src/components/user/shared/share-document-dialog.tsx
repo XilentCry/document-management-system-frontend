@@ -26,19 +26,7 @@ import {
   ItemTitle
 } from "@/components/ui/item";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useDebounce } from "@/hooks/use-debounce";
 import {
   shareDocumentFormSchema,
@@ -47,14 +35,12 @@ import {
 import { useShareDocument } from "@/services/documents/mutations";
 import { useGetDocumentShares } from "@/services/documents/queries";
 import { useGetShareableUsers } from "@/services/items/queries";
-import { useGetAllShareRoles } from "@/services/share-roles/queries";
 import { useCurrentUser } from "@/services/user/queries";
 import { TBasicUser } from "@/types/basic-user";
 import { TItem } from "@/types/item";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Info } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { DiscardChangesAlertDialog } from "./discard-changes-alert-dialog";
 import { ShareItemRow } from "./share-item-row";
 
@@ -84,13 +70,6 @@ export function ShareDocumentDialog({
     data: shareableUsers = [],
   } = useGetShareableUsers(item.id, debouncedSearchTerm, openShareDialog);
 
-  const {
-    isLoading: isLoadingShareRoles,
-    isError: isShareRolesError,
-    error: shareRolesError,
-    data: shareRoles = [],
-  } = useGetAllShareRoles(openShareDialog);
-
   const [selectedUsers, setSelectedUsers] = useState<TBasicUser[]>([]);
 
   const {
@@ -98,15 +77,12 @@ export function ShareDocumentDialog({
     control,
     formState: { isSubmitting, isSubmitSuccessful },
     reset,
-    setValue,
   } = useForm<TShareDocumentFormSchema>({
     resolver: zodResolver(shareDocumentFormSchema),
     defaultValues: {
       share_with: [],
     },
   });
-
-  const shareRoleId = useWatch({ control, name: "share_role_id" });
 
   useEffect(() => {
     if (isSubmitSuccessful) {
@@ -129,12 +105,6 @@ export function ShareDocumentDialog({
       reset({ share_with: [] });
     }
   }, [openShareDialog, reset]);
-
-  useEffect(() => {
-    if (shareRoles.length > 0 && shareRoleId === undefined) {
-      setValue("share_role_id", shareRoles[0].id, { shouldValidate: true });
-    }
-  }, [shareRoles, shareRoleId, setValue]);
 
   const handleOpenChange = (open: boolean) => {
     if (!open && selectedUsers.length > 0) {
@@ -274,63 +244,6 @@ export function ShareDocumentDialog({
                     )}
                   />
                 </div>
-
-                {selectedUsers.length > 0 && (
-                  <Controller
-                    name="share_role_id"
-                    control={control}
-                    render={({ field }) => {
-                      const selectedShareRole = shareRoles.find(
-                        (role) => role.id === field.value,
-                      );
-
-                      return (
-                        <div className="flex items-center gap-2">
-                          <Select
-                            value={field.value || undefined}
-                            onValueChange={(value) => field.onChange(value)}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a role">
-                                {selectedShareRole?.name}
-                              </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                              {isLoadingShareRoles ? (
-                                <div className="p-4 flex items-center justify-center">
-                                  <Spinner className="text-primary size-5" />
-                                </div>
-                              ) : isShareRolesError && shareRolesError ? (
-                                <div className="p-4 text-center text-sm text-destructive">
-                                  {shareRolesError.message}
-                                </div>
-                              ) : (
-                                shareRoles.map((shareRole) => (
-                                  <SelectItem
-                                    key={shareRole.id}
-                                    value={shareRole.id}
-                                  >
-                                    {shareRole.name}
-                                  </SelectItem>
-                                ))
-                              )}
-                            </SelectContent>
-                          </Select>
-                          {selectedShareRole?.description ? (
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Info className="size-4" />
-                              </TooltipTrigger>
-                              <TooltipContent side="top">
-                                {selectedShareRole.description}
-                              </TooltipContent>
-                            </Tooltip>
-                          ) : null}
-                        </div>
-                      );
-                    }}
-                  />
-                )}
               </div>
 
               <div className="flex flex-col gap-4">
@@ -358,7 +271,6 @@ export function ShareDocumentDialog({
                         key={share.id}
                         share={share}
                         item={item}
-                        shareRoles={shareRoles}
                         isOwner={isOwner}
                       />
                     ))}

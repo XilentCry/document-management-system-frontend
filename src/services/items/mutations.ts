@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { forceDeleteItem, moveItem, renameItem, restoreItem } from "./api";
 import { toast } from "sonner";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
+import { TTrashedItem } from "@/types/trash-item";
 
 export const useRenameItem = (
   type: "folder" | "document",
@@ -150,7 +151,7 @@ export const useRestoreItem = () => {
 
 export const useForceDeleteItem = (
   setIsDeleteDialogOpen?: (isOpen: boolean) => void,
-  setItemToDelete?: (item: any | null) => void
+  setItemToDelete?: (item: TTrashedItem | null) => void
 ) => {
   const queryClient = useQueryClient();
   return useMutation({

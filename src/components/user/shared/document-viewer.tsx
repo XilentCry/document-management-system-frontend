@@ -1,65 +1,36 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
 import { Spinner } from "@/components/ui/spinner";
 import { viewDocument } from "@/services/documents/api";
-import { useDownloadDocument } from "@/services/documents/mutations";
 import { useGetDocumentDetails } from "@/services/documents/queries";
-import { useCurrentUser } from "@/services/user/queries";
 import { TItem } from "@/types/item";
-import {
-  Download,
-  EllipsisVertical,
-  FolderInput,
-  Info,
-  Link2,
-  PencilLine,
-  Shield,
-  UserRoundPlus,
-  X
-} from "lucide-react";
+import { Info, X } from "lucide-react";
+import { TTrashedItem } from "@/types/trash-item";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { DocumentViewerRail } from "./document-viewer-rail";
-import { MoveItemDialog } from "./move-item-dialog";
 import { PdfDisplay } from "./pdf-display";
-import { RenameItemDialog } from "./rename-item-dialog";
-import { ShareDocumentDialog } from "./share-document-dialog";
-import { useCopyLink } from "@/hooks/use-copy-link";
-import { ChangeClassificationDialog } from "./change-classification-dialog";
+import { ItemActionDropdown } from "./item-action-dropdown";
 
 export function DocumentViewer({
   openDocumentViewer,
   setOpenDocumentViewer,
   document,
+  isTrash,
 }: {
   openDocumentViewer: boolean;
   setOpenDocumentViewer: Dispatch<SetStateAction<boolean>>;
-  document: TItem;
+  document: TItem | TTrashedItem;
+  isTrash?: boolean;
 }) {
-  const [openChangeClassificationDialog, setOpenChangeClassificationDialog] = useState(false);
-  const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
-  const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
-  const [openShareDialog, setOpenShareDialog] = useState(false);
   const [openViewerRail, setOpenViewerRail] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
-  const { data: currentUser } = useCurrentUser();
-  const userId = currentUser?.id;
-  const isOwner = document.owner.id === userId;
-
-  const documentDetailsQuery = useGetDocumentDetails(document.id, openDocumentViewer);
+  const documentDetailsQuery = useGetDocumentDetails(
+    document.id,
+    openDocumentViewer && !isTrash,
+  );
   const documentName = documentDetailsQuery.data?.name ?? document.name;
-
-  const { copyLink } = useCopyLink();
-
-  const { mutate: downloadDocumentMutation } = useDownloadDocument();
 
   useEffect(() => {
     if (!openDocumentViewer) return;
@@ -79,13 +50,6 @@ export function DocumentViewer({
     };
   }, [openDocumentViewer, document.id]);
 
-  const handleDownload = () => {
-    downloadDocumentMutation({
-      id: document.id,
-      fileName: documentName,
-    });
-  };
-
   return (
     <>
       {openDocumentViewer && (
@@ -100,66 +64,33 @@ export function DocumentViewer({
                 <X />
               </Button>
               <div className="flex items-center gap-4">
-                <Image src="/pdf.svg" alt="PDF" width={16} height={16} priority />
+                <Image
+                  src="/pdf.svg"
+                  alt="PDF"
+                  width={16}
+                  height={16}
+                  priority
+                />
                 <span className="text-sm leading-snug font-medium">
                   {documentName}
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
+              {isTrash ? (
                 <Button
                   variant="ghost"
-                  onClick={handleDownload}
+                  size="icon"
+                  onClick={() => setOpenViewerRail(!openViewerRail)}
                 >
-                  <Download />
+                  <Info />
                 </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger
-                    render={<Button variant="ghost" size="icon" />}
-                  >
-                    <EllipsisVertical />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-72">
-                    <DropdownMenuItem
-                      disabled={!isOwner}
-                      onClick={() => setOpenRenameItemDialog(true)}
-                    >
-                      <PencilLine />
-                      Rename
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      disabled={!isOwner}
-                      onClick={() => setOpenChangeClassificationDialog(true)}
-                    >
-                      <Shield />
-                      Change classification
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      disabled={!isOwner}
-                      onClick={() => setOpenMoveItemDialog(true)}
-                    >
-                      <FolderInput />
-                      Move
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setOpenViewerRail(true)}>
-                      <Info />
-                      Details
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              {isOwner && document.classification === "protected" && (
-                <Button onClick={() => setOpenShareDialog(true)}>
-                  <UserRoundPlus />
-                  Share
-                </Button>
-              )}
-              {document.classification === "public" && (
-                <Button onClick={() => copyLink(document.id)}>
-                  <Link2 />
-                  Copy Link
-                </Button>
+              ) : (
+                <ItemActionDropdown
+                  item={document as TItem}
+                  variant="viewer"
+                  onDetails={() => setOpenViewerRail(true)}
+                />
               )}
             </div>
           </header>
@@ -182,35 +113,13 @@ export function DocumentViewer({
                 documentId={document.id}
                 openRail={openViewerRail}
                 setOpenRail={setOpenViewerRail}
+                isTrash={isTrash}
+                item={isTrash ? (document as TTrashedItem) : undefined}
               />
             )}
           </div>
         </div>
       )}
-
-      <RenameItemDialog
-        item={document}
-        openRenameItemDialog={openRenameItemDialog}
-        setOpenRenameItemDialog={setOpenRenameItemDialog}
-      />
-
-      <MoveItemDialog
-        item={document}
-        openMoveItemDialog={openMoveItemDialog}
-        setOpenMoveItemDialog={setOpenMoveItemDialog}
-      />
-
-      <ShareDocumentDialog
-        item={document}
-        openShareDialog={openShareDialog}
-        setOpenShareDialog={setOpenShareDialog}
-      />
-
-      <ChangeClassificationDialog
-        item={document}
-        openChangeClassificationDialog={openChangeClassificationDialog}
-        setOpenChangeClassificationDialog={setOpenChangeClassificationDialog}
-      />
     </>
   );
 }

@@ -1,14 +1,14 @@
 import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useCurrentUser } from "@/services/user/queries";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { downloadDocument, downloadDocumentVersion, shareDocument, uploadDocument, updateClassification, updateDocumentShareRole, removeDocumentShare, trashDocument } from "./api";
+import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query";
+import { downloadDocument, downloadDocumentVersion, shareDocument, uploadDocument, updateClassification, removeDocumentShare, trashDocument } from "./api";
 import { toast } from "sonner";
 import { TShareDocumentFormSchema } from "@/schemas/documents/share-document-form-schema";
 import { TChangeClassificationFormSchema } from "@/schemas/documents/change-classification-form-schema";
 import { TTrashDocumentFormSchema } from "@/schemas/documents/trash-document-form-schema";
 import { TDocumentShare } from "@/types/document-share";
-import { TShareRole } from "@/types/share-role";
+import { TCursorPaginate } from "@/types/cursor-paginate";
 
 export type TUploadDocumentResponse = {
   item: {
@@ -170,80 +170,7 @@ export const useUpdateClassification = () => {
   });
 };
 
-export const useUpdateDocumentShareRole = () => {
-  const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({
-      shareId,
-      shareRoleId,
-    }: {
-      shareId: string;
-      shareRoleId: string;
-      documentId: string;
-    }) => updateDocumentShareRole(shareId, shareRoleId),
-    onMutate: async (newShareRole) => {
-      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({
-        queryKey: ["document", newShareRole.documentId, "shares"],
-      });
-
-      // Snapshot the previous value
-      const previousShares = queryClient.getQueryData<TDocumentShare[]>([
-        "document",
-        newShareRole.documentId,
-        "shares",
-      ]);
-
-      // Optimistically update to the new value
-      if (previousShares) {
-        const shareRoles = queryClient.getQueryData<TShareRole[]>(["share-roles"]);
-        const newRole = shareRoles?.find((r) => r.id === newShareRole.shareRoleId);
-
-        queryClient.setQueryData<TDocumentShare[]>(
-          ["document", newShareRole.documentId, "shares"],
-          (old) =>
-            old?.map((share) => {
-              if (share.id === newShareRole.shareId) {
-                return {
-                  ...share,
-                  share_role: newRole || share.share_role,
-                };
-              }
-              return share;
-            }),
-        );
-      }
-
-      // Return a context object with the snapshotted value
-      return { previousShares };
-    },
-    onSuccess: (data) => {
-      toast.success(data.message);
-    },
-    onError: (error, variables, context) => {
-      toast.error(error.message);
-
-      // Rollback to the previous value
-      if (context?.previousShares) {
-        queryClient.setQueryData(
-          ["document", variables.documentId, "shares"],
-          context.previousShares,
-        );
-      }
-    },
-    onSettled: (data, error, variables) => {
-      // Always refetch after error or success to ensure we have the correct data
-      queryClient.invalidateQueries({
-        queryKey: ["document", variables.documentId, "shares"],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["item", variables.documentId, "activities"],
-      });
-    },
-  });
-};
 
 export const useRemoveDocumentShare = () => {
   const queryClient = useQueryClient();
@@ -260,16 +187,25 @@ export const useRemoveDocumentShare = () => {
         queryKey: ["document", variables.documentId, "shares"],
       });
 
-      const previousShares = queryClient.getQueryData<TDocumentShare[]>([
-        "document",
-        variables.documentId,
-        "shares",
-      ]);
+      const previousShares = queryClient.getQueryData<
+        InfiniteData<TCursorPaginate<TDocumentShare>>
+      >(["document", variables.documentId, "shares"]);
 
       if (previousShares) {
-        queryClient.setQueryData<TDocumentShare[]>(
+        queryClient.setQueryData<InfiniteData<TCursorPaginate<TDocumentShare>>>(
           ["document", variables.documentId, "shares"],
-          (old) => old?.filter((share) => share.id !== variables.shareId),
+          (old) => {
+            if (!old) return old;
+            return {
+              ...old,
+              pages: old.pages.map((page) => ({
+                ...page,
+                data: page.data.filter(
+                  (share) => share.id !== variables.shareId,
+                ),
+              })),
+            };
+          },
         );
       }
 

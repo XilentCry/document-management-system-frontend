@@ -6,17 +6,27 @@ import { X } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { ItemDetails } from "./item-details";
 import { ItemDetailsSkeleton } from "./item-details-skeleton";
+import { TTrashedItem } from "@/types/trash-item";
+import { TrashItemDetails } from "../trash/trash-item-details";
 
 export function DocumentViewerRail({
   documentId,
   openRail,
   setOpenRail,
+  isTrash,
+  item,
 }: {
   documentId: string;
   openRail: boolean;
   setOpenRail: Dispatch<SetStateAction<boolean>>;
+  isTrash?: boolean;
+  item?: TTrashedItem;
 }) {
-  const documentQuery = useGetDocumentDetails(documentId, true, openRail);
+  const documentQuery = useGetDocumentDetails(
+    documentId,
+    true,
+    openRail && !isTrash,
+  );
 
   return (
     <div className="bg-background border-l w-80 flex flex-col h-full">
@@ -27,7 +37,9 @@ export function DocumentViewerRail({
         </Button>
       </div>
       <div className="min-h-0 p-4 flex-1 flex flex-col gap-4 text-sm">
-        {documentQuery.isLoading ? (
+        {isTrash && item ? (
+          <TrashItemDetails item={item} />
+        ) : documentQuery.isLoading ? (
           <ItemDetailsSkeleton />
         ) : documentQuery.isError && documentQuery.error ? (
           <div className="flex-1 flex items-center justify-center">

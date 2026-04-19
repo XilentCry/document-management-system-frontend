@@ -27,7 +27,8 @@ export const uploadFileFormSchema = z.object({
           ),
       }),
     )
-    .min(1, "At least one file is required."),
+    .min(1, "At least one file is required.")
+    .max(5, "You can upload a maximum of 5 files at a time."),
 });
 
 export type TUploadFileFormSchema = z.infer<typeof uploadFileFormSchema>;

@@ -145,7 +145,7 @@ export function AdvancedSearchDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="w-250 max-w-250!">
+      <DialogContent className="w-250 max-w-250!" finalFocus={false}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           <DialogHeader>
             <DialogTitle>Advanced search</DialogTitle>

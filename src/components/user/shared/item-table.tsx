@@ -1,16 +1,4 @@
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -20,35 +8,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatFileSize } from "@/lib/format-file-size";
-import { useDownloadDocument } from "@/services/documents/mutations";
-import { useRailStore } from "@/stores/rail-store";
+import { Folder } from "lucide-react";
+import { Dispatch, SetStateAction } from "react";
 import { useCurrentUser } from "@/services/user/queries";
+import { useRailStore } from "@/stores/rail-store";
 import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TItem } from "@/types/item";
-import {
-  Activity,
-  CircleAlert,
-  Download,
-  EllipsisVertical,
-  Folder,
-  FolderInput,
-  History,
-  PencilLine,
-  UserRoundPlus,
-  Info,
-  Link2,
-  Shield,
-  Trash2
-} from "lucide-react";
-import { Dispatch, SetStateAction, useState } from "react";
-import { MoveItemDialog } from "./move-item-dialog";
-import { RenameItemDialog } from "./rename-item-dialog";
-import { ShareDocumentDialog } from "./share-document-dialog";
 import { DocumentViewer } from "./document-viewer";
-import { VersionHistoryDialog } from "./manage-versions-dialog";
-import { useCopyLink } from "@/hooks/use-copy-link";
-import { ChangeClassificationDialog } from "./change-classification-dialog";
-import { TrashDocumentDialog } from "./trash-document-dialog";
+import { ItemActionDropdown } from "./item-action-dropdown";
 
 export function ItemTable({
   data,
@@ -67,30 +34,14 @@ export function ItemTable({
 }) {
   const { data: currentUser } = useCurrentUser();
   const userId = currentUser?.id;
-  const [openRenameItemDialog, setOpenRenameItemDialog] = useState(false);
-  const [openMoveItemDialog, setOpenMoveItemDialog] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<TItem | null>(null);
-  const [openShareDialog, setOpenShareDialog] = useState(false);
-  const [openVersionHistoryDialog, setOpenVersionHistoryDialog] = useState(false);
-  const [openChangeClassificationDialog, setOpenChangeClassificationDialog] = useState(false);
-  const [openTrashDialog, setOpenTrashDialog] = useState(false);
 
   const {
     setSelectedDocumentId,
     setSelectedDocumentFileName,
     setSelectedFolderId,
     setSelectedFolderName,
-    setRailTab,
     openRail,
-    setOpenRail,
   } = useRailStore();
-
-  const { mutate: downloadDocumentMutation } = useDownloadDocument();
-  const { copyLink } = useCopyLink();
-
-  const handleDownload = (id: string, fileName: string) => {
-    downloadDocumentMutation({ id, fileName });
-  };
 
   return (
     <>
@@ -165,159 +116,7 @@ export function ItemTable({
                 )}
 
                 <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      render={
-                        <Button
-                          variant="outline"
-                          size="icon-sm"
-                          className="border-none bg-transparent hover:bg-input/50"
-                        />
-                      }
-                    >
-                      <EllipsisVertical className="size-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-72">
-                      {!item.is_folder && (
-                        <DropdownMenuItem
-                          onClick={() => handleDownload(item.id, item.name)}
-                        >
-                          <Download />
-                          Download
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem
-                        disabled={!isOwner}
-                        onClick={() => {
-                          setSelectedItem(item);
-                          setOpenRenameItemDialog(true);
-                        }}
-                      >
-                        <PencilLine />
-                        Rename
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      {!item.is_folder && (
-                        <DropdownMenuItem
-                          disabled={!isOwner}
-                          onClick={() => {
-                            setSelectedItem(item);
-                            setOpenChangeClassificationDialog(true);
-                          }}
-                        >
-                          <Shield />
-                          Change classification
-                        </DropdownMenuItem>
-                      )}
-                      {!item.is_folder && (
-                        <>
-                          {item.classification === "protected" ? (
-                            <DropdownMenuItem
-                              disabled={!isOwner}
-                              onClick={() => {
-                                setSelectedItem(item);
-                                setOpenShareDialog(true);
-                              }}
-                            >
-                              <UserRoundPlus />
-                              Share
-                            </DropdownMenuItem>
-                          ) : item.classification === "public" ? (
-                            <DropdownMenuItem
-                              onClick={() => copyLink(item.id)}
-                            >
-                              <Link2 />
-                              Copy Link
-                            </DropdownMenuItem>
-                          ) : null}
-                        </>
-                      )}
-                      <DropdownMenuItem
-                        disabled={!isOwner}
-                        onClick={() => {
-                          setSelectedItem(item);
-                          setOpenMoveItemDialog(true);
-                        }}
-                      >
-                        <FolderInput />
-                        Move
-                      </DropdownMenuItem>
-                      <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>
-                          <CircleAlert />
-                          {item.is_folder ? "Folder" : "File"} information
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                          <DropdownMenuSubContent className="w-72">
-                            <DropdownMenuItem
-                              onClick={() => {
-                                if (item.is_folder) {
-                                  setSelectedFolderId(item.id);
-                                  setSelectedFolderName(item.name);
-                                  setSelectedDocumentId(null);
-                                  setSelectedDocumentFileName(null);
-                                } else {
-                                  setSelectedDocumentId(item.id);
-                                  setSelectedDocumentFileName(item.name);
-                                  setSelectedFolderId(null);
-                                  setSelectedFolderName(null);
-                                }
-
-                                setRailTab("details");
-                                setOpenRail(true);
-                              }}
-                            >
-                              <Info />
-                              Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => {
-                                if (item.is_folder) {
-                                  setSelectedFolderId(item.id);
-                                  setSelectedFolderName(item.name);
-                                  setSelectedDocumentId(null);
-                                  setSelectedDocumentFileName(null);
-                                } else {
-                                  setSelectedDocumentId(item.id);
-                                  setSelectedDocumentFileName(item.name);
-                                  setSelectedFolderId(null);
-                                  setSelectedFolderName(null);
-                                }
-
-                                setRailTab("activity");
-                                setOpenRail(true);
-                              }}
-                            >
-                              <Activity />
-                              Activity
-                            </DropdownMenuItem>
-                            {!item.is_folder && (
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setSelectedItem(item);
-                                  setOpenVersionHistoryDialog(true);
-                                }}
-                              >
-                                <History />
-                                {!isOwner ? "Version history" : "Manage versions"}
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                      </DropdownMenuSub>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        disabled={!isOwner}
-                        onClick={() => {
-                          setSelectedItem(item);
-                          setOpenTrashDialog(true);
-                        }}
-                      >
-                        <Trash2 />
-                        Move to trash
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <ItemActionDropdown item={item} />
                 </TableCell>
               </TableRow>
             );
@@ -325,53 +124,7 @@ export function ItemTable({
         </TableBody>
       </Table>
 
-      {selectedItem && (
-        <RenameItemDialog
-          item={selectedItem}
-          openRenameItemDialog={openRenameItemDialog}
-          setOpenRenameItemDialog={setOpenRenameItemDialog}
-        />
-      )}
 
-      {selectedItem && (
-        <MoveItemDialog
-          item={selectedItem}
-          openMoveItemDialog={openMoveItemDialog}
-          setOpenMoveItemDialog={setOpenMoveItemDialog}
-        />
-      )}
-
-      {selectedItem && (
-        <ShareDocumentDialog
-          item={selectedItem}
-          openShareDialog={openShareDialog}
-          setOpenShareDialog={setOpenShareDialog}
-        />
-      )}
-
-      {selectedItem && (
-        <VersionHistoryDialog
-          item={selectedItem}
-          openVersionHistoryDialog={openVersionHistoryDialog}
-          setOpenVersionHistoryDialog={setOpenVersionHistoryDialog}
-        />
-      )}
-
-      {selectedItem && (
-        <ChangeClassificationDialog
-          item={selectedItem}
-          openChangeClassificationDialog={openChangeClassificationDialog}
-          setOpenChangeClassificationDialog={setOpenChangeClassificationDialog}
-        />
-      )}
-
-      {selectedItem && (
-        <TrashDocumentDialog
-          item={selectedItem}
-          openTrashDialog={openTrashDialog}
-          setOpenTrashDialog={setOpenTrashDialog}
-        />
-      )}
 
       {selectedDocument && (
         <DocumentViewer

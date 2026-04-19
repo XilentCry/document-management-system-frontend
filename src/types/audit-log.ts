@@ -139,15 +139,6 @@ export type TDocumentVersionDeletedLimitAuditLog = TBaseAuditLog & {
   };
 };
 
-export type TShareRoleUpdatedAuditLog = TBaseAuditLog & {
-  action: "document.update_share_role";
-  properties: {
-    name: string;
-    shared_with: string;
-    old_role: string;
-    new_role: string;
-  };
-};
 
 export type TRemoveDocumentShareAuditLog = TBaseAuditLog & {
   action: "document.remove_share";
@@ -173,5 +164,5 @@ export type TAuditLog =
   | TOrganizationUnitUpdatedAuditLog
   | TClassificationChangedAuditLog
   | TDocumentVersionDeletedLimitAuditLog
-  | TShareRoleUpdatedAuditLog
+
   | TRemoveDocumentShareAuditLog;

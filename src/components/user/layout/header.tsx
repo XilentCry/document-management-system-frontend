@@ -135,6 +135,7 @@ export function Header() {
   };
 
   const handleOpen = () => {
+    searchFormRef.current?.querySelector<HTMLInputElement>("input")?.blur();
     reset({
       type: filterType,
       itemName: draftSearchTerm,
@@ -243,7 +244,7 @@ export function Header() {
                 <SlidersHorizontal />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-(--anchor-width) min-h-60.75" autoFocus={false}>
+            <PopoverContent className="w-(--anchor-width) min-h-60.75" autoFocus={false} finalFocus={false}>
               {isLoadingTopItems ? (
                 <div className="flex-1 flex items-center justify-center">
                   <Spinner className="text-primary size-9" />

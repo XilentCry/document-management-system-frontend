@@ -110,7 +110,7 @@ export function TrashDocumentTable({
               onDoubleClick={() => onDocumentDoubleClick(trashedItem)}
             >
               <TableCell>
-                <div className="flex items-center gap-2 text-primary font-medium">
+                <div className="flex items-center gap-2">
                   <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
                   {trashedItem.name}
                 </div>
@@ -187,7 +187,7 @@ export function TrashDocumentTable({
               Delete Permanently
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete <span className="font-semibold text-foreground">"{itemToDelete?.name}"</span> forever? This action cannot be undone.
+              Are you sure you want to delete <span className="font-semibold text-foreground">&quot;{itemToDelete?.name}&quot;</span> forever? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

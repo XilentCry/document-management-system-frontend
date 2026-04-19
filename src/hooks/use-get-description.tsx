@@ -42,15 +42,6 @@ export function useGetDescription() {
           </>
         );
 
-      case "document.update_share_role":
-        return (
-          <>
-            {actor} updated the share role of{" "}
-            <span className="text-primary">{auditLog.properties.shared_with}</span>{" "}
-            for{" "}
-            <span className="text-primary">{auditLog.properties.name}</span>
-          </>
-        );
 
       case "document.remove_share":
         return (
