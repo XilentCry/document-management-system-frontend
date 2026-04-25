@@ -7,6 +7,7 @@ import { TCursorPaginate } from "@/types/cursor-paginate";
 import { TDocumentVersion } from "@/types/document-version";
 import { TItem } from "@/types/item";
 import { TDocumentShare } from "@/types/document-share";
+import { TDownloadEligibleUser } from "@/types/download-eligible-user";
 import { TTrashedItem } from "@/types/trash-item";
 
 export const getDocumentShares = async ({
@@ -42,6 +43,48 @@ export const shareDocument = async (
   const { data } = await apiClient.post(
     `/api/documents/${id}/share`,
     shareData,
+  );
+  return data;
+};
+
+export const getDownloadEligibleUsers = async ({
+  id,
+  q,
+  pageParam,
+  filter,
+}: {
+  id: string;
+  q: string;
+  pageParam: string | null;
+  filter?: "granted" | "not_granted";
+}): Promise<TCursorPaginate<TDownloadEligibleUser>> => {
+  const { data } = await apiClient.get(
+    `/api/documents/${id}/download-eligible-users`,
+    {
+      params: { q: q || undefined, cursor: pageParam, filter },
+    },
+  );
+  return data;
+};
+
+export const grantDownloadAccess = async (id: string, userId: string) => {
+  const { data } = await apiClient.put(
+    `/api/documents/${id}/download-grants/${userId}`,
+  );
+  return data;
+};
+
+export const bulkGrantDownloadAccess = async (id: string, userIds: string[]) => {
+  const { data } = await apiClient.post(
+    `/api/documents/${id}/download-grants`,
+    { user_ids: userIds },
+  );
+  return data;
+};
+
+export const revokeDownloadAccess = async (id: string, userId: string) => {
+  const { data } = await apiClient.delete(
+    `/api/documents/${id}/download-grants/${userId}`,
   );
   return data;
 };
@@ -97,8 +140,9 @@ export const viewPublicDocument = async (id: string): Promise<string> => {
 export const checkConflicts = async (conflictData: {
   organization_unit_id: string;
   file_names: string[];
+  replace_item_id?: string;
 }): Promise<{
-  conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
+  conflicts: { id: string; name: string; can_replace: boolean; is_locked: boolean; versions_count: number }[];
 }> => {
   const { data } = await apiClient.post(
     "/api/documents/check-conflicts",
@@ -109,21 +153,16 @@ export const checkConflicts = async (conflictData: {
 
 export async function uploadDocument(documentData: TSingleFile) {
   const formData = new FormData();
-  formData.append(
-    "organization_unit_id",
-    documentData.organization_unit_id,
-  );
-  formData.append(
-    "classification_id",
-    documentData.classification_id,
-  );
-
-  if (documentData.folder_id) {
-    formData.append("folder_id", documentData.folder_id);
-  }
 
   if (documentData.replace_item_id) {
     formData.append("replace_item_id", documentData.replace_item_id);
+  } else {
+    formData.append("organization_unit_id", documentData.organization_unit_id);
+    formData.append("classification_id", documentData.classification_id);
+
+    if (documentData.folder_id) {
+      formData.append("folder_id", documentData.folder_id);
+    }
   }
 
   formData.append("file", documentData.file);
@@ -184,6 +223,17 @@ export const updateClassification = async (
 
 export const removeDocumentShare = async (shareId: string) => {
   const { data } = await apiClient.delete(`/api/documents/shares/${shareId}`);
+  return data;
+};
+
+export const updateShareRole = async (
+  shareId: string,
+  shareRoleId: string,
+): Promise<{ message: string; share: TDocumentShare }> => {
+  const { data } = await apiClient.patch(
+    `/api/documents/shares/${shareId}/role`,
+    { share_role_id: shareRoleId },
+  );
   return data;
 };
 

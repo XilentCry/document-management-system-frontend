@@ -32,7 +32,7 @@ export function SharedDocumentGrid({
             {groupData.items.map((sharedDocument) => (
               <SharedDocument
                 key={sharedDocument.item.id}
-                item={sharedDocument.item}
+                sharedDocument={sharedDocument}
                 onDoubleClick={() => handleDocumentDoubleClick(sharedDocument)}
               />
             ))}

@@ -148,6 +148,102 @@ export type TRemoveDocumentShareAuditLog = TBaseAuditLog & {
   };
 };
 
+export type TUpdateShareRoleAuditLog = TBaseAuditLog & {
+  action: "document.update_share_role";
+  properties: {
+    name: string;
+    shared_with: string;
+    previous_role: string | null;
+    new_role: string;
+  };
+};
+
+export type TTrashDocumentAuditLog = TBaseAuditLog & {
+  action: "document.trash";
+  properties: {
+    name: string;
+  };
+};
+
+export type TRestoreDocumentAuditLog = TBaseAuditLog & {
+  action: "document.restore";
+  properties: {
+    name: string;
+  };
+};
+
+export type TForceDeleteDocumentAuditLog = TBaseAuditLog & {
+  action: "document.force_delete";
+  properties: {
+    name: string;
+  };
+};
+
+export type TGrantDownloadAuditLog = TBaseAuditLog & {
+  action: "document.grant_download";
+  properties: {
+    name: string;
+    shared_with: string;
+  };
+};
+
+export type TRevokeDownloadAuditLog = TBaseAuditLog & {
+  action: "document.revoke_download";
+  properties: {
+    name: string;
+    shared_with: string;
+  };
+};
+
+export type TLockItemAuditLog = TBaseAuditLog & {
+  action: "item.lock";
+  properties: {
+    name: string;
+  };
+};
+
+export type TUnlockItemAuditLog = TBaseAuditLog & {
+  action: "item.unlock";
+  properties: {
+    name: string;
+  };
+};
+
+export type TDocumentDownloadAuditLog = TBaseAuditLog & {
+  action: "document.download";
+  properties: {
+    name: string;
+    parent: string | null;
+  };
+};
+
+export type TDocumentDownloadVersionAuditLog = TBaseAuditLog & {
+  action: "document.download_version";
+  properties: {
+    name: string;
+    file_name: string;
+    version_number: number;
+  };
+};
+
+export type TDocumentSubmissionCreatedAuditLog = TBaseAuditLog & {
+  action: "document.submission_created";
+  properties: {
+    name: string;
+    docuseal_id: number;
+    submitters_count: number;
+  };
+};
+
+export type TDocumentSignedCompletedAuditLog = TBaseAuditLog & {
+  action: "document.signed_completed";
+  properties: {
+    docuseal_id: number;
+    version_number: number;
+    removed_oldest_version?: number;
+  };
+};
+
 export type TAuditLog =
   | TUploadedAuditLog
   | TCreatedAuditLog
@@ -164,5 +260,16 @@ export type TAuditLog =
   | TOrganizationUnitUpdatedAuditLog
   | TClassificationChangedAuditLog
   | TDocumentVersionDeletedLimitAuditLog
-
-  | TRemoveDocumentShareAuditLog;
+  | TRemoveDocumentShareAuditLog
+  | TUpdateShareRoleAuditLog
+  | TTrashDocumentAuditLog
+  | TRestoreDocumentAuditLog
+  | TForceDeleteDocumentAuditLog
+  | TGrantDownloadAuditLog
+  | TRevokeDownloadAuditLog
+  | TLockItemAuditLog
+  | TUnlockItemAuditLog
+  | TDocumentDownloadAuditLog
+  | TDocumentDownloadVersionAuditLog
+  | TDocumentSubmissionCreatedAuditLog
+  | TDocumentSignedCompletedAuditLog;

@@ -22,7 +22,7 @@ import { useCurrentUser } from "@/services/user/queries";
 import { TUser } from "@/types/user";
 import { Ellipsis } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { getStatusBadgeClass } from "@/lib/get-status-badge-class";
+import { getUserStatusBadgeClass } from "@/lib/get-status-badge-class";
 
 
 export function UserTable({ users }: { users: TUser[] }) {
@@ -60,7 +60,7 @@ export function UserTable({ users }: { users: TUser[] }) {
               <Badge variant="secondary">{user.role}</Badge>
             </TableCell>
             <TableCell>
-              <Badge className={getStatusBadgeClass(user.status)}>
+              <Badge className={getUserStatusBadgeClass(user.status)}>
                 {user.status}
               </Badge>
             </TableCell>

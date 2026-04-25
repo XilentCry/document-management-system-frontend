@@ -15,13 +15,13 @@ import { Dispatch, SetStateAction } from "react";
 interface FileUploadVersionConflictDialogProps {
   conflictData: {
     open: boolean;
-    conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
+    conflicts: { id: string; name: string; can_replace: boolean; is_locked?: boolean; versions_count: number }[];
     pendingData: TUploadFileFormSchema | null;
   };
   setConflictData: Dispatch<
     SetStateAction<{
       open: boolean;
-      conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
+      conflicts: { id: string; name: string; can_replace: boolean; is_locked?: boolean; versions_count: number }[];
       pendingData: TUploadFileFormSchema | null;
     }>
   >;

@@ -20,10 +20,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useUploadDialogStore } from "@/stores/upload-dialog-store";
-import { useCurrentUser } from "@/services/user/queries";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Building, FileUp, FolderPlus, Plus, Trash2, UsersRound } from "lucide-react";
+import { useCurrentUser } from "@/services/user/queries";
+import { useUploadDialogStore } from "@/stores/upload-dialog-store";
+import { Building, FileSignature, FileUp, FolderPlus, Plus, Send, Trash2, UsersRound } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -103,6 +103,24 @@ export function UserSidebar() {
                   >
                     <Building />
                     Organizational Drive
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={pathname.startsWith("/drive/signings")}
+                    onClick={() => router.push("/drive/signings")}
+                  >
+                    <FileSignature />
+                    My Signings
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={pathname.startsWith("/drive/submissions")}
+                    onClick={() => router.push("/drive/submissions")}
+                  >
+                    <Send />
+                    My Submissions
                   </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>

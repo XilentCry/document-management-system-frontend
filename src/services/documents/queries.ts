@@ -3,6 +3,7 @@ import {
   getDocumentDetails,
   getDocumentShares,
   getDocumentVersions,
+  getDownloadEligibleUsers,
   getPublicDocumentDetails,
   getTrashedDocuments,
 } from "./api";
@@ -92,6 +93,46 @@ export const useGetPublicDocumentDetails = (id: string) => {
   });
 
   return { isLoading, isError, error, data };
+};
+
+export const useGetDownloadEligibleUsers = (
+  documentId: string,
+  q: string,
+  enabled: boolean = true,
+  filter?: "granted" | "not_granted",
+) => {
+  const {
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["document", documentId, "download-eligible", filter ?? "all", q],
+    queryFn: ({ pageParam }) =>
+      getDownloadEligibleUsers({ id: documentId, q, pageParam, filter }),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.meta.next_cursor,
+    enabled: !!documentId && enabled,
+  });
+
+  return {
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
 };
 
 export const useGetTrashedDocuments = () => {

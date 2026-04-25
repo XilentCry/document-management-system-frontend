@@ -2,13 +2,13 @@ import apiClient from "@/lib/api-client";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 import { TRenameItemFormSchema } from "@/schemas/items/rename-item-form-schema";
 import { TAuditLog } from "@/types/audit-log";
-import { TBasicUser } from "@/types/basic-user";
 import { TCursorPaginate } from "@/types/cursor-paginate";
+import { TShareableUser } from "@/types/shareable-user";
 
 export async function getShareableUsers(
   id: string,
   searchTerm?: string,
-): Promise<TBasicUser[]> {
+): Promise<TShareableUser[]> {
   const queryParam = searchTerm ? `?q=${encodeURIComponent(searchTerm)}` : "";
   const { data } = await apiClient.get(
     `/api/documents/${id}/shareable-users${queryParam}`,
@@ -42,6 +42,16 @@ export async function moveItem(
   moveData: TMoveItemFormSchema,
 ): Promise<{ message: string }> {
   const { data } = await apiClient.patch(`/api/items/${id}/move`, moveData);
+  return data;
+}
+
+export async function lockItem(id: string): Promise<{ message: string }> {
+  const { data } = await apiClient.patch(`/api/items/${id}/lock`);
+  return data;
+}
+
+export async function unlockItem(id: string): Promise<{ message: string }> {
+  const { data } = await apiClient.patch(`/api/items/${id}/unlock`);
   return data;
 }
 

@@ -1,4 +1,6 @@
-import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Combobox,
   ComboboxChip,
@@ -26,8 +28,21 @@ import {
   ItemTitle
 } from "@/components/ui/item";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useDebounce } from "@/hooks/use-debounce";
+import { cn } from "@/lib/utils";
 import {
   shareDocumentFormSchema,
   TShareDocumentFormSchema,
@@ -35,12 +50,14 @@ import {
 import { useShareDocument } from "@/services/documents/mutations";
 import { useGetDocumentShares } from "@/services/documents/queries";
 import { useGetShareableUsers } from "@/services/items/queries";
+import { useGetAllShareRoles } from "@/services/share-roles/queries";
 import { useCurrentUser } from "@/services/user/queries";
-import { TBasicUser } from "@/types/basic-user";
 import { TItem } from "@/types/item";
+import { TShareableUser } from "@/types/shareable-user";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, ArrowLeft, Info, Settings } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form";
 import { DiscardChangesAlertDialog } from "./discard-changes-alert-dialog";
 import { ShareItemRow } from "./share-item-row";
 
@@ -57,8 +74,10 @@ export function ShareDocumentDialog({
   const debouncedSearchTerm = useDebounce(searchTerm);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showDiscardAlert, setShowDiscardAlert] = useState(false);
+  const [mode, setMode] = useState<"share" | "settings">("share");
   const { data: currentUser } = useCurrentUser();
   const isOwner = currentUser?.id === item.owner.id;
+  const isLocked = !!item.is_locked;
 
   const anchor = useComboboxAnchor();
 
@@ -70,19 +89,35 @@ export function ShareDocumentDialog({
     data: shareableUsers = [],
   } = useGetShareableUsers(item.id, debouncedSearchTerm, openShareDialog);
 
-  const [selectedUsers, setSelectedUsers] = useState<TBasicUser[]>([]);
+  const { data: shareRoles = [] } =
+    useGetAllShareRoles(openShareDialog);
+
+  const viewerRoleId = shareRoles.find((role) => role.name === "viewer")?.id;
+  const editorRoleId = shareRoles.find((role) => role.name === "editor")?.id;
+
+  const defaultRoleId = viewerRoleId ?? shareRoles[0]?.id ?? "";
+
+  const [selectedUsers, setSelectedUsers] = useState<TShareableUser[]>([]);
+  const hasSelectedUserWithOrgAccess = selectedUsers.some(
+    (u) => u.has_organization_unit_access,
+  );
 
   const {
     handleSubmit,
     control,
     formState: { isSubmitting, isSubmitSuccessful },
     reset,
-  } = useForm<TShareDocumentFormSchema>({
+    setValue,
+  } = useForm<TShareDocumentFormSchema, unknown, TShareDocumentFormSchema>({
     resolver: zodResolver(shareDocumentFormSchema),
     defaultValues: {
       share_with: [],
+      share_role_id: "",
+      allow_download: false,
     },
   });
+
+  const currentRoleId = useWatch({ control, name: "share_role_id" });
 
   useEffect(() => {
     if (isSubmitSuccessful) {
@@ -97,14 +132,53 @@ export function ShareDocumentDialog({
     if (openShareDialog) {
       setSelectedUsers([]);
       setSearchTerm("");
+      setMode("share");
     }
   }
 
   useEffect(() => {
     if (openShareDialog) {
-      reset({ share_with: [] });
+      reset({
+        share_with: [],
+        share_role_id: defaultRoleId,
+        allow_download: false,
+      });
     }
-  }, [openShareDialog, reset]);
+  }, [openShareDialog, reset, defaultRoleId]);
+
+  useEffect(() => {
+    if (openShareDialog && !currentRoleId && defaultRoleId) {
+      setValue("share_role_id", defaultRoleId);
+    }
+  }, [openShareDialog, currentRoleId, defaultRoleId, setValue]);
+
+  useEffect(() => {
+    if (
+      hasSelectedUserWithOrgAccess &&
+      viewerRoleId &&
+      currentRoleId === viewerRoleId
+    ) {
+      setValue("share_role_id", editorRoleId ?? "");
+    }
+  }, [
+    hasSelectedUserWithOrgAccess,
+    currentRoleId,
+    viewerRoleId,
+    editorRoleId,
+    setValue,
+  ]);
+
+  useEffect(() => {
+    if (isLocked && viewerRoleId && currentRoleId !== viewerRoleId) {
+      setValue("share_role_id", viewerRoleId);
+    }
+  }, [isLocked, viewerRoleId, currentRoleId, setValue]);
+
+  useEffect(() => {
+    if (isLocked) {
+      setValue("allow_download", false);
+    }
+  }, [isLocked, setValue]);
 
   const handleOpenChange = (open: boolean) => {
     if (!open && selectedUsers.length > 0) {
@@ -148,182 +222,314 @@ export function ShareDocumentDialog({
             className="flex flex-col gap-6 min-w-0"
           >
             <DialogHeader>
-              <DialogTitle>Share &quot;{item.name}&quot;</DialogTitle>
+              <div className="flex items-center gap-2 min-w-0 pr-6">
+                {mode === "settings" && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setMode("share")}
+                  >
+                    <ArrowLeft />
+                  </Button>
+                )}
+                <DialogTitle className="truncate">
+                  {mode === "share"
+                    ? <>Share &quot;{item.name}&quot;</>
+                    : <>Settings for &quot;{item.name}&quot;</>}
+                </DialogTitle>
+              </div>
             </DialogHeader>
-            <div className="max-h-96 flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <div className="flex-1">
-                  <Controller
-                    name="share_with"
-                    control={control}
-                    render={({ field }) => (
-                      <Combobox
-                        filter={null}
-                        items={shareableUsers}
-                        multiple
-                        value={selectedUsers}
-                        onValueChange={(users) => {
-                          setSelectedUsers(users);
-                          field.onChange(users.map((u) => u.id));
-                        }}
-                        inputValue={searchTerm}
-                        onInputValueChange={(val) => {
-                          setSearchTerm(val);
-                          if (val.trim().length > 0) {
-                            setIsDropdownOpen(true);
-                          } else {
-                            setIsDropdownOpen(false);
-                          }
-                        }}
-                        itemToStringValue={(user) =>
-                          `${user.first_name} ${user.last_name} ${user.email}`
+            {mode === "settings" ? (
+              <div className="flex flex-col gap-4">
+                <p className="text-sm font-medium">Access</p>
+                <Controller
+                  name="allow_download"
+                  control={control}
+                  render={({ field }) => (
+                    <label className="flex items-center gap-2 text-sm">
+                      <Checkbox
+                        checked={field.value}
+                        disabled={isLocked}
+                        onCheckedChange={(checked) =>
+                          field.onChange(checked === true)
                         }
-                        open={isDropdownOpen}
-                        onOpenChange={(isOpen) => {
-                          if (isOpen && searchTerm.trim().length === 0) return;
-                          setIsDropdownOpen(isOpen);
-                        }}
-                      >
-                        <ComboboxChips ref={anchor}>
-                          <ComboboxValue>
-                            {selectedUsers.map((user) => (
-                              <ComboboxChip key={user.id}>
-                                {user.first_name} {user.middle_name ?? ""}{" "}
-                                {user.last_name}
-                              </ComboboxChip>
-                            ))}
-                          </ComboboxValue>
-                          <ComboboxChipsInput
-                            placeholder={
-                              selectedUsers.length === 0 ? "Add people" : ""
+                      />
+                      Allow download
+                    </label>
+                  )}
+                />
+              </div>
+            ) : (
+              <div className="max-h-96 flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <Controller
+                      name="share_with"
+                      control={control}
+                      render={({ field }) => (
+                        <Combobox
+                          filter={null}
+                          items={shareableUsers}
+                          multiple
+                          value={selectedUsers}
+                          onValueChange={(users) => {
+                            setSelectedUsers(users);
+                            field.onChange(users.map((u) => u.id));
+                          }}
+                          inputValue={searchTerm}
+                          onInputValueChange={(val) => {
+                            setSearchTerm(val);
+                            if (val.trim().length > 0) {
+                              setIsDropdownOpen(true);
+                            } else {
+                              setIsDropdownOpen(false);
                             }
-                          />
-                        </ComboboxChips>
-                        <ComboboxContent anchor={anchor}>
-                          {searchTerm.trim().length ===
-                            0 ? null : isLoadingShareableUsers ||
-                              isFetchingShareableUsers ? (
-                            <div className="flex items-center justify-center p-4">
-                              <Spinner className="text-primary size-5" />
-                            </div>
-                          ) : isShareableUsersError && shareableUsersError ? (
-                            <div className="flex items-center justify-center p-4">
-                              <p className="text-destructive text-sm">
-                                {shareableUsersError.message}
-                              </p>
-                            </div>
-                          ) : shareableUsers.length === 0 ? (
-                            searchTerm === debouncedSearchTerm ? (
-                              <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
-                                No users found.
-                              </div>
-                            ) : null
-                          ) : (
-                            <ComboboxList>
-                              {shareableUsers.map((shareableUser) => (
-                                <ComboboxItem
-                                  key={shareableUser.id}
-                                  value={shareableUser}
-                                >
-                                  <div className="min-w-0">
-                                    <p className="truncate font-medium">
-                                      {shareableUser.first_name}{" "}
-                                      {shareableUser.middle_name ?? ""}{" "}
-                                      {shareableUser.last_name}
-                                    </p>
-                                    <p className="truncate text-muted-foreground text-xs">
-                                      {shareableUser.email}
-                                    </p>
-                                  </div>
-                                </ComboboxItem>
+                          }}
+                          itemToStringValue={(user) =>
+                            `${user.first_name} ${user.last_name} ${user.email}`
+                          }
+                          open={isDropdownOpen}
+                          onOpenChange={(isOpen) => {
+                            if (isOpen && searchTerm.trim().length === 0) return;
+                            setIsDropdownOpen(isOpen);
+                          }}
+                        >
+                          <ComboboxChips ref={anchor}>
+                            <ComboboxValue>
+                              {selectedUsers.map((user) => (
+                                <ComboboxChip key={user.id}>
+                                  {user.first_name} {user.middle_name ?? ""}{" "}
+                                  {user.last_name}
+                                </ComboboxChip>
                               ))}
-                            </ComboboxList>
-                          )}
-                        </ComboboxContent>
-                      </Combobox>
-                    )}
-                  />
+                            </ComboboxValue>
+                            <ComboboxChipsInput
+                              placeholder={
+                                selectedUsers.length === 0 ? "Add people" : ""
+                              }
+                            />
+                          </ComboboxChips>
+                          <ComboboxContent anchor={anchor}>
+                            {searchTerm.trim().length ===
+                              0 ? null : isLoadingShareableUsers ||
+                                isFetchingShareableUsers ? (
+                              <div className="flex items-center justify-center p-4">
+                                <Spinner className="text-primary size-5" />
+                              </div>
+                            ) : isShareableUsersError && shareableUsersError ? (
+                              <div className="flex items-center justify-center p-4">
+                                <p className="text-destructive text-sm">
+                                  {shareableUsersError.message}
+                                </p>
+                              </div>
+                            ) : shareableUsers.length === 0 ? (
+                              searchTerm === debouncedSearchTerm ? (
+                                <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
+                                  No users found.
+                                </div>
+                              ) : null
+                            ) : (
+                              <ComboboxList>
+                                {shareableUsers.map((shareableUser) => (
+                                  <ComboboxItem
+                                    key={shareableUser.id}
+                                    value={shareableUser}
+                                  >
+                                    <div className="min-w-0">
+                                      <p className="truncate font-medium">
+                                        {shareableUser.first_name}{" "}
+                                        {shareableUser.middle_name ?? ""}{" "}
+                                        {shareableUser.last_name}
+                                      </p>
+                                      <p className="truncate text-muted-foreground text-xs">
+                                        {shareableUser.email}
+                                      </p>
+                                      {shareableUser.has_organization_unit_access && (
+                                        <p className="text-amber-600 text-xs">
+                                          Already has view & download via organization unit. Assign Editor to grant additional permission.
+                                        </p>
+                                      )}
+                                    </div>
+                                  </ComboboxItem>
+                                ))}
+                              </ComboboxList>
+                            )}
+                          </ComboboxContent>
+                        </Combobox>
+                      )}
+                    />
+                  </div>
+                  {selectedUsers.length > 0 && (
+                    <div className="shrink-0">
+                      <Controller
+                        name="share_role_id"
+                        control={control}
+                        render={({ field }) => {
+                          const selectedRole = shareRoles.find(
+                            (r) => r.id === field.value,
+                          );
+
+                          return (
+                            <div className="flex items-center gap-2">
+                              <Select
+                                value={field.value}
+                                onValueChange={(value) => field.onChange(value)}
+                              >
+                                <SelectTrigger className="capitalize">
+                                  <SelectValue>{selectedRole?.name}</SelectValue>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {shareRoles.map((role) => (
+                                    <SelectItem
+                                      key={role.id}
+                                      value={role.id}
+                                      className="capitalize"
+                                      disabled={
+                                        (hasSelectedUserWithOrgAccess &&
+                                          role.name === "viewer") ||
+                                        (isLocked && role.name !== "viewer")
+                                      }
+                                    >
+                                      {role.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              {selectedRole ? (
+                                <Tooltip>
+                                  <TooltipTrigger
+                                    type="button"
+                                    className={cn(
+                                      buttonVariants({ variant: "ghost", size: "icon" }),
+                                    )}
+                                  >
+                                    <Info className="size-4" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    {selectedRole.description}
+                                  </TooltipContent>
+                                </Tooltip>
+                              ) : null}
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setMode("settings")}
+                              >
+                                <Settings />
+                              </Button>
+                            </div>
+                          );
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {hasSelectedUserWithOrgAccess && (
+                  <Alert variant="warning">
+                    <AlertCircle />
+                    <AlertTitle>Viewer role unavailable</AlertTitle>
+                    <AlertDescription>
+                      At least one selected user already has view &amp; download access via their organization unit. Choose Editor to grant additional permission.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {isLocked && (
+                  <Alert variant="warning">
+                    <AlertCircle />
+                    <AlertTitle>File is locked</AlertTitle>
+                    <AlertDescription>
+                      Shares are limited to view-only.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="flex flex-col gap-4">
+                  <h3 className="text-sm font-medium">People with access</h3>
+                  {isLoadingActiveShares ? (
+                    <div className="flex items-center justify-center py-4">
+                      <Spinner className="text-primary size-9" />
+                    </div>
+                  ) : (
+                    <ScrollArea className="max-h-52">
+                      <div className="flex flex-col gap-4">
+                        <Item size="xs">
+                          <ItemContent className="min-w-0">
+                            <ItemTitle className="block w-auto truncate">{item.owner.first_name} {item.owner.middle_name ?? ""} {item.owner.last_name}</ItemTitle>
+                            <ItemDescription>{item.owner.email}</ItemDescription>
+                          </ItemContent>
+                          <ItemActions>
+                            <p className="text-muted-foreground">Owner</p>
+                          </ItemActions>
+                        </Item>
+                      </div>
+
+                      {activeShares.map((share) => (
+                        <ShareItemRow
+                          key={share.id}
+                          share={share}
+                          item={item}
+                          isOwner={isOwner}
+                        />
+                      ))}
+
+                      {isFetchNextPageError && (
+                        <div className="py-4 flex flex-col items-center justify-center gap-4">
+                          <p className="text-destructive text-sm text-center px-4">
+                            Failed to load more users. Please try again.
+                          </p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              hasNextPage && !isFetchingNextPage && fetchNextPage()
+                            }
+                          >
+                            Retry
+                          </Button>
+                        </div>
+                      )}
+
+                      {hasNextPage && (
+                        <div className="flex justify-center mt-4">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => fetchNextPage()}
+                            disabled={isFetchingNextPage}
+                          >
+                            {isFetchingNextPage ? (
+                              <>
+                                <Spinner />
+                                Loading more...
+                              </>
+                            ) : (
+                              "Load more"
+                            )}
+                          </Button>
+                        </div>
+                      )}
+                    </ScrollArea>
+                  )}
                 </div>
               </div>
-
-              <div className="flex flex-col gap-4">
-                <h3 className="text-sm font-medium">People with access</h3>
-                {isLoadingActiveShares ? (
-                  <div className="flex items-center justify-center py-4">
-                    <Spinner className="text-primary size-9" />
-                  </div>
-                ) : (
-                  <ScrollArea className="max-h-52">
-                    <div className="flex flex-col gap-4">
-                      <Item size="xs">
-                        <ItemContent className="min-w-0">
-                          <ItemTitle className="block w-auto truncate">{item.owner.first_name} {item.owner.middle_name ?? ""} {item.owner.last_name}</ItemTitle>
-                          <ItemDescription>{item.owner.email}</ItemDescription>
-                        </ItemContent>
-                        <ItemActions>
-                          <p className="text-muted-foreground">Owner</p>
-                        </ItemActions>
-                      </Item>
-                    </div>
-
-                    {activeShares.map((share) => (
-                      <ShareItemRow
-                        key={share.id}
-                        share={share}
-                        item={item}
-                        isOwner={isOwner}
-                      />
-                    ))}
-
-                    {isFetchNextPageError && (
-                      <div className="py-4 flex flex-col items-center justify-center gap-4">
-                        <p className="text-destructive text-sm text-center px-4">
-                          Failed to load more users. Please try again.
-                        </p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            hasNextPage && !isFetchingNextPage && fetchNextPage()
-                          }
-                        >
-                          Retry
-                        </Button>
-                      </div>
-                    )}
-
-                    {hasNextPage && (
-                      <div className="flex justify-center mt-4 pb-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => fetchNextPage()}
-                          disabled={isFetchingNextPage}
-                        >
-                          {isFetchingNextPage ? (
-                            <>
-                              <Spinner />
-                              Loading more...
-                            </>
-                          ) : (
-                            "Load more"
-                          )}
-                        </Button>
-                      </div>
-                    )}
-                  </ScrollArea>
-                )}
-              </div>
-            </div>
+            )}
             <DialogFooter>
               <DialogClose render={<Button variant="outline" />}>
                 Cancel
               </DialogClose>
               <Button
                 type="submit"
-                disabled={isSubmitting || selectedUsers.length === 0}
+                disabled={
+                  isSubmitting ||
+                  selectedUsers.length === 0 ||
+                  !currentRoleId
+                }
               >
                 {isSubmitting ? (
                   <>

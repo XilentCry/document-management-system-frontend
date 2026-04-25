@@ -28,13 +28,10 @@ import Image from "next/image";
 import { useForceDeleteItem, useRestoreItem } from "@/services/items/mutations";
 import { useRailStore } from "@/stores/rail-store";
 import { TTrashedItem } from "@/types/trash-item";
-import {
-  EllipsisVertical,
-  History,
-  Trash2
-} from "lucide-react";
+import { EllipsisVertical, History, Trash2 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
+import { formatFileSize } from "@/lib/format-file-size";
 
 export function TrashDocument({
   trashedItem,
@@ -43,16 +40,13 @@ export function TrashDocument({
   trashedItem: TTrashedItem;
   onDoubleClick: () => void;
 }) {
-  const {
-    setSelectedDocumentId,
-    setSelectedDocumentFileName,
-  } = useRailStore();
+  const { setSelectedDocumentId, setSelectedDocumentFileName } = useRailStore();
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const { mutate: restoreItem } = useRestoreItem();
   const { mutate: forceDeleteItem, isPending: isDeleting } = useForceDeleteItem(
-    setIsDeleteDialogOpen
+    setIsDeleteDialogOpen,
   );
 
   const handleRestore = (e: React.MouseEvent) => {
@@ -113,18 +107,25 @@ export function TrashDocument({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialog
+          open={isDeleteDialogOpen}
+          onOpenChange={setIsDeleteDialogOpen}
+        >
           <AlertDialogContent onClick={(e) => e.stopPropagation()}>
             <AlertDialogHeader>
-              <AlertDialogTitle>
-                Delete Permanently?
-              </AlertDialogTitle>
+              <AlertDialogTitle>Delete Permanently?</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete <span className="font-semibold text-foreground">&quot;{trashedItem.name}&quot;</span> forever?
+                Are you sure you want to delete{" "}
+                <span className="font-semibold text-foreground">
+                  &quot;{trashedItem.name}&quot;
+                </span>{" "}
+                forever?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+              <AlertDialogCancel disabled={isDeleting}>
+                Cancel
+              </AlertDialogCancel>
               <AlertDialogAction
                 variant="destructive"
                 onClick={handleDeleteForever}
@@ -143,8 +144,23 @@ export function TrashDocument({
           </AlertDialogContent>
         </AlertDialog>
       </ItemActions>
-      <ItemFooter className="justify-center bg-background p-4 h-40 rounded-md">
-        <Image src="/pdf.svg" alt="PDF" width={64} height={64} priority />
+      <ItemFooter className="min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <p className="min-w-0 truncate">{trashedItem.classification}</p>
+            <p className="shrink-0">
+              {trashedItem.current_version?.file_size &&
+                formatFileSize(trashedItem.current_version.file_size)}
+            </p>
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <p className="min-w-0 truncate">
+              {trashedItem.owner.first_name} {trashedItem.owner.middle_name ?? ""}{" "}
+              {trashedItem.owner.last_name}
+            </p>
+            <p className="shrink-0">{trashedItem.created_at}</p>
+          </div>
+        </div>
       </ItemFooter>
     </Item>
   );

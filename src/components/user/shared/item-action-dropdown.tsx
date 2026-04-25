@@ -10,8 +10,14 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useCopyLink } from "@/hooks/use-copy-link";
 import { useDownloadDocument } from "@/services/documents/mutations";
+import { useLockItem, useUnlockItem } from "@/services/items/mutations";
 import { useCurrentUser } from "@/services/user/queries";
 import { useRailStore } from "@/stores/rail-store";
 import { TItem } from "@/types/item";
@@ -20,17 +26,23 @@ import {
   CircleAlert,
   Download,
   EllipsisVertical,
+  FilePenLine,
   FolderInput,
   History,
   Info,
+  KeyRound,
   Link2,
+  Lock,
+  LockOpen,
   PencilLine,
   Shield,
   Trash2,
   UserRoundPlus,
 } from "lucide-react";
 import { useState } from "react";
+import { AllowDownloadsDialog } from "./allow-downloads-dialog";
 import { ChangeClassificationDialog } from "./change-classification-dialog";
+import { FormBuilderViewer } from "./form-builder-viewer";
 import { VersionHistoryDialog } from "./manage-versions-dialog";
 import { MoveItemDialog } from "./move-item-dialog";
 import { RenameItemDialog } from "./rename-item-dialog";
@@ -54,12 +66,25 @@ export function ItemActionDropdown({
   const [openChangeClassificationDialog, setOpenChangeClassificationDialog] =
     useState(false);
   const [openTrashDialog, setOpenTrashDialog] = useState(false);
+  const [openFormBuilderViewer, setOpenFormBuilderViewer] = useState(false);
+  const [openAllowDownloadsDialog, setOpenAllowDownloadsDialog] =
+    useState(false);
 
   const { data: currentUser } = useCurrentUser();
   const userId = currentUser?.id;
   const isOwner = item.owner.id === userId;
+  const isLocked = !item.is_folder && !!item.is_locked;
+  const canManageVersions =
+    !isLocked &&
+    (isOwner ||
+      item.current_user_share?.permissions.includes(
+        "document:upload_new_version",
+      ) === true);
 
-  const canDownload = !item.is_folder;
+  const canDownload =
+    !item.is_folder &&
+    !isLocked &&
+    (isOwner || item.current_user_share?.can_download === true);
 
   const {
     setSelectedDocumentId,
@@ -72,6 +97,9 @@ export function ItemActionDropdown({
 
   const { copyLink } = useCopyLink();
   const { mutate: downloadDocumentMutation } = useDownloadDocument();
+  const { mutate: lockItemMutation, isPending: isLocking } = useLockItem();
+  const { mutate: unlockItemMutation, isPending: isUnlocking } =
+    useUnlockItem();
 
   const handleDownload = () => {
     downloadDocumentMutation({
@@ -103,124 +131,223 @@ export function ItemActionDropdown({
 
   return (
     <>
-      <DropdownMenu modal={variant === "table" ? false : true}>
-        <DropdownMenuTrigger
-          render={
-            variant === "viewer" ? (
-              <Button variant="ghost" size="icon" />
-            ) : (
-              <Button
-                variant="outline"
-                size="icon-sm"
-                className="border-none bg-transparent hover:bg-input/50"
-              />
-            )
-          }
-        >
-          <EllipsisVertical className={variant === "table" ? "size-4" : ""} />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          className="w-72"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {!item.is_folder && (
-            <DropdownMenuItem disabled={!canDownload} onClick={handleDownload}>
-              <Download />
-              Download
-            </DropdownMenuItem>
-          )}
-          <DropdownMenuItem
-            disabled={!isOwner}
-            onClick={() => setOpenRenameItemDialog(true)}
-          >
-            <PencilLine />
-            Rename
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          {!item.is_folder && (
-            <DropdownMenuItem
-              disabled={!isOwner}
-              onClick={() => setOpenChangeClassificationDialog(true)}
-            >
-              <Shield />
-              Change classification
-            </DropdownMenuItem>
-          )}
-          {!item.is_folder && (
-            <>
-              {item.classification === "protected" ? (
-                <DropdownMenuItem
-                  disabled={!isOwner}
-                  onClick={() => setOpenShareDialog(true)}
+      <div className="flex items-center gap-1">
+        {variant === "viewer" && !item.is_folder && (
+          <>
+            {canDownload && (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleDownload}
+                    />
+                  }
+                >
+                  <Download />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Download</TooltipContent>
+              </Tooltip>
+            )}
+
+            {item.classification === "protected" && isOwner ? (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setOpenShareDialog(true)}
+                    />
+                  }
                 >
                   <UserRoundPlus />
-                  Share
-                </DropdownMenuItem>
-              ) : item.classification === "public" ? (
-                <DropdownMenuItem onClick={() => copyLink(item.id)}>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Share</TooltipContent>
+              </Tooltip>
+            ) : item.classification === "public" ? (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => copyLink(item.id)}
+                    />
+                  }
+                >
                   <Link2 />
-                  Copy Link
-                </DropdownMenuItem>
-              ) : null}
-            </>
-          )}
-          <DropdownMenuItem
-            disabled={!isOwner}
-            onClick={() => setOpenMoveItemDialog(true)}
-          >
-            <FolderInput />
-            Move
-          </DropdownMenuItem>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Copy Link</TooltipContent>
+              </Tooltip>
+            ) : null}
 
-          {variant === "viewer" ? (
-            <DropdownMenuItem onClick={() => handleOpenRailInfo("details")}>
-              <Info />
-              Details
+            {!isLocked && (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setOpenFormBuilderViewer(true)}
+                    />
+                  }
+                >
+                  <FilePenLine />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Form builder</TooltipContent>
+              </Tooltip>
+            )}
+          </>
+        )}
+        <DropdownMenu modal={variant === "table" ? false : true}>
+          <DropdownMenuTrigger
+            render={
+              variant === "viewer" ? (
+                <Button variant="ghost" size="icon" />
+              ) : (
+                <Button
+                  variant="outline"
+                  size="icon-sm"
+                  className="border-none bg-transparent hover:bg-input/50"
+                />
+              )
+            }
+          >
+            <EllipsisVertical />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-72"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {!item.is_folder && variant !== "viewer" && (
+              <DropdownMenuItem
+                disabled={!canDownload}
+                onClick={handleDownload}
+              >
+                <Download />
+                Download
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem
+              disabled={!isOwner || isLocked}
+              onClick={() => setOpenRenameItemDialog(true)}
+            >
+              <PencilLine />
+              Rename
             </DropdownMenuItem>
-          ) : (
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <CircleAlert />
-                {item.is_folder ? "Folder" : "File"} information
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent className="w-72">
-                  <DropdownMenuItem
-                    onClick={() => handleOpenRailInfo("details")}
-                  >
-                    <Info />
-                    Details
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleOpenRailInfo("activity")}
-                  >
-                    <Activity />
-                    Activity
-                  </DropdownMenuItem>
-                  {!item.is_folder && (
+            <DropdownMenuSeparator />
+            {!item.is_folder && (
+              <DropdownMenuItem
+                disabled={!isOwner || isLocked}
+                onClick={() => setOpenChangeClassificationDialog(true)}
+              >
+                <Shield />
+                Change classification
+              </DropdownMenuItem>
+            )}
+            {!item.is_folder && variant !== "viewer" && (
+              <>
+                {item.classification === "protected" ? (
+                  <>
                     <DropdownMenuItem
-                      onClick={() => setOpenVersionHistoryDialog(true)}
+                      disabled={!isOwner}
+                      onClick={() => setOpenShareDialog(true)}
                     >
-                      <History />
-                      {!isOwner ? "Version history" : "Manage versions"}
+                      <UserRoundPlus />
+                      Share
                     </DropdownMenuItem>
-                  )}
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-          )}
+                    <DropdownMenuItem
+                      disabled={!isOwner || isLocked}
+                      onClick={() => setOpenAllowDownloadsDialog(true)}
+                    >
+                      <KeyRound />
+                      Allow downloads
+                    </DropdownMenuItem>
+                  </>
+                ) : item.classification === "public" ? (
+                  <DropdownMenuItem onClick={() => copyLink(item.id)}>
+                    <Link2 />
+                    Copy Link
+                  </DropdownMenuItem>
+                ) : null}
+              </>
+            )}
 
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            variant="destructive"
-            disabled={!isOwner}
-            onClick={() => setOpenTrashDialog(true)}
-          >
-            <Trash2 />
-            Move to trash
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <DropdownMenuItem
+              disabled={!isOwner}
+              onClick={() => setOpenMoveItemDialog(true)}
+            >
+              <FolderInput />
+              Move
+            </DropdownMenuItem>
+
+            {variant === "viewer" ? (
+              <DropdownMenuItem onClick={() => handleOpenRailInfo("details")}>
+                <Info />
+                Details
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <CircleAlert />
+                  {item.is_folder ? "Folder" : "File"} information
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent className="w-72">
+                    <DropdownMenuItem
+                      onClick={() => handleOpenRailInfo("details")}
+                    >
+                      <Info />
+                      Details
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleOpenRailInfo("activity")}
+                    >
+                      <Activity />
+                      Activity
+                    </DropdownMenuItem>
+                    {!item.is_folder && (
+                      <DropdownMenuItem
+                        onClick={() => setOpenVersionHistoryDialog(true)}
+                      >
+                        <History />
+                        {canManageVersions
+                          ? "Manage versions"
+                          : "Version history"}
+                      </DropdownMenuItem>
+                    )}
+                    {!item.is_folder && (
+                      <DropdownMenuItem
+                        disabled={!isOwner || isLocking || isUnlocking}
+                        onClick={() =>
+                          isLocked
+                            ? unlockItemMutation(item.id)
+                            : lockItemMutation(item.id)
+                        }
+                      >
+                        {isLocked ? <LockOpen /> : <Lock />}
+                        {isLocked ? "Unlock" : "Lock"}
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+            )}
+
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              disabled={!isOwner || isLocked}
+              onClick={() => setOpenTrashDialog(true)}
+            >
+              <Trash2 />
+              Move to trash
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
       <RenameItemDialog
         item={item}
@@ -249,7 +376,19 @@ export function ItemActionDropdown({
           <ChangeClassificationDialog
             item={item}
             openChangeClassificationDialog={openChangeClassificationDialog}
-            setOpenChangeClassificationDialog={setOpenChangeClassificationDialog}
+            setOpenChangeClassificationDialog={
+              setOpenChangeClassificationDialog
+            }
+          />
+          <FormBuilderViewer
+            item={item}
+            openFormBuilderViewer={openFormBuilderViewer}
+            setOpenFormBuilderViewer={setOpenFormBuilderViewer}
+          />
+          <AllowDownloadsDialog
+            item={item}
+            openAllowDownloadsDialog={openAllowDownloadsDialog}
+            setOpenAllowDownloadsDialog={setOpenAllowDownloadsDialog}
           />
         </>
       )}

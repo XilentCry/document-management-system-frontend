@@ -6,8 +6,19 @@ import {
   ItemDescription,
   ItemTitle,
 } from "@/components/ui/item";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { useRemoveDocumentShare } from "@/services/documents/mutations";
+import {
+  useRemoveDocumentShare,
+  useUpdateShareRole,
+} from "@/services/documents/mutations";
+import { useGetAllShareRoles } from "@/services/share-roles/queries";
 import { TDocumentShare } from "@/types/document-share";
 import { TItem } from "@/types/item";
 import { X } from "lucide-react";
@@ -23,11 +34,24 @@ export function ShareItemRow({
 }) {
   const { mutate: removeShareMutation, isPending: isRemoving } =
     useRemoveDocumentShare();
+  const { mutate: updateShareRoleMutation, isPending: isUpdatingRole } =
+    useUpdateShareRole();
+
+  const { data: shareRoles = [] } = useGetAllShareRoles(isOwner);
 
   const handleRemove = () => {
     removeShareMutation({
       shareId: share.id,
       documentId: item.id,
+    });
+  };
+
+  const handleRoleChange = (shareRoleId: string) => {
+    if (shareRoleId === share.share_role.id) return;
+    updateShareRoleMutation({
+      shareId: share.id,
+      documentId: item.id,
+      shareRoleId,
     });
   };
 
@@ -42,21 +66,61 @@ export function ShareItemRow({
       </ItemContent>
       <ItemActions>
         {isOwner ? (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={handleRemove}
-            disabled={isRemoving}
-          >
-            {isRemoving ? (
-              <Spinner className="size-4" />
+          <>
+            {isUpdatingRole ? (
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                <Spinner className="size-4" />
+                Updating...
+              </div>
             ) : (
-              <X className="size-4" />
+              <Select
+                value={share.share_role.id}
+                onValueChange={(value) => value && handleRoleChange(value)}
+                disabled={shareRoles.length === 0}
+              >
+                <SelectTrigger className="capitalize">
+                  <SelectValue>
+                    {
+                      shareRoles.find((r) => r.id === share.share_role.id)
+                        ?.name ?? share.share_role.name
+                    }
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {shareRoles.map((role) => (
+                    <SelectItem
+                      key={role.id}
+                      value={role.id}
+                      className="capitalize"
+                      disabled={
+                        share.has_organization_unit_access &&
+                        role.name === "viewer"
+                      }
+                    >
+                      {role.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
-          </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              onClick={handleRemove}
+              disabled={isRemoving || isUpdatingRole}
+            >
+              {isRemoving ? (
+                <Spinner className="size-4" />
+              ) : (
+                <X className="size-4" />
+              )}
+            </Button>
+          </>
         ) : (
-          <p className="text-muted-foreground text-sm">Shared</p>
+          <p className="text-muted-foreground text-sm capitalize">
+            {share.share_role.name}
+          </p>
         )}
       </ItemActions>
     </Item>
