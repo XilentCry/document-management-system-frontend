@@ -151,6 +151,180 @@ export function useGetDescription() {
             <span className="text-primary">{auditLog.properties.name}</span>
           </>
         );
+
+      case "admin.invite":
+        return (
+          <>
+            {actor} invited{" "}
+            <span className="text-primary">{auditLog.properties.name}</span> as
+            an administrator
+          </>
+        );
+
+      case "admin.reinvite":
+        return (
+          <>
+            {actor} reinvited{" "}
+            <span className="text-primary">{auditLog.properties.name}</span> as
+            an administrator
+          </>
+        );
+
+      case "organization_unit.create":
+        return (
+          <>
+            {actor} created the organization unit{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+            {auditLog.properties.parent ? (
+              <>
+                {" "}
+                under{" "}
+                <span className="text-primary">
+                  {auditLog.properties.parent}
+                </span>
+              </>
+            ) : null}
+          </>
+        );
+
+      case "organization_unit.update":
+        return (
+          <>
+            {actor} updated the organization unit{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </>
+        );
+
+      case "document.update_share_role":
+        return (
+          <>
+            {actor} changed the share role of{" "}
+            <span className="text-primary">
+              {auditLog.properties.shared_with}
+            </span>{" "}
+            on{" "}
+            <span className="text-primary">{auditLog.properties.name}</span> to{" "}
+            <span className="text-primary capitalize">
+              {auditLog.properties.new_role}
+            </span>
+          </>
+        );
+
+      case "document.trash":
+        return (
+          <>
+            {actor} moved{" "}
+            <span className="text-primary">{auditLog.properties.name}</span> to
+            trash
+          </>
+        );
+
+      case "document.restore":
+        return (
+          <>
+            {actor} restored{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </>
+        );
+
+      case "document.force_delete":
+        return (
+          <>
+            {actor} permanently deleted{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </>
+        );
+
+      case "document.grant_download":
+        return (
+          <>
+            {actor} granted download access to{" "}
+            <span className="text-primary">
+              {auditLog.properties.shared_with}
+            </span>{" "}
+            for{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </>
+        );
+
+      case "document.revoke_download":
+        return (
+          <>
+            {actor} revoked download access from{" "}
+            <span className="text-primary">
+              {auditLog.properties.shared_with}
+            </span>{" "}
+            on{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </>
+        );
+
+      case "item.lock":
+        return (
+          <>
+            {actor} locked{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </>
+        );
+
+      case "item.unlock":
+        return (
+          <>
+            {actor} unlocked{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </>
+        );
+
+      case "document.download":
+        return (
+          <>
+            {actor} downloaded{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </>
+        );
+
+      case "document.download_version":
+        return (
+          <>
+            {actor} downloaded Version{" "}
+            <span className="text-primary">
+              {auditLog.properties.version_number}
+            </span>{" "}
+            of{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </>
+        );
+
+      case "document.submission_created":
+        return (
+          <>
+            {actor} created a signing submission for{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>{" "}
+            with{" "}
+            <span className="text-primary">
+              {auditLog.properties.submitters_count}
+            </span>{" "}
+            submitter
+            {auditLog.properties.submitters_count === 1 ? "" : "s"}
+          </>
+        );
+
+      case "document.signed_completed":
+        return (
+          <>
+            A signing submission was completed and saved as Version{" "}
+            <span className="text-primary">
+              {auditLog.properties.version_number}
+            </span>
+            {auditLog.properties.removed_oldest_version ? (
+              <>
+                {" "}
+                (Version {auditLog.properties.removed_oldest_version} was
+                removed)
+              </>
+            ) : null}
+          </>
+        );
     }
   };
 

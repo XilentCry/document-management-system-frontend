@@ -6,7 +6,7 @@ import { TItem } from "@/types/item";
 export function ItemDetails({
   item,
 }: {
-  item: Pick<TItem, "id" | "name" | "type" | "owner" | "created_at" | "updated_at" | "updated_by"> & {
+  item: Pick<TItem, "id" | "name" | "type" | "owner" | "created_at" | "updated_at" | "updated_by" | "opened_at" | "opened_by"> & {
     classification?: string;
     current_version?: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
       item_id: string;
@@ -19,6 +19,12 @@ export function ItemDetails({
   const updatedByLabel = userId === item.updated_by.id
     ? "me"
     : `${item.updated_by.first_name} ${item.updated_by.middle_name ?? ""} ${item.updated_by.last_name}`;
+
+  const openedByLabel = item.opened_by
+    ? userId === item.opened_by.id
+      ? "me"
+      : `${item.opened_by.first_name} ${item.opened_by.middle_name ?? ""} ${item.opened_by.last_name}`
+    : null;
 
   return (
     <>
@@ -57,6 +63,14 @@ export function ItemDetails({
         <p className="font-medium">Date modified</p>
         <p>
           {item.updated_at} by {updatedByLabel}
+        </p>
+      </div>
+      <div>
+        <p className="font-medium">Date opened</p>
+        <p>
+          {item.opened_at
+            ? `${item.opened_at}${openedByLabel ? ` by ${openedByLabel}` : ""}`
+            : "Never"}
         </p>
       </div>
       <div>

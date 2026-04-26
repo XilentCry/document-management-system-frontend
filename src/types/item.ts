@@ -21,4 +21,6 @@ export type TItem = {
   created_at?: string;
   updated_at: string;
   updated_by: TBasicUser;
+  opened_at?: string | null;
+  opened_by?: TBasicUser | null;
 };

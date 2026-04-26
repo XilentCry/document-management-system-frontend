@@ -169,6 +169,160 @@ export function useGetDetails() {
           </span>
         );
 
+      case "document.update_share_role":
+        return (
+          <div className="flex flex-col">
+            <span>
+              User:{" "}
+              <span className="text-primary">
+                {auditLog.properties.shared_with}
+              </span>
+            </span>
+            <span>
+              Role changed from{" "}
+              <span className="text-primary capitalize">
+                {auditLog.properties.previous_role ?? "None"}
+              </span>{" "}
+              to{" "}
+              <span className="text-primary capitalize">
+                {auditLog.properties.new_role}
+              </span>
+            </span>
+          </div>
+        );
+
+      case "document.trash":
+        return (
+          <span>
+            Document:{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </span>
+        );
+
+      case "document.restore":
+        return (
+          <span>
+            Document:{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </span>
+        );
+
+      case "document.force_delete":
+        return (
+          <span>
+            Document:{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </span>
+        );
+
+      case "document.grant_download":
+        return (
+          <span>
+            Granted download to:{" "}
+            <span className="text-primary">
+              {auditLog.properties.shared_with}
+            </span>
+          </span>
+        );
+
+      case "document.revoke_download":
+        return (
+          <span>
+            Revoked download from:{" "}
+            <span className="text-primary">
+              {auditLog.properties.shared_with}
+            </span>
+          </span>
+        );
+
+      case "item.lock":
+        return (
+          <span>
+            Locked:{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </span>
+        );
+
+      case "item.unlock":
+        return (
+          <span>
+            Unlocked:{" "}
+            <span className="text-primary">{auditLog.properties.name}</span>
+          </span>
+        );
+
+      case "document.download":
+        return (
+          <span>
+            Location:{" "}
+            <span className="text-primary">
+              {auditLog.properties.parent ?? "—"}
+            </span>
+          </span>
+        );
+
+      case "document.download_version":
+        return (
+          <div className="flex flex-col">
+            <span>
+              File:{" "}
+              <span className="text-primary">
+                {auditLog.properties.file_name}
+              </span>
+            </span>
+            <span>
+              Version:{" "}
+              <span className="text-primary">
+                Version {auditLog.properties.version_number}
+              </span>
+            </span>
+          </div>
+        );
+
+      case "document.submission_created":
+        return (
+          <div className="flex flex-col">
+            <span>
+              Submission ID:{" "}
+              <span className="text-primary">
+                {auditLog.properties.docuseal_id}
+              </span>
+            </span>
+            <span>
+              Submitters:{" "}
+              <span className="text-primary">
+                {auditLog.properties.submitters_count}
+              </span>
+            </span>
+          </div>
+        );
+
+      case "document.signed_completed":
+        return (
+          <div className="flex flex-col">
+            <span>
+              Submission ID:{" "}
+              <span className="text-primary">
+                {auditLog.properties.docuseal_id}
+              </span>
+            </span>
+            <span>
+              New version:{" "}
+              <span className="text-primary">
+                Version {auditLog.properties.version_number}
+              </span>
+            </span>
+            {auditLog.properties.removed_oldest_version && (
+              <span>
+                Removed version:{" "}
+                <span className="text-primary">
+                  Version {auditLog.properties.removed_oldest_version}
+                </span>
+              </span>
+            )}
+          </div>
+        );
+
       case "organization_unit.update": {
         const formatValue = (value: string | null) => {
           return value ?? "None";

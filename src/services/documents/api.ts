@@ -137,7 +137,7 @@ export const getDocumentDetails = async (
 ): Promise<
   Pick<
     TItem,
-    "id" | "name" | "type" | "owner" | "created_at" | "updated_at" | "updated_by"
+    "id" | "name" | "type" | "owner" | "created_at" | "updated_at" | "updated_by" | "opened_at" | "opened_by"
   > & {
     classification: string;
     current_version: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
@@ -154,7 +154,7 @@ export const getPublicDocumentDetails = async (
 ): Promise<
   Pick<
     TItem,
-    "id" | "name" | "type" | "owner" | "created_at" | "updated_at" | "updated_by"
+    "id" | "name" | "type" | "owner" | "created_at" | "updated_at" | "updated_by" | "opened_at" | "opened_by"
   > & {
     classification: string;
     current_version: Omit<TDocumentVersion, "item" | "created_at" | "created_by"> & {
