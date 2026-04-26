@@ -41,6 +41,8 @@ export function AuditLogTable({ auditLogs }: { auditLogs: TAuditLog[] }) {
               <TableCell>
                 {auditLog.action === "item.rename"
                   ? auditLog.properties.old_name
+                  : auditLog.action === "document.signed_completed"
+                  ? auditLog.subject
                   : auditLog.properties.name}
               </TableCell>
               <TableCell>{auditLog.ip_address ?? "N/A"}</TableCell>
