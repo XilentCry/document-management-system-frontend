@@ -1,5 +1,12 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { getAllSharedWithMe, fetchCurrentUser, getUserOrganizationUnits } from "./api";
+import {
+  getAllSharedWithMe,
+  fetchCurrentUser,
+  getUserOrganizationUnits,
+  getMySignings,
+  getMySubmissions,
+  getSubmissionDetails,
+} from "./api";
 
 export function useCurrentUser() {
   return useQuery({
@@ -50,4 +57,81 @@ export const useGetUserOrganizationUnits = (enabled: boolean = true) => {
   });
 
   return { isLoading, isError, error, data };
+};
+
+export const useGetMySignings = (status?: string) => {
+  const {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["user", "signings", { status }],
+    queryFn: ({ pageParam }) => getMySignings({ status, after: pageParam }),
+    initialPageParam: undefined as number | undefined,
+    getNextPageParam: (lastPage) => {
+      return lastPage.pagination.next || undefined;
+    },
+  });
+
+  return {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
+};
+
+export const useGetMySubmissions = (status?: string) => {
+  const {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["user", "submissions", { status }],
+    queryFn: ({ pageParam }) => getMySubmissions({ status, after: pageParam }),
+    initialPageParam: undefined as number | undefined,
+    getNextPageParam: (lastPage) => {
+      return lastPage.pagination.next || undefined;
+    },
+  });
+
+  return {
+    isLoading,
+    isError,
+    error,
+    isFetchNextPageError,
+    isSuccess,
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  };
+};
+
+export const useGetSubmissionDetails = (
+  submissionId: number | null,
+  enabled: boolean,
+) => {
+  return useQuery({
+    queryKey: ["user", "submissions", submissionId],
+    queryFn: () => getSubmissionDetails(submissionId as number),
+    enabled: enabled && submissionId !== null,
+  });
 };

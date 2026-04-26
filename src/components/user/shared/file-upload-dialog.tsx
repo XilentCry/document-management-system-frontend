@@ -56,6 +56,9 @@ export function FileUploadDialog() {
   const setIsOpen = useUploadDialogStore((state) => state.setIsOpen);
   const pendingFiles = useUploadDialogStore((state) => state.pendingFiles);
   const replaceItemId = useUploadDialogStore((state) => state.replaceItemId);
+  const isSharedReplace = useUploadDialogStore(
+    (state) => state.isSharedReplace,
+  );
   const clearPendingFiles = useUploadDialogStore(
     (state) => state.clearPendingFiles,
   );
@@ -82,6 +85,7 @@ export function FileUploadDialog() {
       id: string;
       name: string;
       can_replace: boolean;
+      is_locked?: boolean;
       versions_count: number;
     }[];
     pendingData: TUploadFileFormSchema | null;
@@ -128,7 +132,10 @@ export function FileUploadDialog() {
   useEffect(() => {
     if (isOpen && pendingFiles.length > 0 && isClassificationsSuccess) {
       const limit = replaceItemId ? 1 : MAX_FILES;
-      const filesToAdd = pendingFiles.slice(0, Math.max(0, limit - fields.length));
+      const filesToAdd = pendingFiles.slice(
+        0,
+        Math.max(0, limit - fields.length),
+      );
       addFilesToQueue(filesToAdd);
       clearPendingFiles();
     }
@@ -203,6 +210,7 @@ export function FileUploadDialog() {
       const res = await checkConflicts({
         organization_unit_id: currentOrganizationUnitId!,
         file_names: fileNames,
+        ...(replaceItemId ? { replace_item_id: replaceItemId } : {}),
       });
 
       let actualConflicts = res.conflicts || [];
@@ -220,10 +228,10 @@ export function FileUploadDialog() {
         return;
       }
 
-      setIsOpen(false);
       setIsCheckingConflicts(false);
 
       if (replaceItemId) {
+        setIsOpen(false);
         const docsWithReplaceId = data.documents.map((doc) => ({
           ...doc,
           replace_item_id: replaceItemId,
@@ -233,6 +241,8 @@ export function FileUploadDialog() {
         );
         return;
       }
+
+      setIsOpen(false);
 
       await Promise.all(
         data.documents.map((document) => uploadSingleDocument(document)),
@@ -333,65 +343,74 @@ export function FileUploadDialog() {
                         </ItemTitle>
                       </ItemContent>
                       <ItemActions className="items-center gap-2">
-                        <Controller
-                          control={control}
-                          name={`documents.${index}.classification_id`}
-                          render={({ field }) => {
-                            const selectedClassification = classifications.find(
-                              (c) => c.id === field.value,
-                            );
+                        {!isSharedReplace && (
+                          <Controller
+                            control={control}
+                            name={`documents.${index}.classification_id`}
+                            render={({ field }) => {
+                              const selectedClassification =
+                                classifications.find(
+                                  (c) => c.id === field.value,
+                                );
 
-                            return (
-                              <div className="flex items-center gap-2">
-                                <Select
-                                  value={field.value}
-                                  onValueChange={(value) =>
-                                    field.onChange(value)
-                                  }
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue>
-                                      {selectedClassification?.name}
-                                    </SelectValue>
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {isClassificationsLoading ? (
-                                      <div className="flex items-center justify-center p-4">
-                                        <Spinner className="text-primary size-5" />
-                                      </div>
-                                    ) : isClassificationsError &&
-                                      classificationsError ? (
-                                      <div className="flex items-center justify-center p-4">
-                                        <p className="text-destructive text-sm">
-                                          {classificationsError.message}
-                                        </p>
-                                      </div>
-                                    ) : (
-                                      classifications.map((classification) => (
-                                        <SelectItem
-                                          key={classification.id}
-                                          value={classification.id}
-                                        >
-                                          {classification.name}
-                                        </SelectItem>
-                                      ))
-                                    )}
-                                  </SelectContent>
-                                </Select>
-                                {selectedClassification?.description ? (
-                                  <Tooltip>
-                                    <TooltipTrigger>
-                                      <Info className="size-4" />
-                                    </TooltipTrigger>
-                                    <TooltipContent>
-                                      {selectedClassification.description}
-                                    </TooltipContent>
-                                  </Tooltip>
-                                ) : null}
-                              </div>
-                            );
-                          }}
-                        />
+                              return (
+                                <div className="flex items-center gap-2">
+                                  <Select
+                                    value={field.value}
+                                    onValueChange={(value) =>
+                                      field.onChange(value)
+                                    }
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue>
+                                        {selectedClassification?.name}
+                                      </SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {isClassificationsLoading ? (
+                                        <div className="flex items-center justify-center p-4">
+                                          <Spinner className="text-primary size-5" />
+                                        </div>
+                                      ) : isClassificationsError &&
+                                        classificationsError ? (
+                                        <div className="flex items-center justify-center p-4">
+                                          <p className="text-destructive text-sm">
+                                            {classificationsError.message}
+                                          </p>
+                                        </div>
+                                      ) : (
+                                        classifications.map(
+                                          (classification) => (
+                                            <SelectItem
+                                              key={classification.id}
+                                              value={classification.id}
+                                            >
+                                              {classification.name}
+                                            </SelectItem>
+                                          ),
+                                        )
+                                      )}
+                                    </SelectContent>
+                                  </Select>
+                                  {selectedClassification?.description ? (
+                                    <Tooltip>
+                                      <TooltipTrigger
+                                        render={
+                                          <Button variant="ghost" size="icon" />
+                                        }
+                                      >
+                                        <Info className="size-4" />
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        {selectedClassification.description}
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  ) : null}
+                                </div>
+                              );
+                            }}
+                          />
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"

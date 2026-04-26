@@ -51,6 +51,12 @@ export function VersionHistoryDialog({
 
   const { data: currentUser } = useCurrentUser();
   const isOwner = item.owner.id === currentUser?.id;
+  const isLocked = !!item.is_locked;
+  const canUploadNewVersion =
+    !isLocked &&
+    (isOwner ||
+      item.current_user_share?.permissions.includes("document:upload_new_version") === true);
+  const canDownloadVersion = isOwner && !isLocked;
 
   const { mutate: downloadDocumentVersionMutation } = useDownloadDocumentVersion();
   const openForReplacement = useUploadDialogStore((state) => state.openForReplacement);
@@ -64,13 +70,13 @@ export function VersionHistoryDialog({
     if (versions.length >= 3) {
       setShowLimitWarning(true);
     } else {
-      openForReplacement(item.id);
+      openForReplacement(item.id, !isOwner);
     }
   };
 
   const handleConfirmUpload = () => {
     setShowLimitWarning(false);
-    openForReplacement(item.id);
+    openForReplacement(item.id, !isOwner);
   };
 
   return (
@@ -78,10 +84,10 @@ export function VersionHistoryDialog({
       <Dialog open={openVersionHistoryDialog} onOpenChange={setOpenVersionHistoryDialog}>
         <DialogContent className="w-150 max-w-150!">
           <DialogHeader>
-            <DialogTitle>{isOwner ? "Manage versions" : "Version history"}</DialogTitle>
+            <DialogTitle>{canUploadNewVersion ? "Manage versions" : "Version history"}</DialogTitle>
           </DialogHeader>
           <div className="h-96 flex flex-col gap-4">
-            {isOwner && (
+            {canUploadNewVersion && (
               <Button
                 variant="outline"
                 className="w-fit"
@@ -113,7 +119,7 @@ export function VersionHistoryDialog({
                           {version.created_at}&nbsp;&nbsp;{version.created_by.first_name} {version.created_by.middle_name} {version.created_by.last_name}
                         </ItemDescription>
                       </ItemContent>
-                      {isOwner && (
+                      {canDownloadVersion && (
                         <Button
                           variant="ghost"
                           size="icon-sm"

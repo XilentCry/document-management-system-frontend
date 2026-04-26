@@ -3,7 +3,14 @@ import { useFolderStore } from "@/stores/folder-store";
 import { useOrganizationUnitStore } from "@/stores/organization-unit-store";
 import { useCurrentUser } from "@/services/user/queries";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { forceDeleteItem, moveItem, renameItem, restoreItem } from "./api";
+import {
+  forceDeleteItem,
+  lockItem,
+  moveItem,
+  renameItem,
+  restoreItem,
+  unlockItem,
+} from "./api";
 import { toast } from "sonner";
 import { TMoveItemFormSchema } from "@/schemas/items/move-item-form-schema";
 import { TTrashedItem } from "@/types/trash-item";
@@ -148,6 +155,49 @@ export const useRestoreItem = () => {
     },
   });
 };
+
+const useLockMutationBase = (
+  action: (id: string) => Promise<{ message: string }>,
+) => {
+  const { data: currentUser } = useCurrentUser();
+  const storeOrganizationUnitId = useOrganizationUnitStore(
+    (state) => state.currentOrganizationUnitId,
+  );
+  const currentOrganizationUnitId =
+    storeOrganizationUnitId ?? currentUser?.currentOrganizationUnitId ?? null;
+  const currentParentFolderId = useFolderStore(
+    (state) => state.currentParentFolderId,
+  );
+
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => action(id),
+    onSuccess: (data, id) => {
+      toast.success(data.message);
+
+      if (currentParentFolderId) {
+        queryClient.invalidateQueries({
+          queryKey: ["folder", currentParentFolderId, "items"],
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ["organization-unit", currentOrganizationUnitId, "items"],
+        });
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["shared-with-me"] });
+      queryClient.invalidateQueries({ queryKey: ["document", id, "details"] });
+      queryClient.invalidateQueries({ queryKey: ["item", id, "activities"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useLockItem = () => useLockMutationBase(lockItem);
+export const useUnlockItem = () => useLockMutationBase(unlockItem);
 
 export const useForceDeleteItem = (
   setIsDeleteDialogOpen?: (isOpen: boolean) => void,

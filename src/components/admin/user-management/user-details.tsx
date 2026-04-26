@@ -9,7 +9,7 @@ import {
 import { Item, ItemContent, ItemTitle } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
 import { USER_STATUS } from "@/lib/constants";
-import { getStatusBadgeClass } from "@/lib/get-status-badge-class";
+import { getUserStatusBadgeClass } from "@/lib/get-status-badge-class";
 import { useCurrentUser } from "@/services/user/queries";
 import { useUpdateStatus } from "@/services/users/mutations";
 import { TOrganizationUnitBase } from "@/types/organization-unit-base";
@@ -97,7 +97,7 @@ export function UserDetails({
               </div>
               <div className="flex flex-col gap-1">
                 <p className="font-medium">Status</p>
-                <Badge className={getStatusBadgeClass(status)}>
+                <Badge className={getUserStatusBadgeClass(status)}>
                   {status}
                 </Badge>
               </div>

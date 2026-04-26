@@ -1,10 +1,10 @@
-
 import {
   Item,
   ItemActions,
   ItemContent,
   ItemMedia,
   ItemTitle,
+  ItemFooter
 } from "@/components/ui/item";
 import { ItemActionDropdown } from "./item-action-dropdown";
 import { useRailStore } from "@/stores/rail-store";
@@ -47,6 +47,13 @@ export function Folder({
         <ItemActions>
           <ItemActionDropdown item={item} />
         </ItemActions>
+        <ItemFooter className="min-w-0">
+          <p className="min-w-0 truncate">
+            {item.owner.first_name} {item.owner.middle_name ?? ""}{" "}
+            {item.owner.last_name}
+          </p>
+          <p className="shrink-0">{item.updated_at}</p>
+        </ItemFooter>
       </Item>
     </>
   );

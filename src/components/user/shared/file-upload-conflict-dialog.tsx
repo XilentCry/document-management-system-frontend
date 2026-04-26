@@ -13,16 +13,24 @@ import { AlertCircle, Info } from "lucide-react";
 import { TUploadFileFormSchema } from "@/schemas/documents/upload-file-form-schema";
 import { Dispatch, SetStateAction } from "react";
 
+type TConflict = {
+  id: string;
+  name: string;
+  can_replace: boolean;
+  is_locked?: boolean;
+  versions_count: number;
+};
+
 interface FileUploadConflictDialogProps {
   conflictData: {
     open: boolean;
-    conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
+    conflicts: TConflict[];
     pendingData: TUploadFileFormSchema | null;
   };
   setConflictData: Dispatch<
     SetStateAction<{
       open: boolean;
-      conflicts: { id: string; name: string; can_replace: boolean; versions_count: number }[];
+      conflicts: TConflict[];
       pendingData: TUploadFileFormSchema | null;
     }>
   >;
@@ -67,14 +75,30 @@ export function FileUploadConflictDialog({
             </AlertDescription>
           </Alert>
         )}
-        {conflictData.conflicts.some((c) => !c.can_replace) && (
+        {conflictData.conflicts.some((c) => !c.can_replace && c.is_locked) && (
+          <Alert variant="destructive">
+            <AlertCircle />
+            <AlertTitle>Cannot replace the following files (locked):</AlertTitle>
+            <AlertDescription>
+              <ul className="list-disc pl-5">
+                {conflictData.conflicts
+                  .filter((c) => !c.can_replace && c.is_locked)
+                  .map((c) => (
+                    <li key={c.id}>{c.name}</li>
+                  ))}
+              </ul>
+              <p className="mt-2">These files will be skipped.</p>
+            </AlertDescription>
+          </Alert>
+        )}
+        {conflictData.conflicts.some((c) => !c.can_replace && !c.is_locked) && (
           <Alert variant="destructive">
             <AlertCircle />
             <AlertTitle>Cannot replace the following files (owned by others):</AlertTitle>
             <AlertDescription>
               <ul className="list-disc pl-5">
                 {conflictData.conflicts
-                  .filter((c) => !c.can_replace)
+                  .filter((c) => !c.can_replace && !c.is_locked)
                   .map((c) => (
                     <li key={c.id}>{c.name}</li>
                   ))}

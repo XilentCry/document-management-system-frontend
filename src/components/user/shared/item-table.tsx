@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatFileSize } from "@/lib/format-file-size";
-import { Folder } from "lucide-react";
+import { Folder, Lock } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { useCurrentUser } from "@/services/user/queries";
 import { useRailStore } from "@/stores/rail-store";
@@ -91,7 +91,10 @@ export function ItemTable({
                     ) : (
                       <Image src="/pdf.svg" alt="PDF" width={16} height={16} />
                     )}
-                    {item.name}
+                    <span className="truncate">{item.name}</span>
+                    {!item.is_folder && item.is_locked && (
+                      <Lock className="size-4 shrink-0" />
+                    )}
                   </div>
                 </TableCell>
                 {!openRail && (
@@ -123,8 +126,6 @@ export function ItemTable({
           })}
         </TableBody>
       </Table>
-
-
 
       {selectedDocument && (
         <DocumentViewer

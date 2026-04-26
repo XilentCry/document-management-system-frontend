@@ -6,6 +6,7 @@ export type TItem = {
   name: string;
   type?: "pdf" | "folder";
   is_folder: boolean;
+  is_locked: boolean;
   parent_item_id: string | null;
   owner: TUserSummary;
   organization_unit_id: string;
@@ -17,6 +18,11 @@ export type TItem = {
     file_size: number;
     file_path: string;
     version_number?: number;
+  } | null;
+  current_user_share?: {
+    role: "viewer" | "editor" | null;
+    permissions: string[];
+    can_download: boolean;
   } | null;
   created_at?: string;
   updated_at: string;
