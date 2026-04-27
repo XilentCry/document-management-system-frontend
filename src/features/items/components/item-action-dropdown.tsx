@@ -183,7 +183,7 @@ export function ItemActionDropdown({
               </Tooltip>
             ) : null}
 
-            {!isLocked && (
+            {!isLocked && item.classification === "protected" && (
               <Tooltip>
                 <TooltipTrigger
                   render={
