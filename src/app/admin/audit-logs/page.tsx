@@ -1,4 +1,4 @@
-import { AuditLogList } from "@/components/admin/audit-logs/audit-log-list";
+import { AuditLogList } from "@/features/audit-logs/components/audit-log-list";
 import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 

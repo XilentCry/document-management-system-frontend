@@ -1,4 +1,4 @@
-import { TUserStatus } from "@/types/user-status";
+import { TUserStatus } from "@/features/users/types/user-status";
 
 export const ROOT_ORGANIZATION_UNIT_SLUG = "office-of-the-board-of-regents";
 export const UNIVERSITY_PRESIDENT_SLUG = "office-of-the-university-president";

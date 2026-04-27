@@ -1,4 +1,4 @@
-import { OrganizationUnitList } from "@/components/admin/organization-units/organization-unit-list";
+import { OrganizationUnitList } from "@/features/organization-units/components/admin/organization-unit-list";
 import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 

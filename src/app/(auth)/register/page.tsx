@@ -1,5 +1,5 @@
-import { Header } from "@/components/user/auth/header";
-import { RegisterForm } from "@/components/user/auth/register-form";
+import { Header } from "@/features/auth/components/header";
+import { RegisterForm } from "@/features/auth/components/register-form";
 
 export default function RegisterPage() {
   return (

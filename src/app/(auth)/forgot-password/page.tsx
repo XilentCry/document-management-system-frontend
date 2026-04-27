@@ -1,5 +1,5 @@
-import { Header } from "@/components/user/auth/header";
-import { ForgotPasswordForm } from "@/components/user/reset-password/forgot-password-form";
+import { Header } from "@/features/auth/components/header";
+import { ForgotPasswordForm } from "@/features/auth/components/reset-password/forgot-password-form";
 
 export default function ForgotPasswordPage() {
   return (

@@ -1,8 +1,8 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { Header } from "@/components/user/layout/header";
-import { UserSidebar } from "@/components/user/layout/user-sidebar";
-import { Rail } from "@/components/user/shared/rail";
-import { UploadProgress } from "@/components/user/shared/upload-progress";
+import { Header } from "@/layouts/app-header";
+import { UserSidebar } from "@/layouts/user-sidebar";
+import { Rail } from "@/features/drive/components/rail";
+import { UploadProgress } from "@/features/uploads/components/upload-progress";
 import { Suspense } from "react";
 
 export default function AdminLayout({

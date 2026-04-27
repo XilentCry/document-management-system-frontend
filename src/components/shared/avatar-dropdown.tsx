@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { LogoutButton } from "./logout-button"
-import { useCurrentUser } from "@/services/user/queries"
+import { useCurrentUser } from "@/features/auth/api/me-queries"
 import { getInitials } from "@/lib/get-initials"
 import { Skeleton } from "@/components/ui/skeleton"
 

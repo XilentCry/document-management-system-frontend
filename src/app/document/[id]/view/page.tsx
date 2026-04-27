@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { PdfDisplay } from "@/components/user/shared/pdf-display";
-import { PublicDocumentViewerRail } from "@/components/user/shared/public-document-viewer-rail";
-import { viewPublicDocument } from "@/services/documents/api";
-import { useGetPublicDocumentDetails } from "@/services/documents/queries";
+import { PdfDisplay } from "@/features/viewer/components/pdf-display";
+import { PublicDocumentViewerRail } from "@/features/viewer/components/public-document-viewer-rail";
+import { viewPublicDocument } from "@/features/documents/api/client";
+import { useGetPublicDocumentDetails } from "@/features/documents/api/queries";
 import { Info } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";

@@ -1,6 +1,6 @@
 "use client";
 
-import { UserDetails } from "@/components/admin/user-management/user-details";
+import { UserDetails } from "@/features/users/components/user-details";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
 import {
@@ -12,7 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Spinner } from "@/components/ui/spinner";
-import { useGetUser } from "@/services/users/queries";
+import { useGetUser } from "@/features/users/api/queries";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 

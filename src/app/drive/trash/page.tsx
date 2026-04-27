@@ -11,9 +11,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { TrashDocumentGrid } from "@/components/user/trash/trash-document-grid";
-import { TrashDocumentList } from "@/components/user/trash/trash-document-list";
-import { useGetTrashedDocuments } from "@/services/documents/queries";
+import { TrashDocumentGrid } from "@/features/trash/components/trash-document-grid";
+import { TrashDocumentList } from "@/features/trash/components/trash-document-list";
+import { useGetTrashedDocuments } from "@/features/documents/api/queries";
 import { useViewModeStore } from "@/stores/view-mode-store";
 import { LayoutGrid, List, Trash2 } from "lucide-react";
 

@@ -11,12 +11,12 @@ import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EmptyState } from "@/components/shared/empty-state";
 import { InfiniteScrollContainer } from "@/components/shared/infinite-scroll-container";
-import { SubmissionList } from "@/components/user/submissions/submission-list";
-import { SubmissionGrid } from "@/components/user/submissions/submission-grid";
-import { SubmittersRail } from "@/components/user/submissions/submitters-rail";
+import { SubmissionList } from "@/features/submissions/components/submission-list";
+import { SubmissionGrid } from "@/features/submissions/components/submission-grid";
+import { SubmittersRail } from "@/features/submissions/components/submitters-rail";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useViewModeStore } from "@/stores/view-mode-store";
-import { useGetMySubmissions } from "@/services/user/queries";
+import { useGetMySubmissions } from "@/features/auth/api/me-queries";
 import { LayoutGrid, List, Send } from "lucide-react";
 import { useState } from "react";
 

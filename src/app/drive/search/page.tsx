@@ -1,6 +1,6 @@
 "use client";
 
-import { Search } from "@/components/user/search/search";
+import { Search } from "@/features/search/components/search";
 import { Suspense } from "react";
 
 export default function SearchPage() {

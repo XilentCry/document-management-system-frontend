@@ -11,9 +11,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { SharedDocumentGrid } from "@/components/user/shared-with-me/shared-document-grid";
-import { SharedDocumentList } from "@/components/user/shared-with-me/shared-document-list";
-import { useGetAllSharedWithMe } from "@/services/user/queries";
+import { SharedDocumentGrid } from "@/features/shared-with-me/components/shared-document-grid";
+import { SharedDocumentList } from "@/features/shared-with-me/components/shared-document-list";
+import { useGetAllSharedWithMe } from "@/features/auth/api/me-queries";
 import { useViewModeStore } from "@/stores/view-mode-store";
 import { Files, LayoutGrid, List } from "lucide-react";
 

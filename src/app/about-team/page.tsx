@@ -1,6 +1,6 @@
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemHeader, ItemTitle } from "@/components/ui/item";
-import { GoBackButton } from "@/components/user/auth/go-back-button";
-import { Header } from "@/components/user/auth/header";
+import { GoBackButton } from "@/features/auth/components/go-back-button";
+import { Header } from "@/features/auth/components/header";
 import Image from "next/image";
 
 export default function AboutTeamPage() {

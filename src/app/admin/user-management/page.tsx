@@ -1,4 +1,4 @@
-import { UserList } from "@/components/admin/user-management/user-list";
+import { UserList } from "@/features/users/components/user-list";
 import { ModeToggle } from "@/components/shared/mode-toggle";
 import { AvatarDropdown } from "@/components/shared/avatar-dropdown";
 

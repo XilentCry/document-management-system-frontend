@@ -1,4 +1,4 @@
-import { TOrganizationUnitTree } from "@/types/organization-unit-tree";
+import { TOrganizationUnitTree } from "@/features/organization-units/types/organization-unit-tree";
 
 export function filterTree(
   units: TOrganizationUnitTree[],

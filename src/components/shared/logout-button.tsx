@@ -1,6 +1,6 @@
 "use client";
 
-import { useLogout } from "@/services/auth/mutations";
+import { useLogout } from "@/features/auth/api/mutations";
 import { DropdownMenuItem } from "../ui/dropdown-menu";
 import { Spinner } from "../ui/spinner";
 

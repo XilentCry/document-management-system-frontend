@@ -1,4 +1,4 @@
-import { VerifyEmail } from "@/components/user/auth/verify-email";
+import { VerifyEmail } from "@/features/auth/components/verify-email";
 import { Suspense } from "react";
 
 export default function VerifyEmailPage() {

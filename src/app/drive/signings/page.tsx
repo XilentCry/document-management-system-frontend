@@ -9,12 +9,12 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useViewModeStore } from "@/stores/view-mode-store";
 import { FileSignature, LayoutGrid, List } from "lucide-react";
-import { useGetMySignings } from "@/services/user/queries";
+import { useGetMySignings } from "@/features/auth/api/me-queries";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/shared/empty-state";
 import { InfiniteScrollContainer } from "@/components/shared/infinite-scroll-container";
-import { SigningList } from "@/components/user/signings/signing-list";
-import { SigningGrid } from "@/components/user/signings/signing-grid";
+import { SigningList } from "@/features/signings/components/signing-list";
+import { SigningGrid } from "@/features/signings/components/signing-grid";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";

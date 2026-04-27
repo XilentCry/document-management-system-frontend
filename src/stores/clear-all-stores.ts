@@ -1,10 +1,10 @@
-import { useFolderStore } from "./folder-store";
-import { useOrganizationUnitStore } from "./organization-unit-store";
-import { useRailStore } from "./rail-store";
-import { useSearchStore } from "./search-store";
-import { useSubmittersRailStore } from "./submitters-rail-store";
-import { useUploadDialogStore } from "./upload-dialog-store";
-import { useUploadStore } from "./upload-store";
+import { useFolderStore } from "@/features/drive/store/folder-store";
+import { useOrganizationUnitStore } from "@/features/organization-units/store/organization-unit-store";
+import { useRailStore } from "@/features/drive/store/rail-store";
+import { useSearchStore } from "@/features/search/store/search-store";
+import { useSubmittersRailStore } from "@/features/submissions/store/submitters-rail-store";
+import { useUploadDialogStore } from "@/features/uploads/store/upload-dialog-store";
+import { useUploadStore } from "@/features/uploads/store/upload-store";
 
 export function clearAllStores() {
   useOrganizationUnitStore.getState().reset();
