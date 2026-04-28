@@ -66,7 +66,7 @@ export function Document({
             <div className="flex items-center justify-between gap-2">
               <p className="min-w-0 truncate">
                 {item.owner.id === currentUser?.id
-                  ? "Me"
+                  ? "me"
                   : `${item.owner.first_name} ${item.owner.middle_name ?? ""} ${item.owner.last_name}`}
               </p>
               <p className="shrink-0">{item.updated_at}</p>
