@@ -37,6 +37,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useState } from "react";
 import { formatFileSize } from "@/lib/format-file-size";
 import { RestoreNameConflictDialog } from "./restore-name-conflict-dialog";
+import { useCurrentUser } from "@/features/auth/api/me-queries";
 
 export function TrashDocument({
   trashedItem,
@@ -46,6 +47,7 @@ export function TrashDocument({
   onDoubleClick: () => void;
 }) {
   const { setSelectedDocumentId, setSelectedDocumentFileName } = useRailStore();
+  const { data: currentUser } = useCurrentUser();
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [nameConflict, setNameConflict] = useState<TRestoreNameConflict | null>(
@@ -173,8 +175,9 @@ export function TrashDocument({
           </div>
           <div className="flex items-center justify-between gap-2">
             <p className="min-w-0 truncate">
-              {trashedItem.owner.first_name} {trashedItem.owner.middle_name ?? ""}{" "}
-              {trashedItem.owner.last_name}
+              {trashedItem.owner.id === currentUser?.id
+                ? "me"
+                : `${trashedItem.owner.first_name} ${trashedItem.owner.middle_name ?? ""} ${trashedItem.owner.last_name}`}
             </p>
             <p className="shrink-0">{trashedItem.created_at}</p>
           </div>
