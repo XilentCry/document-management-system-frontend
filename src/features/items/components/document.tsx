@@ -12,6 +12,7 @@ import { useRailStore } from "@/features/drive/store/rail-store";
 import { TItem } from "@/features/items/types/item";
 import { ItemActionDropdown } from "@/features/items/components/item-action-dropdown";
 import { formatFileSize } from "@/lib/format-file-size";
+import { useCurrentUser } from "@/features/auth/api/me-queries";
 
 export function Document({
   item,
@@ -26,6 +27,7 @@ export function Document({
     setSelectedFolderId,
     setSelectedFolderName,
   } = useRailStore();
+  const { data: currentUser } = useCurrentUser();
 
   return (
     <>
@@ -63,8 +65,9 @@ export function Document({
             </div>
             <div className="flex items-center justify-between gap-2">
               <p className="min-w-0 truncate">
-                {item.owner.first_name} {item.owner.middle_name ?? ""}{" "}
-                {item.owner.last_name}
+                {item.owner.id === currentUser?.id
+                  ? "me"
+                  : `${item.owner.first_name} ${item.owner.middle_name ?? ""} ${item.owner.last_name}`}
               </p>
               <p className="shrink-0">{item.updated_at}</p>
             </div>
