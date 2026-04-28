@@ -13,7 +13,6 @@ import { ItemActionDropdown } from "@/features/items/components/item-action-drop
 import { useRailStore } from "@/features/drive/store/rail-store";
 import { TSharedWithMe } from "@/features/shared-with-me/types/shared-with-me";
 import { formatFileSize } from "@/lib/format-file-size";
-import { useCurrentUser } from "@/features/auth/api/me-queries";
 
 export function SharedDocument({
   sharedDocument,
@@ -29,7 +28,6 @@ export function SharedDocument({
     setSelectedFolderId,
     setSelectedFolderName,
   } = useRailStore();
-  const { data: currentUser } = useCurrentUser();
 
   return (
     <Item
@@ -68,9 +66,7 @@ export function SharedDocument({
           </div>
           <div className="flex items-center justify-between gap-2">
             <p className="min-w-0 truncate">
-              {shared_by.id === currentUser?.id
-                ? "me"
-                : `${shared_by.first_name} ${shared_by.middle_name ?? ""} ${shared_by.last_name}`}
+              {`${shared_by.first_name} ${shared_by.middle_name ?? ""} ${shared_by.last_name}`}
             </p>
             <p className="shrink-0">{created_at}</p>
           </div>
